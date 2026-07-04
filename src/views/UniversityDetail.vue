@@ -6,7 +6,7 @@ import EmptyStatePanel from '../components/EmptyStatePanel.vue'
 import StatusPill from '../components/StatusPill.vue'
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getUniversityById, type UniversityLink } from '../data/universities'
+import { universities, getUniversityById, type UniversityLink } from '../data/universities'
 import SchoolLogo from '../components/SchoolLogo.vue'
 import SourceList from '../components/SourceList.vue'
 
@@ -139,6 +139,17 @@ function linkPurpose(type: UniversityLink['type']) {
 
   return purposeMap[type]
 }
+
+const totalCount = computed(() => universities.length)
+const currentIndex = computed(() => universities.findIndex((u) => u.id === String(route.params.id)))
+const prevUniversity = computed(() => {
+  const i = currentIndex.value
+  return i > 0 ? universities[i - 1] : null
+})
+const nextUniversity = computed(() => {
+  const i = currentIndex.value
+  return i >= 0 && i < universities.length - 1 ? universities[i + 1] : null
+})
 </script>
 
 <template>
@@ -578,6 +589,24 @@ function linkPurpose(type: UniversityLink['type']) {
             </div>
           </div>
         </section>
+
+        <nav v-if="university" class="mt-2 flex flex-col gap-3 sm:flex-row sm:items-stretch sm:justify-between" aria-label="相邻条目">
+          <RouterLink v-if="prevUniversity" :to="{ name: 'university-detail', params: { id: prevUniversity.id } }" class="group min-w-0 flex-1 rounded-xl border p-4 transition hover:-translate-y-0.5" :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--border)' }">
+            <span class="flex items-center gap-1.5 text-xs text-[var(--text-tertiary)]"><AppIcon name="arrow-left" :size="14" /> 上一所</span>
+            <span class="mt-1 block truncate text-sm font-medium text-[var(--text-primary)] transition group-hover:text-[var(--accent)]">{{ prevUniversity.name }}</span>
+          </RouterLink>
+          <div v-else class="min-w-0 flex-1 rounded-xl border border-dashed p-4 opacity-60" :style="{ borderColor: 'var(--border)' }">
+            <span class="flex items-center gap-1.5 text-xs text-[var(--text-tertiary)]"><AppIcon name="arrow-left" :size="14" /> 已是第一所</span>
+          </div>
+          <span class="hidden shrink-0 self-center px-3 text-xs font-numeric text-[var(--text-tertiary)] sm:block">{{ currentIndex + 1 }} / {{ totalCount }}</span>
+          <RouterLink v-if="nextUniversity" :to="{ name: 'university-detail', params: { id: nextUniversity.id } }" class="group min-w-0 flex-1 rounded-xl border p-4 text-right transition hover:-translate-y-0.5" :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--border)' }">
+            <span class="flex items-center justify-end gap-1.5 text-xs text-[var(--text-tertiary)]">下一所 <AppIcon name="arrow-right" :size="14" /></span>
+            <span class="mt-1 block truncate text-sm font-medium text-[var(--text-primary)] transition group-hover:text-[var(--accent)]">{{ nextUniversity.name }}</span>
+          </RouterLink>
+          <div v-else class="min-w-0 flex-1 rounded-xl border border-dashed p-4 text-right opacity-60" :style="{ borderColor: 'var(--border)' }">
+            <span class="flex items-center justify-end gap-1.5 text-xs text-[var(--text-tertiary)]">已是最后一所 <AppIcon name="arrow-right" :size="14" /></span>
+          </div>
+        </nav>
       </template>
 
       <EmptyStatePanel

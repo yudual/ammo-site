@@ -6,7 +6,7 @@ import EmptyStatePanel from '../components/EmptyStatePanel.vue'
 import StatusPill from '../components/StatusPill.vue'
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getCompanyById, type CompanyLink } from '../data/companies'
+import { companies, getCompanyById, type CompanyLink } from '../data/companies'
 import SourceList from '../components/SourceList.vue'
 
 const route = useRoute()
@@ -116,6 +116,17 @@ const pendingCount = computed(() => verification.value?.pendingFields.length || 
 const sourceTypes = computed(() =>
   Array.from(new Set((research.value?.sources || []).map((source) => source.type))).slice(0, 4),
 )
+
+const totalCount = computed(() => companies.length)
+const currentIndex = computed(() => companies.findIndex((c) => c.id === companyId.value))
+const prevCompany = computed(() => {
+  const i = currentIndex.value
+  return i > 0 ? companies[i - 1] : null
+})
+const nextCompany = computed(() => {
+  const i = currentIndex.value
+  return i >= 0 && i < companies.length - 1 ? companies[i + 1] : null
+})
 </script>
 
 <template>
@@ -534,6 +545,24 @@ const sourceTypes = computed(() =>
           </div>
 
         </section>
+
+        <nav v-if="company" class="mt-2 flex flex-col gap-3 sm:flex-row sm:items-stretch sm:justify-between" aria-label="相邻条目">
+          <RouterLink v-if="prevCompany" :to="{ name: 'company-detail', params: { id: prevCompany.id } }" class="group min-w-0 flex-1 rounded-xl border p-4 transition hover:-translate-y-0.5" :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--border)' }">
+            <span class="flex items-center gap-1.5 text-xs text-[var(--text-tertiary)]"><AppIcon name="arrow-left" :size="14" /> 上一家</span>
+            <span class="mt-1 block truncate text-sm font-medium text-[var(--text-primary)] transition group-hover:text-[var(--accent)]">{{ prevCompany.name }}</span>
+          </RouterLink>
+          <div v-else class="min-w-0 flex-1 rounded-xl border border-dashed p-4 opacity-60" :style="{ borderColor: 'var(--border)' }">
+            <span class="flex items-center gap-1.5 text-xs text-[var(--text-tertiary)]"><AppIcon name="arrow-left" :size="14" /> 已是第一家</span>
+          </div>
+          <span class="hidden shrink-0 self-center px-3 text-xs font-numeric text-[var(--text-tertiary)] sm:block">{{ currentIndex + 1 }} / {{ totalCount }}</span>
+          <RouterLink v-if="nextCompany" :to="{ name: 'company-detail', params: { id: nextCompany.id } }" class="group min-w-0 flex-1 rounded-xl border p-4 text-right transition hover:-translate-y-0.5" :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--border)' }">
+            <span class="flex items-center justify-end gap-1.5 text-xs text-[var(--text-tertiary)]">下一家 <AppIcon name="arrow-right" :size="14" /></span>
+            <span class="mt-1 block truncate text-sm font-medium text-[var(--text-primary)] transition group-hover:text-[var(--accent)]">{{ nextCompany.name }}</span>
+          </RouterLink>
+          <div v-else class="min-w-0 flex-1 rounded-xl border border-dashed p-4 text-right opacity-60" :style="{ borderColor: 'var(--border)' }">
+            <span class="flex items-center justify-end gap-1.5 text-xs text-[var(--text-tertiary)]">已是最后一家 <AppIcon name="arrow-right" :size="14" /></span>
+          </div>
+        </nav>
       </template>
 
       <EmptyStatePanel
