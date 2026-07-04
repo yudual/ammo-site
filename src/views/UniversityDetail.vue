@@ -1,19 +1,44 @@
 <script setup lang="ts">
+import ReadingProgress from '../components/ReadingProgress.vue'
+import AppIcon from '../components/AppIcon.vue'
 import ActionButton from '../components/ActionButton.vue'
 import EmptyStatePanel from '../components/EmptyStatePanel.vue'
 import StatusPill from '../components/StatusPill.vue'
 import { computed, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { getUniversityById, type UniversityLink } from '../data/universities'
 import SchoolLogo from '../components/SchoolLogo.vue'
 import SourceList from '../components/SourceList.vue'
 
 const route = useRoute()
+const router = useRouter()
 
 const university = computed(() => getUniversityById(String(route.params.id)))
 const research = computed(() => university.value?.research)
 const verification = computed(() => university.value?.verification)
 const activeSection = ref<'overview' | 'verification' | 'profile' | 'research'>('overview')
+
+const isCopied = ref(false)
+
+const goBack = () => {
+  if (window.history.state && window.history.state.back) {
+    router.back()
+  } else {
+    router.push('/universities')
+  }
+}
+
+const copyShareLink = async () => {
+  try {
+    await navigator.clipboard.writeText(window.location.href)
+    isCopied.value = true
+    setTimeout(() => {
+      isCopied.value = false
+    }, 1500)
+  } catch (err) {
+    // 降级
+  }
+}
 
 const pageSections = [
   { id: 'overview', label: '概览' },
@@ -117,7 +142,8 @@ function linkPurpose(type: UniversityLink['type']) {
 </script>
 
 <template>
-  <section class="university-detail-page min-h-screen overflow-x-clip bg-[var(--page-bg)] px-4 pb-8 pt-28 text-[var(--text-primary)] md:px-6 md:pb-12 md:pt-32">
+  <ReadingProgress />
+  <section class="university-detail-page min-h-screen overflow-x-clip bg-[var(--page-bg)] px-4 pb-8 pt-20 text-[var(--text-primary)] md:px-6 md:pb-12 md:pt-24">
     <div class="university-detail-shell mx-auto flex w-full min-w-0 max-w-6xl flex-col gap-6">
       <template v-if="university">
         <header
@@ -141,19 +167,42 @@ function linkPurpose(type: UniversityLink['type']) {
               </div>
 
               <div class="min-w-0 flex-1">
-                <div class="mb-4 flex flex-wrap gap-2">
-                  <ActionButton to="/universities" variant="secondary" size="sm">
-                    回院校一览
-                  </ActionButton>
-                  <ActionButton to="/companies" variant="secondary" size="sm">
+                <div class="mb-4 flex flex-wrap items-center gap-2 w-full">
+                  <button
+                    type="button"
+                    class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition border hover:opacity-80 shrink-0"
+                    :style="{
+                      backgroundColor: 'var(--surface-strong)',
+                      borderColor: 'var(--border)',
+                      color: 'var(--text-secondary)',
+                    }"
+                    @click="goBack"
+                  >
+                    <AppIcon name="arrow-left" class="w-4 h-4" /> 回院校一览
+                  </button>
+                  <ActionButton to="/companies" variant="secondary" size="sm" class="shrink-0">
                     看企业名录
                   </ActionButton>
-                  <ActionButton to="/graduate" variant="tonal" size="sm">
+                  <ActionButton to="/graduate" variant="tonal" size="sm" class="shrink-0">
                     考研方向
                   </ActionButton>
+
+                  <button
+                    type="button"
+                    class="rounded-lg px-3 py-1.5 text-sm font-medium transition border sm:ml-auto flex items-center gap-1 hover:opacity-90 shrink-0"
+                    :style="{
+                      backgroundColor: isCopied ? 'var(--accent-soft)' : 'var(--surface-strong)',
+                      borderColor: isCopied ? 'var(--accent)' : 'var(--border)',
+                      color: isCopied ? 'var(--accent)' : 'var(--text-secondary)',
+                    }"
+                    @click="copyShareLink"
+                  >
+                    <AppIcon :name="isCopied ? 'check' : 'link'" :size="16" />
+                    <span>{{ isCopied ? '链接已复制！' : '分享本页' }}</span>
+                  </button>
                 </div>
                 <p class="mb-3 text-sm tracking-[0.16em] text-[var(--text-secondary)]">院校档案</p>
-                <h1 class="text-2xl font-semibold leading-tight text-[var(--text-primary)] md:text-3xl">
+                <h1 class="university-name-title text-2xl font-semibold leading-tight text-[var(--text-primary)] md:text-3xl">
                   {{ university.name }}
                 </h1>
                 <p class="mt-3 max-w-3xl text-sm leading-7 text-[var(--text-secondary)] md:text-base">
@@ -598,6 +647,12 @@ function linkPurpose(type: UniversityLink['type']) {
   line-break: anywhere;
   overflow-wrap: anywhere;
   word-break: break-word;
+}
+
+.university-name-title {
+  line-break: anywhere;
+  overflow-wrap: anywhere;
+  word-break: break-all;
 }
 
 @media (max-width: 639px) {

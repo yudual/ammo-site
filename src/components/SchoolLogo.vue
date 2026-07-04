@@ -28,6 +28,7 @@ const fallbackText = computed(() => {
       :src="src"
       :alt="name"
       class="max-h-full max-w-full object-contain"
+      decoding="async"
       @error="failed = true"
     />
     <span

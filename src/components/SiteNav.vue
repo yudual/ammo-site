@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import ThemeToggle from './ThemeToggle.vue'
+import { useSearchDialog } from '../composables/useSearchDialog'
 
 const route = useRoute()
+const { toggle: toggleSearch } = useSearchDialog()
 
 const mainNavItems = [
   { label: '专业介绍', to: '/about-major' },
@@ -32,11 +34,30 @@ const contextLink = computed(() => {
 function isActive(path: string) {
   return route.path === path || route.path.startsWith(`${path}/`)
 }
+
+function onKeyDown(e: KeyboardEvent) {
+  if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) {
+    e.preventDefault()
+    toggleSearch()
+  }
+}
+
+onMounted(() => {
+  if (typeof window !== 'undefined') {
+    window.addEventListener('keydown', onKeyDown)
+  }
+})
+
+onUnmounted(() => {
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('keydown', onKeyDown)
+  }
+})
 </script>
 
 <template>
   <header
-    class="site-nav sticky top-3 z-[60] mx-auto w-[calc(100%-1rem)] max-w-6xl rounded-lg border px-3 py-2 backdrop-blur-xl sm:w-[calc(100%-2rem)] md:fixed md:left-1/2 md:mx-0 md:w-[calc(100%-2rem)] md:-translate-x-1/2"
+    class="site-nav sticky top-0 z-[60] w-full border-b backdrop-blur-xl md:fixed md:left-0 md:top-0"
     :style="{
       backgroundColor: 'var(--surface)',
       borderColor: 'var(--border)',
@@ -44,7 +65,7 @@ function isActive(path: string) {
     }"
   >
     <div
-      class="flex min-w-0 flex-wrap items-center gap-2 md:grid md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-3"
+      class="mx-auto max-w-6xl px-4 py-2.5 flex min-w-0 flex-wrap items-center gap-2 md:grid md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-3"
     >
       <div class="flex min-w-0 flex-wrap items-center gap-2 md:justify-self-start lg:flex-nowrap">
         <RouterLink
@@ -67,7 +88,7 @@ function isActive(path: string) {
             color: 'var(--text-secondary)',
           }"
         >
-          <span class="text-base leading-none text-[var(--accent)]" aria-hidden="true">←</span>
+          <span class="text-base leading-none text-[var(--accent)]" aria-hidden="true">&larr;</span>
           {{ contextLink.label }}
         </RouterLink>
       </div>
@@ -89,7 +110,32 @@ function isActive(path: string) {
         </div>
       </nav>
 
-      <div class="ml-auto flex shrink-0 items-center md:ml-0 md:justify-self-end">
+      <div class="ml-auto flex shrink-0 items-center gap-2 md:ml-0 md:justify-self-end">
+        <button
+          type="button"
+          class="flex h-10 shrink-0 items-center gap-1.5 rounded-full border px-3 text-sm font-medium transition hover:scale-[1.03]"
+          :style="{
+            backgroundColor: 'var(--surface-strong)',
+            borderColor: 'var(--border)',
+            color: 'var(--text-secondary)',
+          }"
+          aria-label="全站搜索"
+          title="全站搜索 (Ctrl/⌘ + K)"
+          @click="toggleSearch"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" class="h-4.5 w-4.5">
+            <circle cx="11" cy="11" r="7" />
+            <path d="m21 21-4.3-4.3" />
+          </svg>
+          <span class="hidden sm:inline">搜索</span>
+          <kbd
+            class="ml-0.5 hidden rounded border px-1 py-0.5 text-[10px] leading-none md:inline"
+            :style="{ borderColor: 'var(--border)', color: 'var(--text-tertiary)', backgroundColor: 'var(--surface)' }"
+          >
+            ⌘K
+          </kbd>
+        </button>
+
         <ThemeToggle />
       </div>
     </div>

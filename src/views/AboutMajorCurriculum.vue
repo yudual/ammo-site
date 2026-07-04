@@ -6,7 +6,7 @@ const totalCourseKeywords = majorLearningBlocks.reduce((total, block) => total +
 </script>
 
 <template>
-  <section class="topic-page min-h-screen overflow-x-hidden bg-[var(--page-bg)] px-5 pb-12 pt-40 text-[var(--text-primary)] sm:px-6">
+  <section class="topic-page min-h-screen overflow-x-hidden bg-[var(--page-bg)] px-5 pb-12 pt-20 md:pt-40 text-[var(--text-primary)] sm:px-6">
     <TopicNav :items="majorNavItems" ariaLabelText="专业介绍导航" />
 
     <main class="mx-auto flex w-full max-w-6xl flex-col gap-8">

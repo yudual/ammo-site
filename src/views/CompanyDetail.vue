@@ -1,19 +1,44 @@
 <script setup lang="ts">
+import ReadingProgress from '../components/ReadingProgress.vue'
+import AppIcon from '../components/AppIcon.vue'
 import ActionButton from '../components/ActionButton.vue'
 import EmptyStatePanel from '../components/EmptyStatePanel.vue'
 import StatusPill from '../components/StatusPill.vue'
 import { computed, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { getCompanyById, type CompanyLink } from '../data/companies'
 import SourceList from '../components/SourceList.vue'
 
 const route = useRoute()
+const router = useRouter()
 
 const companyId = computed(() => Number(route.params.id))
 const company = computed(() => getCompanyById(companyId.value))
 const research = computed(() => company.value?.research)
 const verification = computed(() => company.value?.verification)
 const activeSection = ref<'overview' | 'verification' | 'profile' | 'research'>('overview')
+
+const isCopied = ref(false)
+
+const goBack = () => {
+  if (window.history.state && window.history.state.back) {
+    router.back()
+  } else {
+    router.push('/companies')
+  }
+}
+
+const copyShareLink = async () => {
+  try {
+    await navigator.clipboard.writeText(window.location.href)
+    isCopied.value = true
+    setTimeout(() => {
+      isCopied.value = false
+    }, 1500)
+  } catch (err) {
+    // 降级
+  }
+}
 
 const pageSections = [
   { id: 'overview', label: '概览' },
@@ -94,7 +119,8 @@ const sourceTypes = computed(() =>
 </script>
 
 <template>
-  <section class="company-detail-page min-h-screen overflow-x-clip bg-[var(--page-bg)] px-4 pb-8 pt-28 text-[var(--text-primary)] md:px-6 md:pb-12 md:pt-32">
+  <ReadingProgress />
+  <section class="company-detail-page min-h-screen overflow-x-clip bg-[var(--page-bg)] px-4 pb-8 pt-20 text-[var(--text-primary)] md:px-6 md:pb-12 md:pt-24">
     <div class="company-detail-shell mx-auto flex w-full min-w-0 max-w-6xl flex-col gap-6">
       <template v-if="company">
         <header
@@ -107,16 +133,39 @@ const sourceTypes = computed(() =>
         >
           <div class="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(18rem,0.45fr)] xl:items-start">
             <div class="min-w-0">
-              <div class="mb-4 flex flex-wrap gap-2">
-                <ActionButton to="/companies" variant="secondary" size="sm">
-                  回企业名录
-                </ActionButton>
-                <ActionButton to="/universities" variant="secondary" size="sm">
+              <div class="mb-4 flex flex-wrap items-center gap-2 w-full">
+                <button
+                  type="button"
+                  class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition border hover:opacity-80 shrink-0"
+                  :style="{
+                    backgroundColor: 'var(--surface-strong)',
+                    borderColor: 'var(--border)',
+                    color: 'var(--text-secondary)',
+                  }"
+                  @click="goBack"
+                >
+                  <AppIcon name="arrow-left" class="w-4 h-4" /> 回企业名录
+                </button>
+                <ActionButton to="/universities" variant="secondary" size="sm" class="shrink-0">
                   看院校一览
                 </ActionButton>
-                <ActionButton to="/about-major" variant="tonal" size="sm">
+                <ActionButton to="/about-major" variant="tonal" size="sm" class="shrink-0">
                   专业介绍
                 </ActionButton>
+
+                <button
+                  type="button"
+                  class="rounded-lg px-3 py-1.5 text-sm font-medium transition border sm:ml-auto flex items-center gap-1 hover:opacity-90 shrink-0"
+                  :style="{
+                    backgroundColor: isCopied ? 'var(--accent-soft)' : 'var(--surface-strong)',
+                    borderColor: isCopied ? 'var(--accent)' : 'var(--border)',
+                    color: isCopied ? 'var(--accent)' : 'var(--text-secondary)',
+                  }"
+                  @click="copyShareLink"
+                >
+                  <AppIcon :name="isCopied ? 'check' : 'link'" :size="16" />
+                  <span>{{ isCopied ? '链接已复制！' : '分享本页' }}</span>
+                </button>
               </div>
               <p class="mb-3 text-sm tracking-[0.16em] text-[var(--text-secondary)]">企业档案</p>
               <h1 class="company-name-title max-w-full text-xl font-semibold leading-tight text-[var(--text-primary)] sm:text-2xl md:max-w-4xl md:text-3xl">

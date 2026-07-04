@@ -16,7 +16,7 @@ const route = useRoute()
 
 <template>
   <header
-    class="fixed left-1/2 top-28 z-50 w-[calc(100%-1rem)] max-w-6xl -translate-x-1/2 rounded-lg border px-3 py-2 backdrop-blur-xl sm:w-[calc(100%-2rem)] md:top-20"
+    class="sticky top-[56px] z-50 mx-auto w-[calc(100%-1rem)] max-w-6xl rounded-lg border px-3 py-2 backdrop-blur-xl sm:w-[calc(100%-2rem)] md:fixed md:top-[72px] md:left-1/2 md:w-full md:max-w-6xl md:-translate-x-1/2"
     :style="{
       backgroundColor: 'var(--surface)',
       borderColor: 'var(--border)',

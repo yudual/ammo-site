@@ -4,7 +4,7 @@ import { graduateCompareRows, graduateNavItems } from '../data/graduate'
 </script>
 
 <template>
-  <section class="topic-page min-h-screen overflow-x-hidden bg-[var(--page-bg)] px-5 pb-12 pt-40 text-[var(--text-primary)] sm:px-6">
+  <section class="topic-page min-h-screen overflow-x-hidden bg-[var(--page-bg)] px-5 pb-12 pt-20 md:pt-40 text-[var(--text-primary)] sm:px-6">
     <TopicNav :items="graduateNavItems" ariaLabelText="考研方向导航" />
 
     <main class="mx-auto flex w-full max-w-6xl flex-col gap-8">
@@ -20,6 +20,15 @@ import { graduateCompareRows, graduateNavItems } from '../data/graduate'
         </p>
       </header>
 
+      <!-- 移动端滑动提示：仅窄屏可见 -->
+      <p
+        class="flex items-center gap-1.5 text-xs text-[var(--text-tertiary)] sm:hidden"
+        aria-hidden="true"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="h-3.5 w-3.5"><path d="M9 18l6-6-6-6" /></svg>
+        左右滑动查看完整对比表
+      </p>
+
       <section
         class="overflow-x-auto rounded-lg border"
         :style="{
@@ -27,11 +36,14 @@ import { graduateCompareRows, graduateNavItems } from '../data/graduate'
           borderColor: 'var(--border)',
           boxShadow: 'var(--glass-shadow)',
         }"
+        role="region"
+        aria-label="考研方向对比表，可左右滑动"
+        tabindex="0"
       >
         <table class="graduate-table w-full min-w-[58rem] border-collapse text-left text-sm">
           <thead>
             <tr>
-              <th>方向</th>
+              <th class="sticky-col th-sticky">方向</th>
               <th>本科匹配</th>
               <th>主要难点</th>
               <th>常见科目</th>
@@ -41,7 +53,7 @@ import { graduateCompareRows, graduateNavItems } from '../data/graduate'
           </thead>
           <tbody>
             <tr v-for="row in graduateCompareRows" :key="row.direction">
-              <td class="font-medium text-[var(--text-primary)]">{{ row.direction }}</td>
+              <td class="sticky-col td-sticky font-medium text-[var(--text-primary)]">{{ row.direction }}</td>
               <td>{{ row.match }}</td>
               <td>{{ row.difficulty }}</td>
               <td>{{ row.commonSubjects }}</td>
@@ -102,5 +114,22 @@ import { graduateCompareRows, graduateNavItems } from '../data/graduate'
 
 .graduate-table td {
   color: var(--text-secondary);
+  background-color: var(--surface-strong);
+}
+
+/* 第一列在水平滚动时钉住，方向名不滑走 */
+.graduate-table .th-sticky,
+.graduate-table .td-sticky {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background-color: var(--surface-strong);
+  box-shadow: 6px 0 8px -6px rgba(0, 0, 0, 0.18);
+}
+
+/* 容器获得键盘焦点时描边提示 */
+section[role="region"]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 </style>
