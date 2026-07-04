@@ -25,7 +25,8 @@ const selectedRelevance = ref<'全部' | RelevanceLevel>('全部')
 const selectedStatus = ref<'全部' | VerificationStatus>('全部')
 const onlyWithResearch = ref(false)
 const filtersOpen = ref(false)
-const listPageSize = 10
+const PAGE_SIZE_OPTIONS = [10, 20, 30] as const
+const listPageSize = ref<(typeof PAGE_SIZE_OPTIONS)[number]>(10)
 const currentCompanyPage = ref(1)
 const companyListTop = ref<HTMLElement | null>(null)
 
@@ -48,6 +49,10 @@ const initFromQuery = () => {
       currentCompanyPage.value = pageNum
     }
   }
+  if (query.size) {
+    const ps = parseInt(String(query.size), 10)
+    if (ps === 10 || ps === 20 || ps === 30) listPageSize.value = ps
+  }
 }
 
 initFromQuery()
@@ -67,6 +72,7 @@ const updateUrlQuery = () => {
   if (selectedStatus.value !== '全部') query.status = selectedStatus.value
   if (onlyWithResearch.value) query.research = '1'
   if (currentCompanyPage.value > 1) query.page = String(currentCompanyPage.value)
+  if (listPageSize.value !== 10) query.size = String(listPageSize.value)
 
   router.replace({
     path: route.path,
@@ -84,6 +90,7 @@ watch(
     selectedRelevance,
     selectedStatus,
     onlyWithResearch,
+    listPageSize,
   ],
   () => {
     if (isInitializing.value) return
@@ -299,11 +306,11 @@ const filteredCompanies = computed(() => {
 })
 
 const companyPageCount = computed(() =>
-  Math.max(Math.ceil(filteredCompanies.value.length / listPageSize), 1),
+  Math.max(Math.ceil(filteredCompanies.value.length / listPageSize.value), 1),
 )
-const companyPageStart = computed(() => (currentCompanyPage.value - 1) * listPageSize)
+const companyPageStart = computed(() => (currentCompanyPage.value - 1) * listPageSize.value)
 const visibleCompanies = computed(() =>
-  filteredCompanies.value.slice(companyPageStart.value, companyPageStart.value + listPageSize),
+  filteredCompanies.value.slice(companyPageStart.value, companyPageStart.value + listPageSize.value),
 )
 
 const companyPageNumbers = computed(() =>
@@ -757,7 +764,11 @@ async function setCompanyPage(page: number) {
             }"
             aria-label="企业列表分页"
           >
-            <p class="text-[var(--text-secondary)]">每页 {{ listPageSize }} 家</p>
+            <div class="flex items-center gap-2 text-[var(--text-secondary)]">
+              <span class="text-sm">每页</span>
+              <button v-for="opt in PAGE_SIZE_OPTIONS" :key="opt" type="button" class="min-h-9 min-w-9 rounded-lg border px-2.5 py-1 text-sm font-medium font-numeric transition hover:-translate-y-0.5" :aria-pressed="opt === listPageSize ? 'true' : 'false'" :style="{ backgroundColor: opt === listPageSize ? 'var(--accent)' : 'var(--surface-strong)', borderColor: opt === listPageSize ? 'var(--accent)' : 'var(--border)', color: opt === listPageSize ? '#ffffff' : 'var(--text-secondary)' }" @click="listPageSize = opt">{{ opt }}</button>
+              <span class="text-sm">家</span>
+            </div>
 
             <div class="flex flex-wrap items-center justify-center gap-2">
               <button
