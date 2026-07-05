@@ -4,48 +4,37 @@ import AppIcon from '../components/AppIcon.vue'
 import ActionButton from '../components/ActionButton.vue'
 import EmptyStatePanel from '../components/EmptyStatePanel.vue'
 import StatusPill from '../components/StatusPill.vue'
-import { computed, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 import { companies, getCompanyById, type CompanyLink } from '../data/companies'
 import SourceList from '../components/SourceList.vue'
+import { useShareLink } from '../composables/useShareLink'
+import { useDetailNav } from '../composables/useDetailNav'
 
 const route = useRoute()
-const router = useRouter()
 
 const companyId = computed(() => Number(route.params.id))
 const company = computed(() => getCompanyById(companyId.value))
 const research = computed(() => company.value?.research)
 const verification = computed(() => company.value?.verification)
-const activeSection = ref<'overview' | 'verification' | 'profile' | 'research'>('overview')
 
-const isCopied = ref(false)
+const { isCopied, copyShareLink } = useShareLink()
 
-const goBack = () => {
-  if (window.history.state && window.history.state.back) {
-    router.back()
-  } else {
-    router.push('/companies')
-  }
-}
-
-const copyShareLink = async () => {
-  try {
-    await navigator.clipboard.writeText(window.location.href)
-    isCopied.value = true
-    setTimeout(() => {
-      isCopied.value = false
-    }, 1500)
-  } catch (err) {
-    // 降级
-  }
-}
-
-const pageSections = [
-  { id: 'overview', label: '概览' },
-  { id: 'verification', label: '核验' },
-  { id: 'profile', label: '档案' },
-  { id: 'research', label: '来源' },
-] as const
+const {
+  activeSection,
+  navSections,
+  scrollToSection,
+  goBack,
+  totalCount,
+  currentIndex,
+  prevItem,
+  nextItem,
+} = useDetailNav({
+  primaryKey: 'companies',
+  items: companies,
+  currentId: companyId,
+  hasVerification: computed(() => Boolean(verification.value)),
+})
 
 const quickFacts = computed(() => {
   if (!company.value) {
@@ -117,21 +106,11 @@ const sourceTypes = computed(() =>
   Array.from(new Set((research.value?.sources || []).map((source) => source.type))).slice(0, 4),
 )
 
-const totalCount = computed(() => companies.length)
-const currentIndex = computed(() => companies.findIndex((c) => c.id === companyId.value))
-const prevCompany = computed(() => {
-  const i = currentIndex.value
-  return i > 0 ? companies[i - 1] : null
-})
-const nextCompany = computed(() => {
-  const i = currentIndex.value
-  return i >= 0 && i < companies.length - 1 ? companies[i + 1] : null
-})
 </script>
 
 <template>
   <ReadingProgress />
-  <section class="company-detail-page min-h-screen overflow-x-clip bg-[var(--page-bg)] px-4 pb-8 pt-20 text-[var(--text-primary)] md:px-6 md:pb-12 md:pt-24">
+  <section class="company-detail-page min-h-screen overflow-x-clip bg-[var(--page-bg)] px-4 pb-8 pt-6 text-[var(--text-primary)] md:px-6 md:pb-12 md:pt-8">
     <div class="company-detail-shell mx-auto flex w-full min-w-0 max-w-6xl flex-col gap-6">
       <template v-if="company">
         <header
@@ -250,7 +229,7 @@ const nextCompany = computed(() => {
             </aside>
           </div>
 
-          <div class="mt-5 grid gap-3 border-t pt-4 text-sm sm:grid-cols-2 xl:grid-cols-4" :style="{ borderColor: 'var(--border)' }">
+          <div class="border-soft mt-5 grid gap-3 border-t pt-4 text-sm sm:grid-cols-2 xl:grid-cols-4">
             <div v-for="fact in quickFacts" :key="fact.label">
               <p class="text-[var(--text-tertiary)]">{{ fact.label }}</p>
               <p class="mt-1 font-medium leading-6 text-[var(--text-primary)]">{{ fact.value }}</p>
@@ -269,7 +248,7 @@ const nextCompany = computed(() => {
         >
           <div class="flex min-w-max gap-2">
             <button
-              v-for="section in pageSections"
+              v-for="section in navSections"
               :key="section.id"
               type="button"
               class="rounded-lg px-4 py-2 text-sm font-medium transition"
@@ -278,7 +257,7 @@ const nextCompany = computed(() => {
                 backgroundColor: activeSection === section.id ? 'var(--accent)' : 'var(--surface-strong)',
                 color: activeSection === section.id ? '#ffffff' : 'var(--text-secondary)',
               }"
-              @click="activeSection = section.id"
+              @click="scrollToSection(section.id)"
             >
               {{ section.label }}
             </button>
@@ -293,7 +272,7 @@ const nextCompany = computed(() => {
             boxShadow: 'var(--glass-shadow)',
           }"
         >
-          <div v-if="activeSection === 'overview'">
+          <section id="overview" class="detail-section scroll-target" aria-label="概览">
             <div class="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
               <div>
                 <p class="text-sm tracking-[0.14em] text-[var(--text-tertiary)]">概览</p>
@@ -303,13 +282,13 @@ const nextCompany = computed(() => {
 
             <div class="mt-5 grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(18rem,0.42fr)]">
               <div class="grid gap-3 md:grid-cols-2">
-                <div class="detail-panel rounded-xl border p-4" :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--border)' }">
+                <div class="surface-card-strong detail-panel rounded-xl border p-4">
                   <p class="text-sm font-medium text-[var(--text-primary)]">岗位线索</p>
                   <p class="mt-2 text-sm leading-7 text-[var(--text-secondary)]">{{ company.positions }}</p>
                   <p class="mt-2 text-xs leading-5 text-[var(--text-tertiary)]">{{ company.education }}</p>
                 </div>
 
-                <div class="detail-panel rounded-xl border p-4" :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--border)' }">
+                <div class="surface-card-strong detail-panel rounded-xl border p-4">
                   <p class="text-sm font-medium text-[var(--text-primary)]">待遇口径</p>
                   <p class="mt-2 text-sm leading-7 text-[var(--text-secondary)]">薪资：{{ company.salaryRange }}</p>
                   <p class="mt-1 text-sm leading-7 text-[var(--text-secondary)]">作息：{{ company.schedule }}</p>
@@ -334,7 +313,7 @@ const nextCompany = computed(() => {
                 </div>
               </div>
 
-              <aside class="detail-panel rounded-xl border p-4" :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--border)' }">
+              <aside class="surface-card-strong detail-panel rounded-xl border p-4">
                 <p class="text-sm font-medium text-[var(--text-primary)]">外部链接</p>
                 <div v-if="priorityLinks.length" class="mt-3 flex flex-col gap-2">
                   <ActionButton
@@ -350,9 +329,72 @@ const nextCompany = computed(() => {
                 </div>
               </aside>
             </div>
-          </div>
+          </section>
 
-          <div v-else-if="activeSection === 'research'">
+          <section v-if="verification" id="verification" class="detail-section scroll-target" aria-label="核验">
+            <div class="grid gap-5 xl:grid-cols-[minmax(0,0.75fr)_minmax(0,1fr)_minmax(0,1fr)]">
+              <div>
+                <p class="text-sm tracking-[0.14em] text-[var(--text-tertiary)]">资料核验情况</p>
+                <h2 class="mt-2 text-lg font-semibold text-[var(--text-primary)]">{{ verification.status }}</h2>
+                <p class="mt-3 text-sm leading-7 text-[var(--text-secondary)]">{{ verification.summary }}</p>
+                <div class="mt-4 grid grid-cols-3 gap-3 text-sm">
+                  <div class="surface-card detail-mini-stat rounded-lg border px-3 py-3">
+                    <p class="text-[var(--text-tertiary)]">已核验</p>
+                    <p class="mt-1 text-lg font-semibold text-[var(--text-primary)]">{{ verifiedCount }}</p>
+                  </div>
+                  <div class="surface-card detail-mini-stat rounded-lg border px-3 py-3">
+                    <p class="text-[var(--text-tertiary)]">待核对</p>
+                    <p class="mt-1 text-lg font-semibold text-[var(--text-primary)]">{{ pendingCount }}</p>
+                  </div>
+                  <div class="surface-card detail-mini-stat rounded-lg border px-3 py-3">
+                    <p class="text-[var(--text-tertiary)]">来源</p>
+                    <p class="mt-1 text-lg font-semibold text-[var(--text-primary)]">{{ sourceCount }}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="surface-card-strong detail-panel rounded-xl border p-4"
+                :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--status-positive-border)' }"
+              >
+                <p class="text-sm font-medium" :style="{ color: 'var(--status-positive)' }">已核验信息</p>
+                <ul v-if="verification.verifiedFields.length" class="mt-3 space-y-2 text-sm leading-6 text-[var(--text-secondary)]">
+                  <li v-for="field in verification.verifiedFields" :key="field">{{ field }}</li>
+                </ul>
+                <p v-else class="mt-3 text-sm leading-6 text-[var(--text-tertiary)]">
+                  暂无已核验信息。
+                </p>
+              </div>
+
+              <div
+                class="surface-card-strong detail-panel rounded-xl border p-4"
+                :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--status-warning-border)' }"
+              >
+                <p class="text-sm font-medium" :style="{ color: 'var(--status-warning)' }">待核对信息</p>
+                <ul class="mt-3 space-y-2 text-sm leading-6 text-[var(--text-secondary)]">
+                  <li v-for="field in verification.pendingFields" :key="field">{{ field }}</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <section id="profile" class="detail-section scroll-target" aria-label="档案">
+            <p class="text-sm tracking-[0.14em] text-[var(--text-tertiary)]">信息表格</p>
+            <h2 class="mt-2 text-xl font-semibold text-[var(--text-primary)]">企业基础信息档案</h2>
+            <div class="border-soft mt-5 overflow-hidden rounded-xl border">
+              <div
+                v-for="row in detailRows"
+                :key="row.label"
+                class="grid gap-3 border-b px-4 py-4 last:border-b-0 md:grid-cols-[9rem_minmax(0,1fr)]"
+                :style="{ borderColor: 'var(--border)', backgroundColor: 'var(--surface-strong)' }"
+              >
+                <p class="text-sm text-[var(--text-tertiary)]">{{ row.label }}</p>
+                <p class="text-sm leading-7 text-[var(--text-secondary)]">{{ row.value }}</p>
+              </div>
+            </div>
+          </section>
+
+          <section id="research" class="detail-section scroll-target" aria-label="来源">
             <div class="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
               <div>
                 <p class="text-sm tracking-[0.14em] text-[var(--text-tertiary)]">外部链接</p>
@@ -409,7 +451,7 @@ const nextCompany = computed(() => {
               </div>
             </div>
 
-            <div class="mt-8 border-t pt-6" :style="{ borderColor: 'var(--border)' }">
+            <div class="border-soft mt-8 border-t pt-6">
               <p class="text-sm tracking-[0.14em] text-[var(--text-tertiary)]">调研来源与信号</p>
               <template v-if="research">
                 <div class="mt-3 grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(18rem,0.42fr)]">
@@ -422,14 +464,14 @@ const nextCompany = computed(() => {
                     <p class="mt-2 text-sm leading-7 text-[var(--text-secondary)]">{{ research.conclusion }}</p>
                   </div>
 
-                  <div class="rounded-lg border p-4" :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--border)' }">
+                  <div class="surface-card-strong rounded-lg border p-4">
                     <p class="text-sm font-medium text-[var(--text-primary)]">来源概况</p>
                 <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
-                  <div class="detail-mini-stat rounded-lg border px-3 py-3" :style="{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }">
+                  <div class="surface-card detail-mini-stat rounded-lg border px-3 py-3">
                     <p class="text-[var(--text-tertiary)]">来源数</p>
                     <p class="mt-1 text-lg font-semibold text-[var(--text-primary)]">{{ sourceCount }}</p>
                   </div>
-                  <div class="detail-mini-stat rounded-lg border px-3 py-3" :style="{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }">
+                  <div class="surface-card detail-mini-stat rounded-lg border px-3 py-3">
                     <p class="text-[var(--text-tertiary)]">状态</p>
                     <p class="mt-1 text-sm font-medium leading-6 text-[var(--text-primary)]">{{ research.status }}</p>
                   </div>
@@ -448,14 +490,14 @@ const nextCompany = computed(() => {
                 </div>
 
                 <div class="mt-6 grid gap-4 md:grid-cols-2">
-                  <div class="detail-panel rounded-xl border p-4" :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--border)' }">
+                  <div class="surface-card-strong detail-panel rounded-xl border p-4">
                     <p class="text-sm font-medium text-[var(--text-primary)]">关键信号</p>
                     <ul class="mt-3 space-y-2 text-sm leading-6 text-[var(--text-secondary)]">
                       <li v-for="signal in research.keySignals" :key="signal">{{ signal }}</li>
                     </ul>
                   </div>
 
-                  <div class="detail-panel rounded-xl border p-4" :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--border)' }">
+                  <div class="surface-card-strong detail-panel rounded-xl border p-4">
                     <p class="text-sm font-medium text-[var(--text-primary)]">注意事项</p>
                     <ul class="mt-3 space-y-2 text-sm leading-6 text-[var(--text-secondary)]">
                       <li v-for="risk in research.risks" :key="risk">{{ risk }}</li>
@@ -463,7 +505,7 @@ const nextCompany = computed(() => {
                   </div>
                 </div>
 
-                <details class="mt-6 rounded-xl border p-4" :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--border)' }">
+                <details class="surface-card-strong mt-6 rounded-xl border p-4">
                   <summary class="cursor-pointer text-sm font-medium text-[var(--text-primary)]">
                     展开来源列表
                   </summary>
@@ -479,87 +521,23 @@ const nextCompany = computed(() => {
               />
             </template>
           </div>
-          </div>
-
-          <div v-else-if="activeSection === 'verification' && verification">
-            <div class="grid gap-5 xl:grid-cols-[minmax(0,0.75fr)_minmax(0,1fr)_minmax(0,1fr)]">
-              <div>
-                <p class="text-sm tracking-[0.14em] text-[var(--text-tertiary)]">资料核验情况</p>
-                <h2 class="mt-2 text-lg font-semibold text-[var(--text-primary)]">{{ verification.status }}</h2>
-                <p class="mt-3 text-sm leading-7 text-[var(--text-secondary)]">{{ verification.summary }}</p>
-                <div class="mt-4 grid grid-cols-3 gap-3 text-sm">
-                  <div class="detail-mini-stat rounded-lg border px-3 py-3" :style="{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }">
-                    <p class="text-[var(--text-tertiary)]">已核验</p>
-                    <p class="mt-1 text-lg font-semibold text-[var(--text-primary)]">{{ verifiedCount }}</p>
-                  </div>
-                  <div class="detail-mini-stat rounded-lg border px-3 py-3" :style="{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }">
-                    <p class="text-[var(--text-tertiary)]">待核对</p>
-                    <p class="mt-1 text-lg font-semibold text-[var(--text-primary)]">{{ pendingCount }}</p>
-                  </div>
-                  <div class="detail-mini-stat rounded-lg border px-3 py-3" :style="{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }">
-                    <p class="text-[var(--text-tertiary)]">来源</p>
-                    <p class="mt-1 text-lg font-semibold text-[var(--text-primary)]">{{ sourceCount }}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="detail-panel rounded-xl border p-4"
-                :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--status-positive-border)' }"
-              >
-                <p class="text-sm font-medium" :style="{ color: 'var(--status-positive)' }">已核验信息</p>
-                <ul v-if="verification.verifiedFields.length" class="mt-3 space-y-2 text-sm leading-6 text-[var(--text-secondary)]">
-                  <li v-for="field in verification.verifiedFields" :key="field">{{ field }}</li>
-                </ul>
-                <p v-else class="mt-3 text-sm leading-6 text-[var(--text-tertiary)]">
-                  暂无已核验信息。
-                </p>
-              </div>
-
-              <div
-                class="detail-panel rounded-xl border p-4"
-                :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--status-warning-border)' }"
-              >
-                <p class="text-sm font-medium" :style="{ color: 'var(--status-warning)' }">待核对信息</p>
-                <ul class="mt-3 space-y-2 text-sm leading-6 text-[var(--text-secondary)]">
-                  <li v-for="field in verification.pendingFields" :key="field">{{ field }}</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div v-else-if="activeSection === 'profile'">
-            <p class="text-sm tracking-[0.14em] text-[var(--text-tertiary)]">信息表格</p>
-            <h2 class="mt-2 text-xl font-semibold text-[var(--text-primary)]">企业基础信息档案</h2>
-            <div class="mt-5 overflow-hidden rounded-xl border" :style="{ borderColor: 'var(--border)' }">
-              <div
-                v-for="row in detailRows"
-                :key="row.label"
-                class="grid gap-3 border-b px-4 py-4 last:border-b-0 md:grid-cols-[9rem_minmax(0,1fr)]"
-                :style="{ borderColor: 'var(--border)', backgroundColor: 'var(--surface-strong)' }"
-              >
-                <p class="text-sm text-[var(--text-tertiary)]">{{ row.label }}</p>
-                <p class="text-sm leading-7 text-[var(--text-secondary)]">{{ row.value }}</p>
-              </div>
-            </div>
-          </div>
-
+          </section>
         </section>
 
         <nav v-if="company" class="mt-2 flex flex-col gap-3 sm:flex-row sm:items-stretch sm:justify-between" aria-label="相邻条目">
-          <RouterLink v-if="prevCompany" :to="{ name: 'company-detail', params: { id: prevCompany.id } }" class="group min-w-0 flex-1 rounded-xl border p-4 transition hover:-translate-y-0.5" :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--border)' }">
+          <RouterLink v-if="prevItem" :to="{ name: 'company-detail', params: { id: prevItem.id } }" class="surface-card-strong group min-w-0 flex-1 rounded-xl border p-4 transition hover:-translate-y-0.5">
             <span class="flex items-center gap-1.5 text-xs text-[var(--text-tertiary)]"><AppIcon name="arrow-left" :size="14" /> 上一家</span>
-            <span class="mt-1 block truncate text-sm font-medium text-[var(--text-primary)] transition group-hover:text-[var(--accent)]">{{ prevCompany.name }}</span>
+            <span class="mt-1 block truncate text-sm font-medium text-[var(--text-primary)] transition group-hover:text-[var(--accent)]">{{ prevItem.name }}</span>
           </RouterLink>
-          <div v-else class="min-w-0 flex-1 rounded-xl border border-dashed p-4 opacity-60" :style="{ borderColor: 'var(--border)' }">
+          <div v-else class="border-soft min-w-0 flex-1 rounded-xl border border-dashed p-4 opacity-60">
             <span class="flex items-center gap-1.5 text-xs text-[var(--text-tertiary)]"><AppIcon name="arrow-left" :size="14" /> 已是第一家</span>
           </div>
           <span class="hidden shrink-0 self-center px-3 text-xs font-numeric text-[var(--text-tertiary)] sm:block">{{ currentIndex + 1 }} / {{ totalCount }}</span>
-          <RouterLink v-if="nextCompany" :to="{ name: 'company-detail', params: { id: nextCompany.id } }" class="group min-w-0 flex-1 rounded-xl border p-4 text-right transition hover:-translate-y-0.5" :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--border)' }">
+          <RouterLink v-if="nextItem" :to="{ name: 'company-detail', params: { id: nextItem.id } }" class="surface-card-strong group min-w-0 flex-1 rounded-xl border p-4 text-right transition hover:-translate-y-0.5">
             <span class="flex items-center justify-end gap-1.5 text-xs text-[var(--text-tertiary)]">下一家 <AppIcon name="arrow-right" :size="14" /></span>
-            <span class="mt-1 block truncate text-sm font-medium text-[var(--text-primary)] transition group-hover:text-[var(--accent)]">{{ nextCompany.name }}</span>
+            <span class="mt-1 block truncate text-sm font-medium text-[var(--text-primary)] transition group-hover:text-[var(--accent)]">{{ nextItem.name }}</span>
           </RouterLink>
-          <div v-else class="min-w-0 flex-1 rounded-xl border border-dashed p-4 text-right opacity-60" :style="{ borderColor: 'var(--border)' }">
+          <div v-else class="border-soft min-w-0 flex-1 rounded-xl border border-dashed p-4 text-right opacity-60">
             <span class="flex items-center justify-end gap-1.5 text-xs text-[var(--text-tertiary)]">已是最后一家 <AppIcon name="arrow-right" :size="14" /></span>
           </div>
         </nav>
@@ -661,6 +639,18 @@ const nextCompany = computed(() => {
   .company-detail-shell :where(header, section, nav, div, p, h1, h2, a, li, span, button, details, summary) {
     max-inline-size: 100% !important;
     box-sizing: border-box;
+  }
+}
+
+.detail-section + .detail-section {
+  margin-top: 2.5rem;
+}
+.scroll-target {
+  scroll-margin-top: 11.5rem;
+}
+@media (min-width: 768px) {
+  .scroll-target {
+    scroll-margin-top: 9.75rem;
   }
 }
 </style>

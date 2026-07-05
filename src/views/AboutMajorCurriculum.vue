@@ -6,15 +6,15 @@ const totalCourseKeywords = majorLearningBlocks.reduce((total, block) => total +
 </script>
 
 <template>
-  <section class="topic-page min-h-screen overflow-x-hidden bg-[var(--page-bg)] px-5 pb-12 pt-20 md:pt-40 text-[var(--text-primary)] sm:px-6">
+  <section class="topic-page min-h-screen overflow-x-hidden bg-[var(--page-bg)] px-5 pb-12 pt-4 text-[var(--text-primary)] sm:px-6 sm:pt-6 md:pt-4">
     <TopicNav :items="majorNavItems" ariaLabelText="专业介绍导航" />
 
     <main class="mx-auto flex w-full max-w-6xl flex-col gap-8">
-      <header class="border-b pb-8" :style="{ borderColor: 'var(--border)' }">
+      <header class="border-soft border-b pb-8">
         <div class="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(18rem,0.45fr)] xl:items-end">
           <div>
             <p class="text-sm tracking-[0.14em] text-[var(--text-tertiary)]">学什么</p>
-            <h1 class="mt-3 text-3xl font-semibold leading-tight text-[var(--text-primary)] md:text-4xl">
+            <h1 class="mt-3 text-2xl font-semibold leading-tight text-[var(--text-primary)] sm:text-3xl md:text-4xl">
               不是单科专业，是一组工程能力
             </h1>
             <p class="mt-4 max-w-3xl text-sm leading-7 text-[var(--text-secondary)] md:text-base">
@@ -23,11 +23,11 @@ const totalCourseKeywords = majorLearningBlocks.reduce((total, block) => total +
           </div>
 
           <div class="grid grid-cols-2 gap-3 text-sm">
-            <div class="border-l pl-4" :style="{ borderColor: 'var(--border)' }">
+            <div class="border-soft border-l pl-4">
               <p class="text-[var(--text-tertiary)]">课程层级</p>
               <p class="mt-1 text-2xl font-semibold text-[var(--text-primary)]">{{ majorLearningBlocks.length }}</p>
             </div>
-            <div class="border-l pl-4" :style="{ borderColor: 'var(--border)' }">
+            <div class="border-soft border-l pl-4">
               <p class="text-[var(--text-tertiary)]">关键词</p>
               <p class="mt-1 text-2xl font-semibold text-[var(--text-primary)]">{{ totalCourseKeywords }}</p>
             </div>
@@ -36,12 +36,10 @@ const totalCourseKeywords = majorLearningBlocks.reduce((total, block) => total +
       </header>
 
       <section
-        class="overflow-hidden rounded-lg border"
-        :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--border)' }"
+        class="surface-card-strong overflow-hidden rounded-lg border"
       >
         <div
-          class="hidden grid-cols-[3.5rem_14rem_minmax(0,1fr)] gap-4 border-b px-5 py-3 text-xs text-[var(--text-tertiary)] md:grid"
-          :style="{ borderColor: 'var(--border)' }"
+          class="border-soft hidden grid-cols-[3.5rem_14rem_minmax(0,1fr)] gap-4 border-b px-5 py-3 text-xs text-[var(--text-tertiary)] md:grid"
         >
           <span>层级</span>
           <span>作用</span>
@@ -51,8 +49,7 @@ const totalCourseKeywords = majorLearningBlocks.reduce((total, block) => total +
         <article
           v-for="block in majorLearningBlocks"
           :key="block.title"
-          class="grid gap-4 border-b px-5 py-5 last:border-b-0 md:grid-cols-[3.5rem_14rem_minmax(0,1fr)]"
-          :style="{ borderColor: 'var(--border)' }"
+          class="border-soft grid gap-4 border-b px-5 py-5 last:border-b-0 md:grid-cols-[3.5rem_14rem_minmax(0,1fr)]"
         >
           <p class="text-sm font-medium text-[var(--accent)]">{{ block.eyebrow }}</p>
           <div>

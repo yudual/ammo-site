@@ -10,9 +10,9 @@ const notes = ['公开资料整理', '静态导航站', '联系邮箱：ty368685
 </script>
 
 <template>
-  <section class="min-h-screen bg-[var(--page-bg)] px-5 pb-10 pt-28 text-[var(--text-primary)] sm:px-6 sm:pb-12 sm:pt-32">
+  <section class="min-h-screen bg-[var(--page-bg)] px-5 pb-10 pt-8 text-[var(--text-primary)] sm:px-6 sm:pb-12 md:pt-12">
     <div class="mx-auto flex w-full max-w-5xl flex-col gap-8">
-      <header class="border-b pb-8" :style="{ borderColor: 'var(--border)' }">
+      <header class="border-soft border-b pb-8">
         <p class="mb-3 text-sm tracking-[0.16em] text-[var(--text-secondary)]">About</p>
         <h1 class="text-3xl font-semibold tracking-tight text-[var(--text-primary)] md:text-4xl">
           关于弹药工程导航
@@ -37,7 +37,7 @@ const notes = ['公开资料整理', '静态导航站', '联系邮箱：ty368685
           <li
             v-for="item in contentScopes"
             :key="item"
-            class="rounded-lg border px-4 py-3"
+            class="surface-card rounded-lg border px-4 py-3"
             :style="{
               backgroundColor: 'var(--surface-strong)',
               borderColor: 'var(--border)',
@@ -60,15 +60,14 @@ const notes = ['公开资料整理', '静态导航站', '联系邮箱：ty368685
           <li
             v-for="item in notes"
             :key="item"
-            class="rounded-lg border px-4 py-3"
-            :style="{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }"
+            class="surface-card rounded-lg border px-4 py-3"
           >
             {{ item }}
           </li>
         </ul>
       </section>
 
-      <section class="border-t pt-6" :style="{ borderColor: 'var(--border)' }">
+      <section class="border-soft border-t pt-6">
         <div class="flex flex-wrap items-center gap-4 text-sm text-[var(--text-secondary)]">
           <a href="mailto:ty368685189@gmail.com" class="font-medium text-[var(--accent)] transition hover:opacity-80">
             联系维护者

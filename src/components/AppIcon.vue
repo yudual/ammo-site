@@ -1,5 +1,7 @@
 <script setup lang="ts">
-withDefaults(
+import { computed, watchEffect } from 'vue'
+
+const props = withDefaults(
   defineProps<{
     name: string
     size?: number
@@ -25,6 +27,16 @@ const PATHS: Record<string, string> = {
   'arrow-left': 'M10.5 19 3 12m0 0 7.5-7.5M3 12h18',
   'arrow-right': 'M13.5 5 21 12m0 0-7.5 7.5M21 12H3',
 }
+
+const warnedNames = new Set<string>()
+const iconPath = computed(() => PATHS[props.name] ?? '')
+
+watchEffect(() => {
+  if (!import.meta.env.DEV || iconPath.value || warnedNames.has(props.name)) return
+
+  warnedNames.add(props.name)
+  console.warn(`[AppIcon] Unknown icon name: ${props.name}`)
+})
 </script>
 
 <template>
@@ -41,6 +53,6 @@ const PATHS: Record<string, string> = {
     aria-hidden="true"
     focusable="false"
   >
-    <path :d="PATHS[name] ?? ''" />
+    <path v-if="iconPath" :d="iconPath" />
   </svg>
 </template>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { nextTick, ref, watch, onMounted, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import { useSearchDialog } from '../composables/useSearchDialog'
 import { useGlobalSearch, type SearchHit } from '../composables/useGlobalSearch'
 
@@ -128,12 +128,12 @@ onUnmounted(() => {
 
           <ul class="gs-list">
             <li v-for="(hit, i) in results" :key="hit.kind + '-' + hit.id">
-              <button
-                type="button"
+              <RouterLink
+                :to="hit.to"
                 class="gs-item"
                 :class="{ 'is-active': i === highlight }"
                 :style="i === highlight ? { backgroundColor: 'var(--accent-soft)', color: 'var(--text-primary)' } : {}"
-                @click="go(hit)"
+                @click="closeDialog"
                 @mouseenter="highlight = i"
               >
                 <span
@@ -147,7 +147,7 @@ onUnmounted(() => {
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="gs-arrow h-3.5 w-3.5 shrink-0">
                   <path d="m9 6 6 6-6 6" />
                 </svg>
-              </button>
+              </RouterLink>
             </li>
 
             <li v-if="query.trim() && !results.length" class="gs-empty">
@@ -234,6 +234,8 @@ onUnmounted(() => {
   text-align: left;
   transition: background-color 0.15s ease;
   font-size: 0.92rem;
+  text-decoration: none;
+  color: inherit;
 }
 
 .gs-item.is-active {

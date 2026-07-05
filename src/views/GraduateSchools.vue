@@ -4,11 +4,11 @@ import { graduateNavItems, graduateSchoolSignals, graduateSourceLinks } from '..
 </script>
 
 <template>
-  <section class="topic-page min-h-screen overflow-x-hidden bg-[var(--page-bg)] px-5 pb-12 pt-20 md:pt-40 text-[var(--text-primary)] sm:px-6">
+  <section class="topic-page min-h-screen overflow-x-hidden bg-[var(--page-bg)] px-5 pb-12 pt-4 text-[var(--text-primary)] sm:px-6 sm:pt-6 md:pt-4">
     <TopicNav :items="graduateNavItems" ariaLabelText="考研方向导航" />
 
     <main class="mx-auto flex w-full max-w-6xl flex-col gap-8">
-      <header class="border-b pb-8" :style="{ borderColor: 'var(--border)' }">
+      <header class="border-soft border-b pb-8">
         <p class="text-sm tracking-[0.14em] text-[var(--text-tertiary)]">院校列表</p>
         <h1 class="mt-3 text-3xl font-semibold leading-tight text-[var(--text-primary)] md:text-4xl">
           常见院校与院所
@@ -19,12 +19,10 @@ import { graduateNavItems, graduateSchoolSignals, graduateSourceLinks } from '..
       </header>
 
       <section
-        class="overflow-hidden rounded-lg border"
-        :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--border)' }"
+        class="surface-card-strong overflow-hidden rounded-lg border"
       >
         <div
-          class="hidden grid-cols-[minmax(12rem,0.65fr)_minmax(0,1fr)_minmax(0,1fr)_8rem] gap-4 border-b px-5 py-3 text-xs text-[var(--text-tertiary)] xl:grid"
-          :style="{ borderColor: 'var(--border)' }"
+          class="border-soft hidden grid-cols-[minmax(12rem,0.65fr)_minmax(0,1fr)_minmax(0,1fr)_8rem] gap-4 border-b px-5 py-3 text-xs text-[var(--text-tertiary)] xl:grid"
         >
           <span>院校 / 院所</span>
           <span>方向信号</span>
@@ -61,7 +59,7 @@ import { graduateNavItems, graduateSchoolSignals, graduateSourceLinks } from '..
         </a>
       </section>
 
-      <details class="rounded-lg border p-4" :style="{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }">
+      <details class="surface-card rounded-lg border p-4">
         <summary class="flex cursor-pointer list-none items-center justify-between gap-3">
           <span>
             <span class="block text-sm tracking-[0.14em] text-[var(--text-tertiary)]">资料来源</span>

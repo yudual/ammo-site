@@ -4,11 +4,11 @@ import { majorCautionFor, majorDirections, majorNavItems, majorSuitableFor } fro
 </script>
 
 <template>
-  <section class="topic-page min-h-screen overflow-x-hidden bg-[var(--page-bg)] px-5 pb-12 pt-20 md:pt-40 text-[var(--text-primary)] sm:px-6">
+  <section class="topic-page min-h-screen overflow-x-hidden bg-[var(--page-bg)] px-5 pb-12 pt-4 text-[var(--text-primary)] sm:px-6 sm:pt-6 md:pt-4">
     <TopicNav :items="majorNavItems" ariaLabelText="专业介绍导航" />
 
     <main class="mx-auto flex w-full max-w-6xl flex-col gap-8">
-      <header class="border-b pb-8" :style="{ borderColor: 'var(--border)' }">
+      <header class="border-soft border-b pb-8">
         <p class="text-sm tracking-[0.14em] text-[var(--text-tertiary)]">毕业去向</p>
         <h1 class="mt-3 text-3xl font-semibold leading-tight text-[var(--text-primary)] md:text-4xl">
           常见去向与岗位差异
@@ -19,14 +19,12 @@ import { majorCautionFor, majorDirections, majorNavItems, majorSuitableFor } fro
       </header>
 
       <section
-        class="overflow-hidden rounded-lg border"
-        :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--border)' }"
+        class="surface-card-strong overflow-hidden rounded-lg border"
       >
         <article
           v-for="direction in majorDirections"
           :key="direction.title"
-          class="grid gap-4 border-b px-5 py-5 last:border-b-0 xl:grid-cols-[12rem_minmax(0,1fr)_minmax(0,1.05fr)]"
-          :style="{ borderColor: 'var(--border)' }"
+          class="border-soft grid gap-4 border-b px-5 py-5 last:border-b-0 xl:grid-cols-[12rem_minmax(0,1fr)_minmax(0,1.05fr)]"
         >
           <h2 class="text-lg font-semibold leading-7 text-[var(--text-primary)]">
             {{ direction.title }}
@@ -46,7 +44,7 @@ import { majorCautionFor, majorDirections, majorNavItems, majorSuitableFor } fro
               </span>
             </div>
           </div>
-          <p class="border-l pl-4 text-sm leading-7 text-[var(--text-secondary)]" :style="{ borderColor: 'var(--border)' }">
+          <p class="border-soft border-l pl-4 text-sm leading-7 text-[var(--text-secondary)]">
             {{ direction.check }}
           </p>
         </article>

@@ -51,7 +51,7 @@ const currentYear = new Date().getFullYear()
     <!-- Background overlay -->
     <div class="fixed inset-0 pointer-events-none z-0 home-bg-aurora"></div>
 
-    <div class="home-shell mx-auto flex min-h-screen w-full min-w-0 max-w-6xl flex-col px-5 pb-16 pt-24 sm:px-6 md:pt-28 relative z-10">
+    <div class="home-shell mx-auto flex min-h-screen w-full min-w-0 max-w-6xl flex-col px-5 pb-16 pt-6 sm:px-6 md:pt-8 relative z-10">
       
       <!-- 第一屏：主入口区 -->
       <header class="flex flex-col items-center text-center py-10 md:py-16">
@@ -96,7 +96,7 @@ const currentYear = new Date().getFullYear()
       </section>
 
       <!-- 轮播图栏 -->
-      <section class="bento-glass overflow-hidden relative flex flex-col justify-center py-4 rounded-xl border mt-8" :style="{ borderColor: 'var(--border)' }">
+      <section class="border-soft bento-glass overflow-hidden relative flex flex-col justify-center py-4 rounded-xl border mt-8">
         <div class="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-[var(--page-bg)] to-transparent z-10 pointer-events-none"></div>
         <div class="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[var(--page-bg)] to-transparent z-10 pointer-events-none"></div>
         
@@ -124,7 +124,7 @@ const currentYear = new Date().getFullYear()
         </div>
 
         <div class="grid gap-6 md:grid-cols-3">
-          <div class="rounded-xl border p-5 bg-[var(--surface)]" :style="{ borderColor: 'var(--border)' }">
+          <div class="border-soft rounded-xl border p-5 bg-[var(--surface)]">
             <h3 class="text-base font-bold text-[var(--accent)] flex items-center gap-2">
               <AppIcon name="school" class="w-4 h-4" /> 高校入口与招生线索
             </h3>
@@ -132,7 +132,7 @@ const currentYear = new Date().getFullYear()
               收录本专业对口高校，标注层次与主攻方向，附研招网、招生简章与学院官网入口。具体招生计划与专业方向以当年学校官方公告为准。
             </p>
           </div>
-          <div class="rounded-xl border p-5 bg-[var(--surface)]" :style="{ borderColor: 'var(--border)' }">
+          <div class="border-soft rounded-xl border p-5 bg-[var(--surface)]">
             <h3 class="text-base font-bold text-[var(--accent)] flex items-center gap-2">
               <AppIcon name="building" class="w-4 h-4" /> 兵工与民爆单位名录
             </h3>
@@ -140,7 +140,7 @@ const currentYear = new Date().getFullYear()
               汇集兵工、民爆主要单位，列出地区、作息风评参考与学历起步要求。作息与加班风评为历史样本，受具体部门与项目周期影响明显，仅供参考。
             </p>
           </div>
-          <div class="rounded-xl border p-5 bg-[var(--surface)]" :style="{ borderColor: 'var(--border)' }">
+          <div class="border-soft rounded-xl border p-5 bg-[var(--surface)]">
             <h3 class="text-base font-bold text-[var(--accent)] flex items-center gap-2">
               <AppIcon name="route" class="w-4 h-4" /> 考研方向与路线对比
             </h3>
@@ -170,7 +170,7 @@ const currentYear = new Date().getFullYear()
         </div>
 
         <!-- 边界说明占3列 -->
-        <div class="md:col-span-3 rounded-xl border p-5 bg-[var(--surface)]" :style="{ borderColor: 'var(--border)' }">
+        <div class="border-soft md:col-span-3 rounded-xl border p-5 bg-[var(--surface)]">
           <h3 class="text-base font-bold text-[var(--text-primary)] flex items-center gap-2"><AppIcon name="search" class="w-4 h-4" /> 资料核验边界说明</h3>
           <p class="mt-3 text-sm leading-7 text-[var(--text-secondary)]">
             每条目都带<strong>【核验状态标签】</strong>（已核验、部分核验、过期待复查）。官方招生指标与工商信息定期同步；薪资、作息等动态信息仅作"学长风评 / 招聘线索"补充参考，并标注可信度边界，不写成确定事实。

@@ -4,11 +4,11 @@ import { majorAbilities, majorNavItems, majorStudyStages } from '../data/aboutMa
 </script>
 
 <template>
-  <section class="topic-page min-h-screen overflow-x-hidden bg-[var(--page-bg)] px-5 pb-12 pt-20 md:pt-40 text-[var(--text-primary)] sm:px-6">
+  <section class="topic-page min-h-screen overflow-x-hidden bg-[var(--page-bg)] px-5 pb-12 pt-4 text-[var(--text-primary)] sm:px-6 sm:pt-6 md:pt-4">
     <TopicNav :items="majorNavItems" ariaLabelText="专业介绍导航" />
 
     <main class="mx-auto flex w-full max-w-6xl flex-col gap-8">
-      <header class="border-b pb-8" :style="{ borderColor: 'var(--border)' }">
+      <header class="border-soft border-b pb-8">
         <p class="text-sm tracking-[0.14em] text-[var(--text-tertiary)]">四年节奏</p>
         <h1 class="mt-3 text-3xl font-semibold leading-tight text-[var(--text-primary)] md:text-4xl">
           四年学习节奏
@@ -20,10 +20,9 @@ import { majorAbilities, majorNavItems, majorStudyStages } from '../data/aboutMa
 
       <section class="grid gap-5 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
         <div
-          class="overflow-hidden rounded-lg border"
-          :style="{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }"
+          class="surface-card surface-card-strong overflow-hidden rounded-lg border"
         >
-          <div class="border-b px-5 py-4" :style="{ borderColor: 'var(--border)' }">
+          <div class="border-soft border-b px-5 py-4">
             <p class="text-sm tracking-[0.14em] text-[var(--text-tertiary)]">课程节奏</p>
             <p class="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
               每一年主要任务和积累重点。
@@ -34,8 +33,7 @@ import { majorAbilities, majorNavItems, majorStudyStages } from '../data/aboutMa
             <article
               v-for="stage in majorStudyStages"
               :key="stage.year"
-              class="grid gap-4 border-b px-5 py-4 last:border-b-0 md:grid-cols-[4.2rem_minmax(0,1fr)]"
-              :style="{ borderColor: 'var(--border)' }"
+              class="border-soft grid gap-4 border-b px-5 py-4 last:border-b-0 md:grid-cols-[4.2rem_minmax(0,1fr)]"
             >
               <p class="text-sm font-semibold text-[var(--accent)]">{{ stage.year }}</p>
               <div>
@@ -56,10 +54,9 @@ import { majorAbilities, majorNavItems, majorStudyStages } from '../data/aboutMa
         </div>
 
         <div
-          class="overflow-hidden rounded-lg border"
-          :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--border)' }"
+          class="surface-card surface-card-strong overflow-hidden rounded-lg border"
         >
-          <div class="border-b px-5 py-4" :style="{ borderColor: 'var(--border)' }">
+          <div class="border-soft border-b px-5 py-4">
             <p class="text-sm tracking-[0.14em] text-[var(--text-tertiary)]">能力清单</p>
             <h2 class="mt-2 text-lg font-semibold text-[var(--text-primary)]">
               毕业前尽量留下哪些材料
@@ -70,8 +67,7 @@ import { majorAbilities, majorNavItems, majorStudyStages } from '../data/aboutMa
             <article
               v-for="ability in majorAbilities"
               :key="ability.name"
-              class="border-b px-5 py-4 odd:md:border-r"
-              :style="{ borderColor: 'var(--border)' }"
+              class="border-soft border-b px-5 py-4 odd:md:border-r"
             >
               <h3 class="text-base font-semibold text-[var(--text-primary)]">
                 {{ ability.name }}

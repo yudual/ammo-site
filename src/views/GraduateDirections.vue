@@ -25,11 +25,11 @@ const directionStats = computed(() =>
 </script>
 
 <template>
-  <section class="topic-page min-h-screen overflow-x-hidden bg-[var(--page-bg)] px-5 pb-12 pt-20 md:pt-40 text-[var(--text-primary)] sm:px-6">
+  <section class="topic-page min-h-screen overflow-x-hidden bg-[var(--page-bg)] px-5 pb-12 pt-4 text-[var(--text-primary)] sm:px-6 sm:pt-6 md:pt-4">
     <TopicNav :items="graduateNavItems" ariaLabelText="考研方向导航" />
 
     <main class="mx-auto flex w-full max-w-6xl flex-col gap-8">
-      <header class="border-b pb-8" :style="{ borderColor: 'var(--border)' }">
+      <header class="border-soft border-b pb-8">
         <p class="text-sm tracking-[0.14em] text-[var(--text-tertiary)]">方向分类</p>
         <h1 class="mt-3 text-3xl font-semibold leading-tight text-[var(--text-primary)] md:text-4xl">
           顺接、半跨和主动转向
@@ -40,14 +40,12 @@ const directionStats = computed(() =>
       </header>
 
       <section
-        class="grid gap-3 rounded-lg border p-4 md:grid-cols-3"
-        :style="{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }"
+        class="surface-card grid gap-3 rounded-lg border p-4 md:grid-cols-3"
       >
         <div
           v-for="stat in directionStats"
           :key="stat.label"
-          class="border-l pl-4"
-          :style="{ borderColor: 'var(--border)' }"
+          class="border-soft border-l pl-4"
         >
           <p class="text-sm text-[var(--text-tertiary)]">{{ stat.label }}</p>
           <p class="mt-1 text-2xl font-semibold text-[var(--text-primary)]">{{ stat.value }}</p>
@@ -64,8 +62,7 @@ const directionStats = computed(() =>
         }"
       >
         <div
-          class="hidden grid-cols-[12rem_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.05fr)] gap-5 border-b px-5 py-3 text-xs text-[var(--text-tertiary)] xl:grid"
-          :style="{ borderColor: 'var(--border)' }"
+          class="border-soft hidden grid-cols-[12rem_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.05fr)] gap-5 border-b px-5 py-3 text-xs text-[var(--text-tertiary)] xl:grid"
         >
           <span>方向 / 科目</span>
           <span>研究主题</span>
@@ -76,8 +73,7 @@ const directionStats = computed(() =>
         <article
           v-for="direction in graduateDirections"
           :key="`${direction.title}-detail`"
-          class="grid gap-5 border-b p-5 last:border-b-0 xl:grid-cols-[12rem_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.05fr)]"
-          :style="{ borderColor: 'var(--border)' }"
+          class="border-soft grid gap-5 border-b p-5 last:border-b-0 xl:grid-cols-[12rem_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.05fr)]"
         >
           <div>
             <span class="inline-flex rounded-lg border px-3 py-1 text-xs font-medium" :style="graduateLevelStyle(direction.level)">

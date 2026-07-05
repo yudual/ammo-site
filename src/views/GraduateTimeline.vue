@@ -4,11 +4,11 @@ import { graduateNavItems, graduateTimeline } from '../data/graduate'
 </script>
 
 <template>
-  <section class="topic-page min-h-screen overflow-x-hidden bg-[var(--page-bg)] px-5 pb-12 pt-20 md:pt-40 text-[var(--text-primary)] sm:px-6">
+  <section class="topic-page min-h-screen overflow-x-hidden bg-[var(--page-bg)] px-5 pb-12 pt-4 text-[var(--text-primary)] sm:px-6 sm:pt-6 md:pt-4">
     <TopicNav :items="graduateNavItems" ariaLabelText="考研方向导航" />
 
     <main class="mx-auto flex w-full max-w-6xl flex-col gap-8">
-      <header class="border-b pb-8" :style="{ borderColor: 'var(--border)' }">
+      <header class="border-soft border-b pb-8">
         <p class="text-sm tracking-[0.14em] text-[var(--text-tertiary)]">四年准备</p>
         <h1 class="mt-3 text-3xl font-semibold leading-tight text-[var(--text-primary)] md:text-4xl">
           本科四年的准备节奏
@@ -25,8 +25,7 @@ import { graduateNavItems, graduateTimeline } from '../data/graduate'
         <article
           v-for="stage in graduateTimeline"
           :key="stage.time"
-          class="grid gap-5 border-b p-5 last:border-b-0 md:grid-cols-[7rem_minmax(0,1fr)_minmax(0,1fr)]"
-          :style="{ borderColor: 'var(--border)' }"
+          class="border-soft grid gap-5 border-b p-5 last:border-b-0 md:grid-cols-[7rem_minmax(0,1fr)_minmax(0,1fr)]"
         >
           <div>
             <p

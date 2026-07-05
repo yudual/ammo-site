@@ -5,14 +5,6 @@ type ResolvedTheme = 'light' | 'dark'
 
 const STORAGE_KEY = 'ammo-site-theme'
 
-/** 用户意图：light / dark / system（跟随操作系统） */
-const mode = ref<ThemeMode>('system')
-/** 实际生效到 DOM 的色调（始终 light 或 dark），保证 :root[data-theme] 选择器可用 */
-const resolved = ref<ResolvedTheme>('light')
-
-let initialized = false
-let mediaQuery: MediaQueryList | null = null
-
 function getStoredMode(): ThemeMode | null {
   if (typeof window === 'undefined') {
     return null
@@ -36,9 +28,32 @@ function systemPrefersDark(): boolean {
   return window.matchMedia('(prefers-color-scheme: dark)').matches
 }
 
+/** 从 DOM 读取 inline 防闪脚本已设的 data-theme，避免首屏图标与实际主题不符。 */
+function readInitialResolved(): ResolvedTheme {
+  if (typeof document === 'undefined') {
+    return 'light'
+  }
+  return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
+}
+
 function resolveTheme(nextMode: ThemeMode): ResolvedTheme {
   return nextMode === 'system' ? (systemPrefersDark() ? 'dark' : 'light') : nextMode
 }
+
+function syncThemeColor(resolved: ResolvedTheme) {
+  if (typeof document === 'undefined') return
+  const meta = document.querySelector('meta[name="theme-color"]')
+  if (!meta) return
+  meta.setAttribute('content', resolved === 'dark' ? '#151917' : '#f3f6f2')
+}
+
+/** 用户意图：light / dark / system（跟随操作系统） */
+const mode = ref<ThemeMode>(getStoredMode() || 'system')
+/** 实际生效到 DOM 的色调（始终 light 或 dark），保证 :root[data-theme] 选择器可用 */
+const resolved = ref<ResolvedTheme>(readInitialResolved())
+
+let initialized = false
+let mediaQuery: MediaQueryList | null = null
 
 function applyMode(nextMode: ThemeMode) {
   mode.value = nextMode
@@ -47,6 +62,7 @@ function applyMode(nextMode: ThemeMode) {
 
   if (typeof document !== 'undefined') {
     document.documentElement.dataset.theme = nextResolved
+    syncThemeColor(nextResolved)
   }
 
   if (typeof window !== 'undefined') {

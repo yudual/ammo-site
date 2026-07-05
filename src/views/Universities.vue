@@ -14,6 +14,8 @@ import {
 } from '../data/universities'
 import SchoolLogo from '../components/SchoolLogo.vue'
 import { countBy } from '../utils/status'
+import { getPaginationItems } from '../utils/pagination'
+import { useShareLink } from '../composables/useShareLink'
 
 const route = useRoute()
 const router = useRouter()
@@ -31,16 +33,21 @@ const currentUniversityPage = ref(1)
 const universityListTop = ref<HTMLElement | null>(null)
 
 const isInitializing = ref(true)
-const isCopied = ref(false)
 
 // 从 URL 初始化筛选状态
 const initFromQuery = () => {
   const query = route.query
   if (query.keyword) keyword.value = String(query.keyword)
-  if (query.tier) selectedTier.value = String(query.tier) as any
+  if (query.tier && tierOptions.includes(String(query.tier) as UniversityTier)) {
+    selectedTier.value = String(query.tier) as UniversityTier
+  }
   if (query.province) selectedProvince.value = String(query.province)
-  if (query.relevance) selectedRelevance.value = String(query.relevance) as any
-  if (query.status) selectedStatus.value = String(query.status) as any
+  if (query.relevance && relevanceOptions.includes(String(query.relevance) as RelevanceLevel)) {
+    selectedRelevance.value = String(query.relevance) as RelevanceLevel
+  }
+  if (query.status && statusOptions.includes(String(query.status) as VerificationStatus)) {
+    selectedStatus.value = String(query.status) as VerificationStatus
+  }
   if (query.research === '1') onlyWithResearch.value = true
   if (query.page) {
     const pageNum = parseInt(String(query.page), 10)
@@ -61,7 +68,7 @@ nextTick(() => {
 })
 
 const updateUrlQuery = () => {
-  const query: Record<string, any> = {}
+  const query: Record<string, string> = {}
   
   if (keyword.value.trim()) query.keyword = keyword.value.trim()
   if (selectedTier.value !== '全部') query.tier = selectedTier.value
@@ -101,17 +108,7 @@ watch(currentUniversityPage, () => {
   updateUrlQuery()
 })
 
-const copyShareLink = async () => {
-  try {
-    await navigator.clipboard.writeText(window.location.href)
-    isCopied.value = true
-    setTimeout(() => {
-      isCopied.value = false
-    }, 1500)
-  } catch (err) {
-    // 降级处理
-  }
-}
+const { isCopied, copyShareLink } = useShareLink()
 const tierOptions: UniversityTier[] = ['985 / 211', '211', '普通本科']
 const relevanceOptions: RelevanceLevel[] = ['高', '中', '低', '待核对']
 const statusOptions: VerificationStatus[] = ['已核验', '部分核验', '过期待复查']
@@ -271,7 +268,7 @@ const visibleUniversities = computed(() =>
 )
 
 const universityPageNumbers = computed(() =>
-  Array.from({ length: universityPageCount.value }, (_, index) => index + 1),
+  getPaginationItems(currentUniversityPage.value, universityPageCount.value),
 )
 
 watch(filteredUniversities, () => {
@@ -318,7 +315,7 @@ async function setUniversityPage(page: number) {
 </script>
 
 <template>
-  <section class="universities-page min-h-screen overflow-x-hidden bg-[var(--page-bg)] px-4 pb-8 pt-20 text-[var(--text-primary)] md:px-6 md:pb-12 md:pt-24">
+  <section class="universities-page min-h-screen overflow-x-hidden bg-[var(--page-bg)] px-4 pb-8 pt-6 text-[var(--text-primary)] md:px-6 md:pb-12 md:pt-8">
     <div class="universities-shell mx-auto flex w-full min-w-0 max-w-7xl flex-col gap-4">
 
       <!-- 双栏容器 -->
@@ -345,7 +342,7 @@ async function setUniversityPage(page: number) {
             }"
           >
             <!-- 手机端抽屉头部 -->
-            <div class="flex items-center justify-between border-b pb-3 mb-1 md:hidden" :style="{ borderColor: 'var(--border)' }">
+            <div class="border-soft flex items-center justify-between border-b pb-3 mb-1 md:hidden">
               <span class="font-semibold text-lg text-[var(--text-primary)]">筛选条件</span>
               <button type="button" class="text-sm font-medium text-[var(--accent)]" @click="filtersOpen = false">确定</button>
             </div>
@@ -474,19 +471,19 @@ async function setUniversityPage(page: number) {
               </div>
 
               <div class="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-2 text-[11px]">
-                <div class="flex items-center justify-between gap-2.5 px-2 py-1 rounded bg-[var(--surface-strong)] border" :style="{ borderColor: 'var(--border)' }">
+                <div class="border-soft flex items-center justify-between gap-2.5 px-2 py-1 rounded bg-[var(--surface-strong)] border">
                   <span class="text-[var(--text-tertiary)]">已收录</span>
                   <strong class="font-bold text-[var(--text-primary)]">{{ universities.length }}</strong>
                 </div>
-                <div class="flex items-center justify-between gap-2.5 px-2 py-1 rounded bg-[var(--surface-strong)] border" :style="{ borderColor: 'var(--border)' }">
+                <div class="border-soft flex items-center justify-between gap-2.5 px-2 py-1 rounded bg-[var(--surface-strong)] border">
                   <span class="text-[var(--text-tertiary)]">高相关</span>
                   <strong class="font-bold text-[var(--text-primary)]">{{ highRelevanceCount }}</strong>
                 </div>
-                <div class="flex items-center justify-between gap-2.5 px-2 py-1 rounded bg-[var(--surface-strong)] border" :style="{ borderColor: 'var(--border)' }">
+                <div class="border-soft flex items-center justify-between gap-2.5 px-2 py-1 rounded bg-[var(--surface-strong)] border">
                   <span class="text-[var(--text-tertiary)]">有调研</span>
                   <strong class="font-bold text-[var(--text-primary)]">{{ withResearchCount }}</strong>
                 </div>
-                <div class="flex items-center justify-between gap-2.5 px-2 py-1 rounded bg-[var(--surface-strong)] border" :style="{ borderColor: 'var(--border)' }">
+                <div class="border-soft flex items-center justify-between gap-2.5 px-2 py-1 rounded bg-[var(--surface-strong)] border">
                   <span class="text-[var(--text-tertiary)]">部分核验</span>
                   <strong class="font-bold text-[var(--accent)]">{{ statusCounts['部分核验'] || 0 }}</strong>
                 </div>
@@ -554,8 +551,7 @@ async function setUniversityPage(page: number) {
                 <button
                   v-if="hasActiveFilters"
                   type="button"
-                  class="rounded-lg px-2 py-1 border text-[var(--text-tertiary)] hover:opacity-80 shrink-0 bg-[var(--surface-strong)]"
-                  :style="{ borderColor: 'var(--border)' }"
+                  class="border-soft rounded-lg px-2 py-1 border text-[var(--text-tertiary)] hover:opacity-80 shrink-0 bg-[var(--surface-strong)]"
                   @click="resetFilters"
                 >
                   清空
@@ -608,10 +604,9 @@ async function setUniversityPage(page: number) {
             </span>
           </div>
           <!-- 紧凑 Row 列表 -->
-          <section v-if="filteredUniversities.length > 0" class="overflow-hidden rounded-xl border w-full" :style="{ borderColor: 'var(--border)' }">
+          <section v-if="filteredUniversities.length > 0" class="overflow-hidden rounded-xl border w-full">
             <div
-              class="hidden grid-cols-[minmax(20rem,1.35fr)_minmax(10rem,0.58fr)_minmax(17rem,0.92fr)_minmax(6rem,0.32fr)] gap-4 border-b px-5 py-3 text-xs text-[var(--text-tertiary)] xl:grid"
-              :style="{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }"
+              class="surface-card hidden grid-cols-[minmax(20rem,1.35fr)_minmax(10rem,0.58fr)_minmax(17rem,0.92fr)_minmax(6rem,0.32fr)] gap-4 border-b px-5 py-3 text-xs text-[var(--text-tertiary)] xl:grid"
             >
               <span>院校 / 状态</span>
               <span>地区与层次</span>
@@ -719,43 +714,36 @@ async function setUniversityPage(page: number) {
             <div class="flex flex-wrap items-center justify-center gap-2">
               <button
                 type="button"
-                class="rounded-lg border px-3 py-2 font-medium transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45"
+                class="btn-ghost rounded-lg border px-3 py-2 font-medium transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45"
                 :disabled="currentUniversityPage === 1"
-                :style="{
-                  backgroundColor: 'var(--surface-strong)',
-                  borderColor: 'var(--border)',
-                  color: 'var(--text-secondary)',
-                }"
                 @click="setUniversityPage(currentUniversityPage - 1)"
               >
                 上一页
               </button>
 
-              <button
-                v-for="page in universityPageNumbers"
-                :key="page"
-                type="button"
-                class="min-h-10 min-w-10 rounded-lg border px-3 py-2 font-medium font-numeric transition hover:-translate-y-0.5"
-                :aria-current="page === currentUniversityPage ? 'page' : undefined"
-                :style="{
-                  backgroundColor: page === currentUniversityPage ? 'var(--accent)' : 'var(--surface-strong)',
-                  borderColor: page === currentUniversityPage ? 'var(--accent)' : 'var(--border)',
-                  color: page === currentUniversityPage ? '#ffffff' : 'var(--text-secondary)',
-                }"
-                @click="setUniversityPage(page)"
-              >
-                {{ page }}
-              </button>
+              <template v-for="(page, index) in universityPageNumbers" :key="`${page}-${index}`">
+                <span
+                  v-if="page === 'ellipsis'"
+                  class="flex min-h-10 min-w-10 items-center justify-center px-2 font-medium text-[var(--text-tertiary)]"
+                  aria-hidden="true"
+                >
+                  ...
+                </span>
+                <button
+                  v-else
+                  type="button"
+                  class="btn-ghost min-h-10 min-w-10 rounded-lg border px-3 py-2 font-medium font-numeric transition hover:-translate-y-0.5"
+                  :aria-current="page === currentUniversityPage ? 'page' : undefined"
+                  @click="setUniversityPage(page)"
+                >
+                  {{ page }}
+                </button>
+              </template>
 
               <button
                 type="button"
-                class="rounded-lg border px-3 py-2 font-medium transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45"
+                class="btn-ghost rounded-lg border px-3 py-2 font-medium transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45"
                 :disabled="currentUniversityPage === universityPageCount"
-                :style="{
-                  backgroundColor: 'var(--surface-strong)',
-                  borderColor: 'var(--border)',
-                  color: 'var(--text-secondary)',
-                }"
                 @click="setUniversityPage(currentUniversityPage + 1)"
               >
                 下一页
@@ -768,13 +756,7 @@ async function setUniversityPage(page: number) {
             v-if="filteredUniversities.length > 0 && universityPageCount === 1"
             class="flex justify-center text-sm text-[var(--text-tertiary)] w-full"
           >
-            <span
-              class="rounded-lg border px-4 py-2"
-              :style="{
-                backgroundColor: 'var(--surface-strong)',
-                borderColor: 'var(--border)',
-              }"
-            >
+            <span class="surface-card-strong rounded-lg border px-4 py-2">
               匹配到的院校都在这里了
             </span>
           </div>

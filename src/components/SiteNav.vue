@@ -57,7 +57,7 @@ onUnmounted(() => {
 
 <template>
   <header
-    class="site-nav sticky top-0 z-[60] w-full border-b backdrop-blur-xl md:fixed md:left-0 md:top-0"
+    class="site-nav sticky top-0 z-[60] w-full border-b backdrop-blur-xl"
     :style="{
       backgroundColor: 'var(--surface)',
       borderColor: 'var(--border)',
@@ -99,7 +99,7 @@ onUnmounted(() => {
             v-for="item in mainNavItems"
             :key="item.to"
             :to="item.to"
-            class="shrink-0 rounded-lg px-3 py-1.5 text-sm font-medium transition hover:-translate-y-0.5"
+            class="shrink-0 rounded-lg px-2 py-1.5 text-[13px] font-medium transition hover:-translate-y-0.5 sm:px-3 sm:text-sm"
             :style="{
               backgroundColor: isActive(item.to) ? 'var(--accent-soft)' : 'transparent',
               color: isActive(item.to) ? 'var(--accent)' : 'var(--text-secondary)',

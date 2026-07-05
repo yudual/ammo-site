@@ -4,11 +4,11 @@ import { graduateCompareRows, graduateNavItems } from '../data/graduate'
 </script>
 
 <template>
-  <section class="topic-page min-h-screen overflow-x-hidden bg-[var(--page-bg)] px-5 pb-12 pt-20 md:pt-40 text-[var(--text-primary)] sm:px-6">
+  <section class="topic-page min-h-screen overflow-x-hidden bg-[var(--page-bg)] px-5 pb-12 pt-4 text-[var(--text-primary)] sm:px-6 sm:pt-6 md:pt-4">
     <TopicNav :items="graduateNavItems" ariaLabelText="考研方向导航" />
 
     <main class="mx-auto flex w-full max-w-6xl flex-col gap-8">
-      <header class="flex flex-col gap-4 border-b pb-8 md:flex-row md:items-end md:justify-between" :style="{ borderColor: 'var(--border)' }">
+      <header class="border-soft flex flex-col gap-4 border-b pb-8 md:flex-row md:items-end md:justify-between">
         <div>
           <p class="text-sm tracking-[0.14em] text-[var(--text-tertiary)]">方向对比</p>
           <h1 class="mt-3 text-3xl font-semibold leading-tight text-[var(--text-primary)] md:text-4xl">
@@ -66,8 +66,7 @@ import { graduateCompareRows, graduateNavItems } from '../data/graduate'
 
       <section class="grid gap-3 md:grid-cols-3">
         <article
-          class="rounded-lg border p-4"
-          :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--border)' }"
+          class="surface-card-strong rounded-lg border p-4"
         >
           <h2 class="text-lg font-semibold text-[var(--text-primary)]">共享科目优先</h2>
           <p class="mt-3 text-sm leading-7 text-[var(--text-secondary)]">
@@ -75,8 +74,7 @@ import { graduateCompareRows, graduateNavItems } from '../data/graduate'
           </p>
         </article>
         <article
-          class="rounded-lg border p-4"
-          :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--border)' }"
+          class="surface-card-strong rounded-lg border p-4"
         >
           <h2 class="text-lg font-semibold text-[var(--text-primary)]">复试风险要早看</h2>
           <p class="mt-3 text-sm leading-7 text-[var(--text-secondary)]">
@@ -84,8 +82,7 @@ import { graduateCompareRows, graduateNavItems } from '../data/graduate'
           </p>
         </article>
         <article
-          class="rounded-lg border p-4"
-          :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--border)' }"
+          class="surface-card-strong rounded-lg border p-4"
         >
           <h2 class="text-lg font-semibold text-[var(--text-primary)]">把约束写进表里</h2>
           <p class="mt-3 text-sm leading-7 text-[var(--text-secondary)]">

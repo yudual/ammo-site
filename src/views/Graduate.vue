@@ -12,7 +12,7 @@ const featuredGraduateSources = graduateSourceLinks.slice(0, 3)
 </script>
 
 <template>
-  <section class="topic-page min-h-screen overflow-x-hidden bg-[var(--page-bg)] px-5 pb-12 pt-20 md:pt-40 text-[var(--text-primary)] sm:px-6">
+  <section class="topic-page min-h-screen overflow-x-hidden bg-[var(--page-bg)] px-5 pb-12 pt-4 text-[var(--text-primary)] sm:px-6 sm:pt-6 md:pt-4">
     <TopicNav :items="graduateNavItems" ariaLabelText="考研方向导航" />
 
     <main class="mx-auto flex w-full max-w-6xl flex-col gap-8">
@@ -79,7 +79,7 @@ const featuredGraduateSources = graduateSourceLinks.slice(0, 3)
         <article
           v-for="item in graduateQuickJudgements"
           :key="item.label"
-          class="rounded-lg border p-4"
+          class="surface-card rounded-lg border p-4"
           :style="{
             backgroundColor: 'var(--surface-strong)',
             borderColor: 'var(--border)',
@@ -151,7 +151,7 @@ const featuredGraduateSources = graduateSourceLinks.slice(0, 3)
         </div>
       </section>
 
-      <details class="rounded-lg border p-4" :style="{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }">
+      <details class="surface-card rounded-lg border p-4">
         <summary class="flex cursor-pointer list-none items-center justify-between gap-3">
           <span>
             <span class="block text-sm tracking-[0.14em] text-[var(--text-tertiary)]">参考入口</span>

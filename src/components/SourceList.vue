@@ -13,9 +13,9 @@ defineProps<{
 </script>
 
 <template>
-  <div v-if="sources.length" class="mt-6 border-t pt-5" :style="{ borderColor: 'var(--border)' }">
+  <div v-if="sources.length" class="border-soft mt-6 border-t pt-5">
     <p class="text-sm font-medium text-[var(--text-primary)]">{{ title || '调研来源' }}</p>
-    <div class="mt-3 overflow-hidden rounded-lg border" :style="{ borderColor: 'var(--border)' }">
+    <div class="border-soft mt-3 overflow-hidden rounded-lg border">
       <a
         v-for="source in sources"
         :key="source.url"

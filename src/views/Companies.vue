@@ -13,6 +13,8 @@ import {
   type VerificationStatus,
 } from '../data/companies'
 import { countBy } from '../utils/status'
+import { getPaginationItems } from '../utils/pagination'
+import { useShareLink } from '../composables/useShareLink'
 
 const route = useRoute()
 const router = useRouter()
@@ -31,17 +33,22 @@ const currentCompanyPage = ref(1)
 const companyListTop = ref<HTMLElement | null>(null)
 
 const isInitializing = ref(true)
-const isCopied = ref(false)
 
 // 从 URL 初始化筛选状态
 const initFromQuery = () => {
   const query = route.query
   if (query.keyword) keyword.value = String(query.keyword)
-  if (query.ownership) selectedOwnership.value = String(query.ownership) as any
+  if (query.ownership && companyOwnershipOptions.includes(String(query.ownership) as (typeof companyOwnershipOptions)[number])) {
+    selectedOwnership.value = String(query.ownership) as (typeof companyOwnershipOptions)[number]
+  }
   if (query.city) selectedCity.value = String(query.city)
   if (query.direction) selectedDirection.value = String(query.direction) as any
-  if (query.relevance) selectedRelevance.value = String(query.relevance) as any
-  if (query.status) selectedStatus.value = String(query.status) as any
+  if (query.relevance && (['高', '中', '低', '待核对'] satisfies RelevanceLevel[]).includes(String(query.relevance) as RelevanceLevel)) {
+    selectedRelevance.value = String(query.relevance) as RelevanceLevel
+  }
+  if (query.status && (['已核验', '部分核验', '过期待复查'] satisfies VerificationStatus[]).includes(String(query.status) as VerificationStatus)) {
+    selectedStatus.value = String(query.status) as VerificationStatus
+  }
   if (query.research === '1') onlyWithResearch.value = true
   if (query.page) {
     const pageNum = parseInt(String(query.page), 10)
@@ -62,7 +69,7 @@ nextTick(() => {
 })
 
 const updateUrlQuery = () => {
-  const query: Record<string, any> = {}
+  const query: Record<string, string> = {}
 
   if (keyword.value.trim()) query.keyword = keyword.value.trim()
   if (selectedOwnership.value !== '全部') query.ownership = selectedOwnership.value
@@ -104,17 +111,7 @@ watch(currentCompanyPage, () => {
   updateUrlQuery()
 })
 
-const copyShareLink = async () => {
-  try {
-    await navigator.clipboard.writeText(window.location.href)
-    isCopied.value = true
-    setTimeout(() => {
-      isCopied.value = false
-    }, 1500)
-  } catch (err) {
-    // 降级处理
-  }
-}
+const { isCopied, copyShareLink } = useShareLink()
 
 type CompanyDirection =
   | '民爆产品'
@@ -314,7 +311,7 @@ const visibleCompanies = computed(() =>
 )
 
 const companyPageNumbers = computed(() =>
-  Array.from({ length: companyPageCount.value }, (_, index) => index + 1),
+  getPaginationItems(currentCompanyPage.value, companyPageCount.value),
 )
 
 watch(filteredCompanies, () => {
@@ -360,7 +357,7 @@ async function setCompanyPage(page: number) {
 </script>
 
 <template>
-  <section class="companies-page min-h-screen bg-[var(--page-bg)] px-4 pb-8 pt-20 text-[var(--text-primary)] md:px-6 md:pb-12 md:pt-24">
+  <section class="companies-page min-h-screen bg-[var(--page-bg)] px-4 pb-8 pt-6 text-[var(--text-primary)] md:px-6 md:pb-12 md:pt-8">
     <div class="companies-shell mx-auto flex w-full min-w-0 flex-col gap-4">
       <!-- 双栏容器 -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-start w-full">
@@ -386,7 +383,7 @@ async function setCompanyPage(page: number) {
             }"
           >
             <!-- 手机端抽屉头部 -->
-            <div class="flex items-center justify-between border-b pb-3 mb-1 md:hidden" :style="{ borderColor: 'var(--border)' }">
+            <div class="border-soft flex items-center justify-between border-b pb-3 mb-1 md:hidden">
               <span class="font-semibold text-lg text-[var(--text-primary)]">筛选条件</span>
               <button type="button" class="text-sm font-medium text-[var(--accent)]" @click="filtersOpen = false">确定</button>
             </div>
@@ -533,19 +530,19 @@ async function setCompanyPage(page: number) {
               </div>
 
               <div class="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-2 text-[11px]">
-                <div class="flex items-center justify-between gap-2.5 px-2 py-1 rounded bg-[var(--surface-strong)] border" :style="{ borderColor: 'var(--border)' }">
+                <div class="border-soft flex items-center justify-between gap-2.5 px-2 py-1 rounded bg-[var(--surface-strong)] border">
                   <span class="text-[var(--text-tertiary)]">已收录</span>
                   <strong class="font-bold text-[var(--text-primary)]">{{ companies.length }}</strong>
                 </div>
-                <div class="flex items-center justify-between gap-2.5 px-2 py-1 rounded bg-[var(--surface-strong)] border" :style="{ borderColor: 'var(--border)' }">
+                <div class="border-soft flex items-center justify-between gap-2.5 px-2 py-1 rounded bg-[var(--surface-strong)] border">
                   <span class="text-[var(--text-tertiary)]">高相关</span>
                   <strong class="font-bold text-[var(--text-primary)]">{{ highRelevanceCount }}</strong>
                 </div>
-                <div class="flex items-center justify-between gap-2.5 px-2 py-1 rounded bg-[var(--surface-strong)] border" :style="{ borderColor: 'var(--border)' }">
+                <div class="border-soft flex items-center justify-between gap-2.5 px-2 py-1 rounded bg-[var(--surface-strong)] border">
                   <span class="text-[var(--text-tertiary)]">有调研</span>
                   <strong class="font-bold text-[var(--text-primary)]">{{ withResearchCount }}</strong>
                 </div>
-                <div class="flex items-center justify-between gap-2.5 px-2 py-1 rounded bg-[var(--surface-strong)] border" :style="{ borderColor: 'var(--border)' }">
+                <div class="border-soft flex items-center justify-between gap-2.5 px-2 py-1 rounded bg-[var(--surface-strong)] border">
                   <span class="text-[var(--text-tertiary)]">部分核验</span>
                   <strong class="font-bold text-[var(--accent)]">{{ statusCounts['部分核验'] || 0 }}</strong>
                 </div>
@@ -613,8 +610,7 @@ async function setCompanyPage(page: number) {
                 <button
                   v-if="hasActiveFilters"
                   type="button"
-                  class="rounded-lg px-2 py-1 border text-[var(--text-tertiary)] hover:opacity-80 shrink-0 bg-[var(--surface-strong)]"
-                  :style="{ borderColor: 'var(--border)' }"
+                  class="border-soft rounded-lg px-2 py-1 border text-[var(--text-tertiary)] hover:opacity-80 shrink-0 bg-[var(--surface-strong)]"
                   @click="resetFilters"
                 >
                   清空
@@ -667,10 +663,9 @@ async function setCompanyPage(page: number) {
             </span>
           </div>
           <!-- 紧凑 Row 列表 -->
-          <section v-if="filteredCompanies.length > 0" class="overflow-hidden rounded-xl border w-full" :style="{ borderColor: 'var(--border)' }">
+          <section v-if="filteredCompanies.length > 0" class="overflow-hidden rounded-xl border w-full">
             <div
-              class="hidden grid-cols-[minmax(20rem,1.35fr)_minmax(10rem,0.58fr)_minmax(16rem,0.9fr)_minmax(6rem,0.32fr)] gap-4 border-b px-5 py-3 text-xs text-[var(--text-tertiary)] xl:grid"
-              :style="{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }"
+              class="surface-card hidden grid-cols-[minmax(20rem,1.35fr)_minmax(10rem,0.58fr)_minmax(16rem,0.9fr)_minmax(6rem,0.32fr)] gap-4 border-b px-5 py-3 text-xs text-[var(--text-tertiary)] xl:grid"
             >
               <span>企业 / 状态</span>
               <span>地区与性质</span>
@@ -773,43 +768,36 @@ async function setCompanyPage(page: number) {
             <div class="flex flex-wrap items-center justify-center gap-2">
               <button
                 type="button"
-                class="rounded-lg border px-3 py-2 font-medium transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45"
+                class="btn-ghost rounded-lg border px-3 py-2 font-medium transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45"
                 :disabled="currentCompanyPage === 1"
-                :style="{
-                  backgroundColor: 'var(--surface-strong)',
-                  borderColor: 'var(--border)',
-                  color: 'var(--text-secondary)',
-                }"
                 @click="setCompanyPage(currentCompanyPage - 1)"
               >
                 上一页
               </button>
 
-              <button
-                v-for="page in companyPageNumbers"
-                :key="page"
-                type="button"
-                class="min-h-10 min-w-10 rounded-lg border px-3 py-2 font-medium font-numeric transition hover:-translate-y-0.5"
-                :aria-current="page === currentCompanyPage ? 'page' : undefined"
-                :style="{
-                  backgroundColor: page === currentCompanyPage ? 'var(--accent)' : 'var(--surface-strong)',
-                  borderColor: page === currentCompanyPage ? 'var(--accent)' : 'var(--border)',
-                  color: page === currentCompanyPage ? '#ffffff' : 'var(--text-secondary)',
-                }"
-                @click="setCompanyPage(page)"
-              >
-                {{ page }}
-              </button>
+              <template v-for="(page, index) in companyPageNumbers" :key="`${page}-${index}`">
+                <span
+                  v-if="page === 'ellipsis'"
+                  class="flex min-h-10 min-w-10 items-center justify-center px-2 font-medium text-[var(--text-tertiary)]"
+                  aria-hidden="true"
+                >
+                  ...
+                </span>
+                <button
+                  v-else
+                  type="button"
+                  class="btn-ghost min-h-10 min-w-10 rounded-lg border px-3 py-2 font-medium font-numeric transition hover:-translate-y-0.5"
+                  :aria-current="page === currentCompanyPage ? 'page' : undefined"
+                  @click="setCompanyPage(page)"
+                >
+                  {{ page }}
+                </button>
+              </template>
 
               <button
                 type="button"
-                class="rounded-lg border px-3 py-2 font-medium transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45"
+                class="btn-ghost rounded-lg border px-3 py-2 font-medium transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45"
                 :disabled="currentCompanyPage === companyPageCount"
-                :style="{
-                  backgroundColor: 'var(--surface-strong)',
-                  borderColor: 'var(--border)',
-                  color: 'var(--text-secondary)',
-                }"
                 @click="setCompanyPage(currentCompanyPage + 1)"
               >
                 下一页
@@ -822,13 +810,7 @@ async function setCompanyPage(page: number) {
             v-if="filteredCompanies.length > 0 && companyPageCount === 1"
             class="flex justify-center text-sm text-[var(--text-tertiary)] w-full"
           >
-            <span
-              class="rounded-lg border px-4 py-2"
-              :style="{
-                backgroundColor: 'var(--surface-strong)',
-                borderColor: 'var(--border)',
-              }"
-            >
+            <span class="surface-card-strong rounded-lg border px-4 py-2">
               匹配到的企业都在这里了
             </span>
           </div>
