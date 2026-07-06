@@ -295,23 +295,6 @@ const sourceTypes = computed(() =>
                   <p class="mt-1 text-sm leading-7 text-[var(--text-secondary)]">作息：{{ company.schedule }}</p>
                 </div>
 
-                <div class="detail-panel rounded-xl border p-4 md:col-span-2" :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--status-warning-border)' }">
-                  <p class="text-sm font-medium" :style="{ color: 'var(--status-warning)' }">不确定信息</p>
-                  <div v-if="frontRisks.length" class="mt-3 flex flex-wrap gap-2">
-                    <span
-                      v-for="risk in frontRisks"
-                      :key="risk"
-                      class="rounded-lg border px-2.5 py-1 text-xs"
-                      :style="{
-                        backgroundColor: 'var(--surface)',
-                        borderColor: 'var(--status-warning-border)',
-                        color: 'var(--text-secondary)',
-                      }"
-                    >
-                      {{ risk }}
-                    </span>
-                  </div>
-                </div>
               </div>
 
               <aside class="surface-card-strong detail-panel rounded-xl border p-4">
@@ -518,7 +501,7 @@ const sourceTypes = computed(() =>
               <EmptyStatePanel
                 eyebrow="调研来源"
                 title="暂无调研报告"
-                description="当前尚未收录公开资料整理、岗位相关性、招聘信号和注意事项。"
+                description="暂无公开调研内容。"
               />
             </template>
           </div>

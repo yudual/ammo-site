@@ -14,7 +14,7 @@ import { majorCautionFor, majorDirections, majorNavItems, majorSuitableFor } fro
           常见去向与岗位差异
         </h1>
         <p class="mt-4 max-w-3xl text-sm leading-7 text-[var(--text-secondary)] md:text-base">
-          方向名称只能帮你定位入口，主要差异更多落在单位、岗位、地点、学历要求和项目环境上。
+          方向名称只是入口，真正要比较的是单位、岗位、地点、学历要求和项目环境。
         </p>
       </header>
 

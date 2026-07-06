@@ -16,7 +16,7 @@ import { graduateCompareRows, graduateNavItems } from '../data/graduate'
           </h1>
         </div>
         <p class="max-w-2xl text-sm leading-7 text-[var(--text-secondary)]">
-          表里的考试科目只作参考，具体科目必须以目标学校当年招生专业目录为准。
+          表里科目只作参考，具体看目标学校当年招生目录。
         </p>
       </header>
 
