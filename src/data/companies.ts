@@ -7682,6 +7682,386 @@ export const companies: Company[] = [
       ]
     }
   },
+  {
+    "id": 60,
+    "name": "北京航天长峰股份有限公司",
+    "ownership": "国企",
+    "city": "北京",
+    "region": "北京市",
+    "salaryRange": "未知",
+    "schedule": "待核对",
+    "scaleOrIndustry": "公共安全 / 军工电子",
+    "highlights": [
+      "航天科工系统",
+      "公共安全",
+      "军工电子",
+      "红外光电"
+    ],
+    "positions": "公共安全、军工电子、光电探测、系统集成",
+    "education": "待核对",
+    "website": "https://www.ascf.com.cn/",
+    "links": [
+      {
+        "title": "北京航天长峰股份有限公司官网",
+        "type": "官网",
+        "url": "https://www.ascf.com.cn/",
+        "note": "官网首页，含业务领域和投资者入口。"
+      },
+      {
+        "title": "公司介绍 - 北京航天长峰",
+        "type": "官网",
+        "url": "https://www.ascf.com.cn/index.php?c=category&id=9",
+        "note": "官网公司介绍栏目。"
+      },
+      {
+        "title": "公共安全 - 北京航天长峰",
+        "type": "官网",
+        "url": "https://www.ascf.com.cn/index.php?c=category&id=30",
+        "note": "官网业务领域入口。"
+      },
+      {
+        "title": "招贤纳士 - 北京航天长峰",
+        "type": "招聘入口",
+        "url": "https://www.ascf.com.cn/index.php?c=category&id=25",
+        "note": "官网人力资源入口。"
+      },
+      {
+        "title": "北京航天长峰股份有限公司 600855",
+        "type": "其他",
+        "url": "https://www.sse.com.cn/assortment/stock/list/info/company/index.shtml?COMPANY_CODE=600855&tabActive=1",
+        "note": "上交所上市公司资料入口。"
+      },
+      {
+        "title": "电子科技大学就业网招聘信息",
+        "type": "学校就业网",
+        "url": "https://www.ese.uestc.edu.cn/info/5138/14846.htm",
+        "note": "学校就业网招聘样本，具体岗位需按年份复核。"
+      },
+      {
+        "title": "军工电子-红外光电 - 北京航天长峰",
+        "type": "官网",
+        "url": "https://www.ascf.com.cn/index.php?c=category&id=32",
+        "note": "官网 · 2026-07-06"
+      },
+      {
+        "title": "北京航天长峰股份有限公司2024年年度报告摘要",
+        "type": "其他",
+        "url": "https://static.cninfo.com.cn/finalpage/2025-04-29/1223364105.PDF",
+        "note": "其他 · 2025-04-29"
+      }
+    ],
+    "description": "航天科工系统公共安全与军工电子平台。",
+    "verification": {
+      "status": "部分核验",
+      "relevanceLevel": "中",
+      "updatedAt": "2026-07-06",
+      "summary": "官网、上交所入口、年度报告和学校就业网招聘样本已对应到同一主体，但岗位与待遇仍需按最新公告复核。",
+      "verifiedFields": [
+        "name",
+        "website",
+        "city",
+        "region",
+        "ownership",
+        "scaleOrIndustry"
+      ],
+      "pendingFields": [
+        "salaryRange",
+        "schedule",
+        "education",
+        "具体岗位",
+        "工作基地"
+      ]
+    },
+    "research": {
+      "updatedAt": "2026-07-06",
+      "status": "主体、上市信息、业务方向和招聘入口已整理，具体岗位要求仍需按最新招聘公告核对。",
+      "relevanceLevel": "中",
+      "conclusion": "北京航天长峰股份有限公司属于航天科工系统上市平台，公开资料显示业务覆盖公共安全、军工电子、电源和红外光电等方向。它和弹药工程更偏安全装备、探测与系统集成近相关，不应写成民爆或弹药生产企业；岗位、学历、薪资和基地仍需按最新公告核对。",
+      "keySignals": [
+        "官网列出公共安全和军工电子业务",
+        "上交所入口可核对上市主体信息",
+        "年度报告可辅助核对业务板块",
+        "学校就业网保留招聘样本"
+      ],
+      "suitableFor": [
+        "公共安全系统方向",
+        "军工电子与光电探测方向",
+        "接受系统集成或工程交付场景的学生"
+      ],
+      "risks": [
+        "业务包含医疗、公共安全和军工电子，不能整体写成爆炸相关",
+        "学校就业网招聘样本需按年份和部门复核",
+        "薪资、作息和工作基地没有稳定公开来源"
+      ],
+      "sources": [
+        {
+          "title": "北京航天长峰股份有限公司官网",
+          "type": "官网",
+          "date": "2026-07-06",
+          "url": "https://www.ascf.com.cn/"
+        },
+        {
+          "title": "公司介绍 - 北京航天长峰",
+          "type": "官网",
+          "date": "2026-07-06",
+          "url": "https://www.ascf.com.cn/index.php?c=category&id=9"
+        },
+        {
+          "title": "公共安全 - 北京航天长峰",
+          "type": "官网",
+          "date": "2026-07-06",
+          "url": "https://www.ascf.com.cn/index.php?c=category&id=30"
+        },
+        {
+          "title": "军工电子-红外光电 - 北京航天长峰",
+          "type": "官网",
+          "date": "2026-07-06",
+          "url": "https://www.ascf.com.cn/index.php?c=category&id=32"
+        },
+        {
+          "title": "北京航天长峰股份有限公司 600855",
+          "type": "其他",
+          "date": "2026-07-06",
+          "url": "https://www.sse.com.cn/assortment/stock/list/info/company/index.shtml?COMPANY_CODE=600855&tabActive=1"
+        },
+        {
+          "title": "北京航天长峰股份有限公司2024年年度报告摘要",
+          "type": "其他",
+          "date": "2025-04-29",
+          "url": "https://static.cninfo.com.cn/finalpage/2025-04-29/1223364105.PDF"
+        },
+        {
+          "title": "电子科技大学就业网招聘信息",
+          "type": "学校就业网",
+          "date": "2026-07-06",
+          "url": "https://www.ese.uestc.edu.cn/info/5138/14846.htm"
+        }
+      ],
+      "searchTrace": [
+        {
+          "round": 1,
+          "queries": [
+            "北京航天长峰股份有限公司官网",
+            "北京航天长峰 600855 上交所",
+            "北京航天长峰 招聘 学校就业网"
+          ],
+          "usefulFindings": [
+            "官网首页展示股票代码和业务领域",
+            "上交所入口可对应上市主体",
+            "学校就业网存在招聘样本"
+          ],
+          "gaps": [
+            "最新岗位明细",
+            "薪资与作息"
+          ]
+        },
+        {
+          "round": 2,
+          "queries": [
+            "site:ascf.com.cn 公共安全 军工电子 红外光电",
+            "北京航天长峰 2024 年年度报告 公共安全"
+          ],
+          "usefulFindings": [
+            "官网业务领域包含公共安全、军工电子-电源和军工电子-红外光电",
+            "年度报告摘要可作上市公司资料补充"
+          ],
+          "gaps": [
+            "岗位与业务板块的逐项对应关系",
+            "具体工作基地"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": 61,
+    "name": "中国船舶重工集团应急预警与救援装备股份有限公司",
+    "ownership": "国企",
+    "city": "武汉",
+    "region": "湖北省",
+    "salaryRange": "未知",
+    "schedule": "待核对",
+    "scaleOrIndustry": "应急救援装备",
+    "highlights": [
+      "中船系统",
+      "应急装备",
+      "救援处置",
+      "官网招聘"
+    ],
+    "positions": "应急装备研发、机械设计、电气控制、工程服务",
+    "education": "本科及以上",
+    "website": "https://www.china-huazhou.com/",
+    "links": [
+      {
+        "title": "中船应急官网",
+        "type": "官网",
+        "url": "https://www.china-huazhou.com/",
+        "note": "官网首页。"
+      },
+      {
+        "title": "公司简介 - 中船应急",
+        "type": "官网",
+        "url": "https://www.china-huazhou.com/about.aspx?nid=1&typeid=1",
+        "note": "官网公司简介，含主体、地点和业务说明。"
+      },
+      {
+        "title": "应急交通工程装备 - 中船应急",
+        "type": "官网",
+        "url": "https://www.china-huazhou.com/products.aspx?nid=3&typeid=10",
+        "note": "官网产品与服务栏目。"
+      },
+      {
+        "title": "应急救援处置装备 - 中船应急",
+        "type": "官网",
+        "url": "https://www.china-huazhou.com/products.aspx?nid=3&typeid=79",
+        "note": "官网产品与服务栏目。"
+      },
+      {
+        "title": "人才招聘 - 中船应急",
+        "type": "招聘入口",
+        "url": "https://www.china-huazhou.com/rczplist.aspx?nid=27&typeid=67",
+        "note": "官网人才招聘栏目，含人才引进计划。"
+      },
+      {
+        "title": "中船应急 300527",
+        "type": "其他",
+        "url": "https://www.cninfo.com.cn/new/disclosure/stock?stockCode=300527&orgId=9900024348",
+        "note": "巨潮资讯上市公司公告入口。"
+      },
+      {
+        "title": "消防救生装备 - 中船应急",
+        "type": "官网",
+        "url": "https://www.china-huazhou.com/products.aspx?nid=3&typeid=13",
+        "note": "官网 · 2026-07-06"
+      }
+    ],
+    "description": "中船系统应急预警与救援装备企业。",
+    "verification": {
+      "status": "部分核验",
+      "relevanceLevel": "中",
+      "updatedAt": "2026-07-06",
+      "summary": "官网、公司简介、产品页、招聘栏目和公告入口均能对应到同一主体，待遇和岗位细节仍需按最新公告核对。",
+      "verifiedFields": [
+        "name",
+        "website",
+        "city",
+        "region",
+        "ownership",
+        "scaleOrIndustry",
+        "positions",
+        "education"
+      ],
+      "pendingFields": [
+        "salaryRange",
+        "schedule",
+        "具体岗位人数",
+        "出差强度",
+        "工作基地"
+      ]
+    },
+    "research": {
+      "updatedAt": "2026-07-06",
+      "status": "主体、产品方向、招聘栏目和上市公告入口已整理，具体岗位与待遇仍需按最新计划复核。",
+      "relevanceLevel": "中",
+      "conclusion": "中国船舶重工集团应急预警与救援装备股份有限公司是中船系统应急装备主体，官网公司简介、产品页和招聘栏目可支撑应急交通、救援处置、消防救生等方向。它和弹药工程属于安全与应急装备近相关，适合关注机械、电气、流体力学和工程服务的学生继续核对。",
+      "keySignals": [
+        "官网公司简介对应中船集团下属单位和武汉主体",
+        "产品页列出应急交通工程装备",
+        "产品页列出应急救援处置装备",
+        "官网人才招聘栏目含近年人才引进计划"
+      ],
+      "suitableFor": [
+        "应急救援装备方向",
+        "机械设计与电气控制方向",
+        "能接受装备制造和工程服务场景的学生"
+      ],
+      "risks": [
+        "方向偏应急装备，不是民爆或弹药制造主体",
+        "岗位、基地和出差强度需按最新招聘计划核对",
+        "薪资和作息没有稳定公开来源"
+      ],
+      "sources": [
+        {
+          "title": "中船应急官网",
+          "type": "官网",
+          "date": "2026-07-06",
+          "url": "https://www.china-huazhou.com/"
+        },
+        {
+          "title": "公司简介 - 中船应急",
+          "type": "官网",
+          "date": "2026-07-06",
+          "url": "https://www.china-huazhou.com/about.aspx?nid=1&typeid=1"
+        },
+        {
+          "title": "应急交通工程装备 - 中船应急",
+          "type": "官网",
+          "date": "2026-07-06",
+          "url": "https://www.china-huazhou.com/products.aspx?nid=3&typeid=10"
+        },
+        {
+          "title": "应急救援处置装备 - 中船应急",
+          "type": "官网",
+          "date": "2026-07-06",
+          "url": "https://www.china-huazhou.com/products.aspx?nid=3&typeid=79"
+        },
+        {
+          "title": "消防救生装备 - 中船应急",
+          "type": "官网",
+          "date": "2026-07-06",
+          "url": "https://www.china-huazhou.com/products.aspx?nid=3&typeid=13"
+        },
+        {
+          "title": "人才招聘 - 中船应急",
+          "type": "招聘入口",
+          "date": "2026-07-06",
+          "url": "https://www.china-huazhou.com/rczplist.aspx?nid=27&typeid=67"
+        },
+        {
+          "title": "中船应急 300527",
+          "type": "其他",
+          "date": "2026-07-06",
+          "url": "https://www.cninfo.com.cn/new/disclosure/stock?stockCode=300527&orgId=9900024348"
+        }
+      ],
+      "searchTrace": [
+        {
+          "round": 1,
+          "queries": [
+            "中国船舶重工集团应急预警与救援装备股份有限公司官网",
+            "中船应急 公司简介",
+            "中船应急 人才招聘"
+          ],
+          "usefulFindings": [
+            "官网可打开并对应主体全称",
+            "公司简介说明中船系统、武汉总部和应急装备方向",
+            "官网人才招聘栏目保留近年招聘计划"
+          ],
+          "gaps": [
+            "最新岗位录用条件的逐条核对",
+            "薪资与作息"
+          ]
+        },
+        {
+          "round": 2,
+          "queries": [
+            "site:china-huazhou.com 应急交通工程装备",
+            "site:china-huazhou.com 应急救援处置装备",
+            "中船应急 300527 巨潮资讯"
+          ],
+          "usefulFindings": [
+            "官网产品页列出应急交通工程装备",
+            "官网产品页列出应急救援处置装备和消防救生装备",
+            "巨潮入口可作为上市公告补充"
+          ],
+          "gaps": [
+            "具体岗位对应产品板块",
+            "工作基地和出差频率"
+          ]
+        }
+      ]
+    }
+  },
 ]
 
 export function getCompanyById(id: number) {
