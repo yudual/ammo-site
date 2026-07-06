@@ -240,23 +240,32 @@ async function runInteractionChecks(cdpBase, baseUrl) {
     await navigate(client, baseUrl, '/companies')
     const companyFlow = await evaluate(client, `(async () => {
       const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-      const input = document.querySelector('input[placeholder="公司、城市、岗位、民爆、火工品"]');
+      const waitFor = async (getter, label, timeout = 3000) => {
+        const startedAt = Date.now();
+        while (Date.now() - startedAt < timeout) {
+          const value = getter();
+          if (value) return value;
+          await wait(50);
+        }
+        throw new Error('等待页面元素超时：' + label);
+      };
+      const input = await waitFor(() => document.querySelector('input[placeholder="公司、城市、岗位、民爆、火工品"]'), '企业筛选输入框');
       input.value = '防爆';
       input.dispatchEvent(new Event('input', { bubbles: true }));
       await wait(350);
-      const detail = [...document.querySelectorAll('a[href^="/companies/"]')].find((link) => link.textContent.includes('看详情'));
+      const detail = await waitFor(() => [...document.querySelectorAll('a[href^="/companies/"]')].find((link) => link.textContent.includes('看详情')), '企业详情入口');
       detail.click();
-      await wait(450);
+      await waitFor(() => location.pathname.startsWith('/companies/') && document.querySelector('h1')?.innerText.trim(), '企业详情页');
       const before = { url: location.pathname + location.search, h1: document.querySelector('h1')?.innerText || '' };
       const next = [...document.querySelectorAll('nav[aria-label="相邻条目"] a[href^="/companies/"]')].find((link) => link.textContent.includes('下一家'));
       if (next) {
         next.click();
-        await wait(450);
+        await waitFor(() => (location.pathname + location.search) !== before.url && (document.querySelector('h1')?.innerText || '') !== before.h1, '企业下一家切换');
       }
       const after = { url: location.pathname + location.search, h1: document.querySelector('h1')?.innerText || '' };
-      const back = [...document.querySelectorAll('button')].find((button) => button.textContent.includes('回企业名录'));
+      const back = await waitFor(() => [...document.querySelectorAll('button')].find((button) => button.textContent.includes('回企业名录')), '回企业名录按钮');
       back.click();
-      await wait(450);
+      await waitFor(() => location.pathname === '/companies' && document.querySelector('h1')?.innerText.includes('企业名录'), '企业名录返回');
       return {
         before,
         after,
@@ -270,27 +279,36 @@ async function runInteractionChecks(cdpBase, baseUrl) {
     await navigate(client, baseUrl, '/universities')
     const universityFlow = await evaluate(client, `(async () => {
       const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-      const input = document.querySelector('input[placeholder="比如：北京、兵器、211"]');
+      const waitFor = async (getter, label, timeout = 3000) => {
+        const startedAt = Date.now();
+        while (Date.now() - startedAt < timeout) {
+          const value = getter();
+          if (value) return value;
+          await wait(50);
+        }
+        throw new Error('等待页面元素超时：' + label);
+      };
+      const input = await waitFor(() => document.querySelector('input[placeholder="比如：北京、兵器、211"]'), '院校筛选输入框');
       input.value = '北京';
       input.dispatchEvent(new Event('input', { bubbles: true }));
       await wait(350);
-      const detail = [...document.querySelectorAll('a[href^="/universities/"]')].find((link) => link.textContent.includes('看详情'));
+      const detail = await waitFor(() => [...document.querySelectorAll('a[href^="/universities/"]')].find((link) => link.textContent.includes('看详情')), '院校详情入口');
       detail.click();
-      await wait(450);
+      await waitFor(() => location.pathname.startsWith('/universities/') && document.querySelector('h1')?.innerText.trim(), '院校详情页');
       const before = { url: location.pathname + location.search, h1: document.querySelector('h1')?.innerText || '' };
       const next = [...document.querySelectorAll('nav[aria-label="相邻条目"] a[href^="/universities/"]')].find((link) => link.textContent.includes('下一所'));
       if (next) {
         next.click();
-        await wait(450);
+        await waitFor(() => (location.pathname + location.search) !== before.url && (document.querySelector('h1')?.innerText || '') !== before.h1, '院校下一所切换');
       }
       const after = { url: location.pathname + location.search, h1: document.querySelector('h1')?.innerText || '' };
-      const share = [...document.querySelectorAll('button')].find((button) => button.textContent.includes('分享本页'));
+      const share = await waitFor(() => [...document.querySelectorAll('button')].find((button) => button.textContent.includes('分享本页')), '分享本页按钮');
       share.click();
-      await wait(100);
+      await waitFor(() => document.body.innerText.includes('链接已复制'), '复制反馈');
       const copiedText = document.body.innerText.includes('链接已复制');
-      const back = [...document.querySelectorAll('button')].find((button) => button.textContent.includes('回院校一览'));
+      const back = await waitFor(() => [...document.querySelectorAll('button')].find((button) => button.textContent.includes('回院校一览')), '回院校一览按钮');
       back.click();
-      await wait(450);
+      await waitFor(() => location.pathname === '/universities' && document.querySelector('h1')?.innerText.includes('院校一览'), '院校一览返回');
       return {
         before,
         after,
@@ -305,17 +323,25 @@ async function runInteractionChecks(cdpBase, baseUrl) {
     await navigate(client, baseUrl, '/')
     const searchFlow = await evaluate(client, `(async () => {
       const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-      const searchButton = document.querySelector('button[aria-label="全站搜索"]');
+      const waitFor = async (getter, label, timeout = 3000) => {
+        const startedAt = Date.now();
+        while (Date.now() - startedAt < timeout) {
+          const value = getter();
+          if (value) return value;
+          await wait(50);
+        }
+        throw new Error('等待页面元素超时：' + label);
+      };
+      const searchButton = await waitFor(() => document.querySelector('button[aria-label="全站搜索"]'), '全站搜索按钮');
       searchButton.click();
-      await wait(150);
-      const input = document.querySelector('input[aria-label="搜索关键词"]');
+      const input = await waitFor(() => document.querySelector('input[aria-label="搜索关键词"]'), '全站搜索输入框');
       const opened = Boolean(input);
       input.value = '控制';
       input.dispatchEvent(new Event('input', { bubbles: true }));
-      await wait(250);
+      await waitFor(() => document.body.innerText.includes('考研') || document.body.innerText.includes('控制科学'), '搜索结果');
       const hasGraduate = document.body.innerText.includes('考研') || document.body.innerText.includes('控制科学');
       input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
-      await wait(450);
+      await waitFor(() => location.pathname.startsWith('/graduate'), '搜索跳转');
       return {
         opened,
         hasGraduate,
