@@ -31,6 +31,33 @@ const PAGE_SIZE_OPTIONS = [10, 20, 30] as const
 const listPageSize = ref<(typeof PAGE_SIZE_OPTIONS)[number]>(10)
 const currentCompanyPage = ref(1)
 const companyListTop = ref<HTMLElement | null>(null)
+type CompanyDirection =
+  | '民爆产品'
+  | '爆破工程'
+  | '电子雷管'
+  | '含能材料'
+  | '火工品'
+  | '安全评价 / 检测'
+  | '智能装备'
+  | '军工科研 / 试验'
+const directionOptions: CompanyDirection[] = [
+  '民爆产品',
+  '爆破工程',
+  '电子雷管',
+  '含能材料',
+  '火工品',
+  '安全评价 / 检测',
+  '智能装备',
+  '军工科研 / 试验',
+]
+const relevanceOptions: RelevanceLevel[] = ['高', '中', '低', '待核对']
+const statusOptions: VerificationStatus[] = ['已核验', '部分核验', '过期待复查']
+const relevanceRank: Record<RelevanceLevel, number> = {
+  高: 0,
+  中: 1,
+  低: 2,
+  待核对: 3,
+}
 
 const isInitializing = ref(true)
 
@@ -113,38 +140,9 @@ watch(currentCompanyPage, () => {
 
 const { isCopied, copyShareLink } = useShareLink()
 
-type CompanyDirection =
-  | '民爆产品'
-  | '爆破工程'
-  | '电子雷管'
-  | '含能材料'
-  | '火工品'
-  | '安全评价 / 检测'
-  | '智能装备'
-  | '军工科研 / 试验'
-
 const cityOptions = computed(() =>
   Array.from(new Set(companies.map((company) => `${company.city} · ${company.region}`))).sort(),
 )
-
-const directionOptions: CompanyDirection[] = [
-  '民爆产品',
-  '爆破工程',
-  '电子雷管',
-  '含能材料',
-  '火工品',
-  '安全评价 / 检测',
-  '智能装备',
-  '军工科研 / 试验',
-]
-const relevanceOptions: RelevanceLevel[] = ['高', '中', '低', '待核对']
-const statusOptions: VerificationStatus[] = ['已核验', '部分核验', '过期待复查']
-const relevanceRank: Record<RelevanceLevel, number> = {
-  高: 0,
-  中: 1,
-  低: 2,
-  待核对: 3,
-}
 
 const activeFilterCount = computed(
   () =>
@@ -316,7 +314,11 @@ const companyPageNumbers = computed(() =>
 
 watch(filteredCompanies, () => {
   if (isInitializing.value) return
-  currentCompanyPage.value = 1
+
+  const maxPage = companyPageCount.value
+  if (currentCompanyPage.value > maxPage) {
+    currentCompanyPage.value = maxPage
+  }
 })
 
 const ownershipCounts = computed(() => countBy(companies, (company) => company.ownership))
@@ -353,6 +355,13 @@ async function setCompanyPage(page: number) {
   currentCompanyPage.value = nextPage
   await nextTick()
   companyListTop.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
+function updateFilters(callback: () => void) {
+  callback()
+  if (!isInitializing.value) {
+    currentCompanyPage.value = 1
+  }
 }
 </script>
 
@@ -575,7 +584,7 @@ async function setCompanyPage(page: number) {
                     borderColor: selectedRelevance === '高' ? 'var(--accent)' : 'var(--border)',
                     color: selectedRelevance === '高' ? 'var(--accent)' : 'var(--text-secondary)',
                   }"
-                  @click="toggleHighRelevance"
+                  @click="updateFilters(toggleHighRelevance)"
                 >
                   高相关
                 </button>
@@ -588,7 +597,7 @@ async function setCompanyPage(page: number) {
                     borderColor: onlyWithResearch ? 'var(--accent)' : 'var(--border)',
                     color: onlyWithResearch ? 'var(--accent)' : 'var(--text-secondary)',
                   }"
-                  @click="toggleWithResearch"
+                  @click="updateFilters(toggleWithResearch)"
                 >
                   有调研
                 </button>
@@ -601,7 +610,7 @@ async function setCompanyPage(page: number) {
                     borderColor: selectedStatus === '部分核验' ? 'var(--accent)' : 'var(--border)',
                     color: selectedStatus === '部分核验' ? 'var(--accent)' : 'var(--text-secondary)',
                   }"
-                  @click="togglePartialVerification"
+                  @click="updateFilters(togglePartialVerification)"
                 >
                   部分核验
                 </button>

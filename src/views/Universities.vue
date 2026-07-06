@@ -31,6 +31,15 @@ const PAGE_SIZE_OPTIONS = [10, 20, 30] as const
 const listPageSize = ref<(typeof PAGE_SIZE_OPTIONS)[number]>(10)
 const currentUniversityPage = ref(1)
 const universityListTop = ref<HTMLElement | null>(null)
+const tierOptions: UniversityTier[] = ['985 / 211', '211', '普通本科']
+const relevanceOptions: RelevanceLevel[] = ['高', '中', '低', '待核对']
+const statusOptions: VerificationStatus[] = ['已核验', '部分核验', '过期待复查']
+const relevanceRank: Record<RelevanceLevel, number> = {
+  高: 0,
+  中: 1,
+  低: 2,
+  待核对: 3,
+}
 
 const isInitializing = ref(true)
 
@@ -109,16 +118,7 @@ watch(currentUniversityPage, () => {
 })
 
 const { isCopied, copyShareLink } = useShareLink()
-const tierOptions: UniversityTier[] = ['985 / 211', '211', '普通本科']
-const relevanceOptions: RelevanceLevel[] = ['高', '中', '低', '待核对']
-const statusOptions: VerificationStatus[] = ['已核验', '部分核验', '过期待复查']
 const priorityUniversityIds = ['aust']
-const relevanceRank: Record<RelevanceLevel, number> = {
-  高: 0,
-  中: 1,
-  低: 2,
-  待核对: 3,
-}
 const provinceOptions = computed(() =>
   Array.from(new Set(universities.map((university) => university.province))).sort(),
 )
@@ -273,7 +273,11 @@ const universityPageNumbers = computed(() =>
 
 watch(filteredUniversities, () => {
   if (isInitializing.value) return
-  currentUniversityPage.value = 1
+
+  const maxPage = universityPageCount.value
+  if (currentUniversityPage.value > maxPage) {
+    currentUniversityPage.value = maxPage
+  }
 })
 
 const tierCounts = computed(() => countBy(universities, (university) => university.tier))
@@ -311,6 +315,13 @@ async function setUniversityPage(page: number) {
   currentUniversityPage.value = nextPage
   await nextTick()
   universityListTop.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
+function updateFilters(callback: () => void) {
+  callback()
+  if (!isInitializing.value) {
+    currentUniversityPage.value = 1
+  }
 }
 </script>
 
@@ -516,7 +527,7 @@ async function setUniversityPage(page: number) {
                     borderColor: selectedRelevance === '高' ? 'var(--accent)' : 'var(--border)',
                     color: selectedRelevance === '高' ? 'var(--accent)' : 'var(--text-secondary)',
                   }"
-                  @click="toggleHighRelevance"
+                  @click="updateFilters(toggleHighRelevance)"
                 >
                   高相关
                 </button>
@@ -529,7 +540,7 @@ async function setUniversityPage(page: number) {
                     borderColor: onlyWithResearch ? 'var(--accent)' : 'var(--border)',
                     color: onlyWithResearch ? 'var(--accent)' : 'var(--text-secondary)',
                   }"
-                  @click="toggleWithResearch"
+                  @click="updateFilters(toggleWithResearch)"
                 >
                   有调研
                 </button>
@@ -542,7 +553,7 @@ async function setUniversityPage(page: number) {
                     borderColor: selectedStatus === '部分核验' ? 'var(--accent)' : 'var(--border)',
                     color: selectedStatus === '部分核验' ? 'var(--accent)' : 'var(--text-secondary)',
                   }"
-                  @click="togglePartialVerification"
+                  @click="updateFilters(togglePartialVerification)"
                 >
                   部分核验
                 </button>
