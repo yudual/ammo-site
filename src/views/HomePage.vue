@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { companies } from '../data/companies'
 import { universities } from '../data/universities'
-import AppIcon from '../components/AppIcon.vue'
 
 type HeroRouteItem = {
   label: string
@@ -61,9 +60,6 @@ const currentYear = new Date().getFullYear()
         <h1 class="text-3xl sm:text-5xl font-extrabold leading-tight tracking-tight text-[var(--text-primary)]">
           本专业去哪查院校、单位和考研线索
         </h1>
-        <p class="mt-5 max-w-2xl text-sm leading-relaxed text-[var(--text-secondary)] sm:text-base">
-          收录本专业对口高校与兵工民爆单位，附考研方向对比。每条附来源与可信度标注，待核对内容不写成确定事实，使用前以官方公告为准。
-        </p>
       </header>
 
       <!-- 四个核心入口卡片 -->
@@ -116,44 +112,8 @@ const currentYear = new Date().getFullYear()
         </div>
       </section>
 
-      <!-- 第二屏：你可以用它查什么 -->
-      <section class="mt-16 sm:mt-24">
-        <div class="text-center mb-10">
-          <h2 class="text-2xl font-bold tracking-tight text-[var(--text-primary)]">本站能查到什么</h2>
-          <p class="mt-2 text-xs sm:text-sm text-[var(--text-tertiary)]">每条都附来源与可信度标注，不替你下结论。</p>
-        </div>
-
-        <div class="grid gap-6 md:grid-cols-3">
-          <div class="border-soft rounded-xl border p-5 bg-[var(--surface)]">
-            <h3 class="text-base font-bold text-[var(--accent)] flex items-center gap-2">
-              <AppIcon name="school" class="w-4 h-4" /> 高校入口与招生线索
-            </h3>
-            <p class="mt-3 text-sm leading-7 text-[var(--text-secondary)]">
-              收录本专业对口高校，标注层次与主攻方向，附研招网、招生简章与学院官网入口。具体招生计划与专业方向以当年学校官方公告为准。
-            </p>
-          </div>
-          <div class="border-soft rounded-xl border p-5 bg-[var(--surface)]">
-            <h3 class="text-base font-bold text-[var(--accent)] flex items-center gap-2">
-              <AppIcon name="building" class="w-4 h-4" /> 兵工与民爆单位名录
-            </h3>
-            <p class="mt-3 text-sm leading-7 text-[var(--text-secondary)]">
-              汇集兵工、民爆主要单位，列出地区、作息风评参考与学历起步要求。作息与加班风评为历史样本，受具体部门与项目周期影响明显，仅供参考。
-            </p>
-          </div>
-          <div class="border-soft rounded-xl border p-5 bg-[var(--surface)]">
-            <h3 class="text-base font-bold text-[var(--accent)] flex items-center gap-2">
-              <AppIcon name="route" class="w-4 h-4" /> 考研方向与路线对比
-            </h3>
-            <p class="mt-3 text-sm leading-7 text-[var(--text-secondary)]">
-              对比顺接本行业、半跨近缘专业、彻底跨考三类路线，附考试科目、准备节点与录取线参考。具体招生方向与名额以目标院校当年研招公告为准。
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <!-- 第三屏：当前资料状态与数据校验说明 -->
+      <!-- 数据概览 -->
       <section class="mt-16 sm:mt-24 grid gap-6 md:grid-cols-5 items-center">
-        <!-- 统计部分占2列 -->
         <div class="md:col-span-2 grid grid-cols-3 gap-3">
           <div class="bento-glass-inset rounded-xl p-4 flex flex-col justify-center items-center text-center">
             <span class="text-xs text-[var(--text-tertiary)] mb-1">已收录高校</span>
@@ -168,31 +128,12 @@ const currentYear = new Date().getFullYear()
             <strong class="text-2xl font-black text-[var(--accent)]">{{ highRelevanceCount }} 条</strong>
           </div>
         </div>
-
-        <!-- 边界说明占3列 -->
-        <div class="border-soft md:col-span-3 rounded-xl border p-5 bg-[var(--surface)]">
-          <h3 class="text-base font-bold text-[var(--text-primary)] flex items-center gap-2"><AppIcon name="search" class="w-4 h-4" /> 资料核验边界说明</h3>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-secondary)]">
-            每条目都带<strong>【核验状态标签】</strong>（已核验、部分核验、过期待复查）。官方招生指标与工商信息定期同步；薪资、作息等动态信息仅作"学长风评 / 招聘线索"补充参考，并标注可信度边界，不写成确定事实。
-          </p>
-        </div>
-      </section>
-
-      <!-- 第四屏：使用提醒与免责公告 -->
-      <section class="mt-16 sm:mt-24 rounded-xl border p-6" :style="{ backgroundColor: 'color-mix(in srgb, var(--surface) 90%, var(--accent-soft) 10%)', borderColor: 'var(--border)' }">
-          <h3 class="text-base font-bold text-[var(--accent)] flex items-center gap-2"><AppIcon name="warning" class="w-4 h-4" /> 报考与求职前的核对提醒</h3>
-        <ul class="mt-4 space-y-3 text-xs sm:text-sm leading-6 text-[var(--text-secondary)] list-disc pl-5">
-          <li><strong>官方公告为准</strong>：由于各高校研招规模、专业方向及企业的编制指标每年都有变动，报考及求职前请务必前往官方研招网或用人单位招聘主页再次确认。</li>
-          <li><strong>动态信息局限性</strong>：网站中收集的作息与加班风评代表历史样本，受具体部门及项目周期影响极大，请理性看待，勿作绝对化推论。</li>
-          <li><strong>非官方背景</strong>：本站为客观学术导航，无任何官方代招、带路中介性质，所有内容皆为公益性质开放阅读。</li>
-        </ul>
       </section>
 
       <!-- Footer -->
       <footer class="mt-16 border-t border-[var(--border)] pt-6 w-full mx-auto">
         <div class="flex flex-col gap-4 text-xs sm:text-sm text-[var(--text-secondary)] md:flex-row md:items-center md:justify-between">
           <div class="flex flex-wrap items-center gap-6">
-            <span class="font-bold text-[var(--text-primary)] tracking-wide">CODEX</span>
             <RouterLink to="/about" class="transition hover:text-[var(--accent)]">关于导航站</RouterLink>
             <a href="mailto:ty368685189@gmail.com" class="transition hover:text-[var(--accent)]">提供线索 / 联系作者</a>
           </div>

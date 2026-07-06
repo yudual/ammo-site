@@ -60,9 +60,23 @@ const relevanceRank: Record<RelevanceLevel, number> = {
 }
 
 const isInitializing = ref(true)
+const isSyncingFromUrl = ref(false)
+
+function resetFilterState() {
+  keyword.value = ''
+  selectedOwnership.value = '全部'
+  selectedCity.value = '全部'
+  selectedDirection.value = '全部'
+  selectedRelevance.value = '全部'
+  selectedStatus.value = '全部'
+  onlyWithResearch.value = false
+  currentCompanyPage.value = 1
+  listPageSize.value = 10
+}
 
 // 从 URL 初始化筛选状态
 const initFromQuery = () => {
+  resetFilterState()
   const query = route.query
   if (query.keyword) keyword.value = String(query.keyword)
   if (query.ownership && companyOwnershipOptions.includes(String(query.ownership) as (typeof companyOwnershipOptions)[number])) {
@@ -92,7 +106,9 @@ const initFromQuery = () => {
 initFromQuery()
 
 nextTick(() => {
+  clampCompanyPage()
   isInitializing.value = false
+  updateUrlQuery()
 })
 
 const updateUrlQuery = () => {
@@ -108,9 +124,23 @@ const updateUrlQuery = () => {
   if (currentCompanyPage.value > 1) query.page = String(currentCompanyPage.value)
   if (listPageSize.value !== 10) query.size = String(listPageSize.value)
 
+  const currentQuery = route.query
+  const currentEntries = Object.entries(currentQuery).filter(([, value]) => value !== undefined && value !== null && value !== '')
+  const nextEntries = Object.entries(query)
+  const sameKeys =
+    nextEntries.length === currentEntries.length &&
+    nextEntries.every(([key, value]) => String(currentQuery[key] ?? '') === value)
+
+  if (sameKeys) {
+    return
+  }
+
+  isSyncingFromUrl.value = true
   router.replace({
     path: route.path,
     query,
+  }).finally(() => {
+    isSyncingFromUrl.value = false
   })
 }
 
@@ -127,14 +157,14 @@ watch(
     listPageSize,
   ],
   () => {
-    if (isInitializing.value) return
+    if (isInitializing.value || isSyncingFromUrl.value) return
     currentCompanyPage.value = 1
     updateUrlQuery()
   }
 )
 
 watch(currentCompanyPage, () => {
-  if (isInitializing.value) return
+  if (isInitializing.value || isSyncingFromUrl.value) return
   updateUrlQuery()
 })
 
@@ -303,6 +333,15 @@ const filteredCompanies = computed(() => {
 const companyPageCount = computed(() =>
   Math.max(Math.ceil(filteredCompanies.value.length / listPageSize.value), 1),
 )
+
+function clampCompanyPage() {
+  const nextPage = Math.min(Math.max(currentCompanyPage.value, 1), companyPageCount.value)
+
+  if (nextPage !== currentCompanyPage.value) {
+    currentCompanyPage.value = nextPage
+  }
+}
+
 const companyPageStart = computed(() => (currentCompanyPage.value - 1) * listPageSize.value)
 const visibleCompanies = computed(() =>
   filteredCompanies.value.slice(companyPageStart.value, companyPageStart.value + listPageSize.value),
@@ -314,11 +353,7 @@ const companyPageNumbers = computed(() =>
 
 watch(filteredCompanies, () => {
   if (isInitializing.value) return
-
-  const maxPage = companyPageCount.value
-  if (currentCompanyPage.value > maxPage) {
-    currentCompanyPage.value = maxPage
-  }
+  clampCompanyPage()
 })
 
 const ownershipCounts = computed(() => countBy(companies, (company) => company.ownership))
@@ -363,6 +398,24 @@ function updateFilters(callback: () => void) {
     currentCompanyPage.value = 1
   }
 }
+
+watch(
+  () => route.query,
+  () => {
+    if (isInitializing.value || isSyncingFromUrl.value) return
+    isSyncingFromUrl.value = true
+    try {
+      initFromQuery()
+      clampCompanyPage()
+    } finally {
+      nextTick(() => {
+        isSyncingFromUrl.value = false
+        updateUrlQuery()
+      })
+    }
+  },
+  { deep: true },
+)
 </script>
 
 <template>
@@ -770,14 +823,14 @@ function updateFilters(callback: () => void) {
           >
             <div class="flex items-center gap-2 text-[var(--text-secondary)]">
               <span class="text-sm">每页</span>
-              <button v-for="opt in PAGE_SIZE_OPTIONS" :key="opt" type="button" class="min-h-9 min-w-9 rounded-lg border px-2.5 py-1 text-sm font-medium font-numeric transition hover:-translate-y-0.5" :aria-pressed="opt === listPageSize ? 'true' : 'false'" :style="{ backgroundColor: opt === listPageSize ? 'var(--accent)' : 'var(--surface-strong)', borderColor: opt === listPageSize ? 'var(--accent)' : 'var(--border)', color: opt === listPageSize ? '#ffffff' : 'var(--text-secondary)' }" @click="listPageSize = opt">{{ opt }}</button>
+              <button v-for="opt in PAGE_SIZE_OPTIONS" :key="opt" type="button" class="min-h-8 min-w-8 rounded-lg border px-2 py-1 text-xs font-medium font-numeric transition hover:-translate-y-0.5 sm:min-h-9 sm:min-w-9 sm:px-2.5 sm:text-sm" :aria-pressed="opt === listPageSize ? 'true' : 'false'" :style="{ backgroundColor: opt === listPageSize ? 'var(--accent)' : 'var(--surface-strong)', borderColor: opt === listPageSize ? 'var(--accent)' : 'var(--border)', color: opt === listPageSize ? '#ffffff' : 'var(--text-secondary)' }" @click="listPageSize = opt">{{ opt }}</button>
               <span class="text-sm">家</span>
             </div>
 
             <div class="flex flex-wrap items-center justify-center gap-2">
               <button
                 type="button"
-                class="btn-ghost rounded-lg border px-3 py-2 font-medium transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45"
+                class="btn-ghost rounded-lg border px-2.5 py-1.5 text-xs font-medium transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45 sm:px-3 sm:py-2 sm:text-sm"
                 :disabled="currentCompanyPage === 1"
                 @click="setCompanyPage(currentCompanyPage - 1)"
               >
@@ -787,7 +840,7 @@ function updateFilters(callback: () => void) {
               <template v-for="(page, index) in companyPageNumbers" :key="`${page}-${index}`">
                 <span
                   v-if="page === 'ellipsis'"
-                  class="flex min-h-10 min-w-10 items-center justify-center px-2 font-medium text-[var(--text-tertiary)]"
+                  class="flex min-h-8 min-w-8 items-center justify-center px-1.5 font-medium text-[var(--text-tertiary)] sm:min-h-10 sm:min-w-10 sm:px-2"
                   aria-hidden="true"
                 >
                   ...
@@ -795,7 +848,7 @@ function updateFilters(callback: () => void) {
                 <button
                   v-else
                   type="button"
-                  class="btn-ghost min-h-10 min-w-10 rounded-lg border px-3 py-2 font-medium font-numeric transition hover:-translate-y-0.5"
+                  class="btn-ghost min-h-8 min-w-8 rounded-lg border px-2 py-1.5 text-xs font-medium font-numeric transition hover:-translate-y-0.5 sm:min-h-10 sm:min-w-10 sm:px-3 sm:py-2 sm:text-sm"
                   :aria-current="page === currentCompanyPage ? 'page' : undefined"
                   @click="setCompanyPage(page)"
                 >
@@ -805,7 +858,7 @@ function updateFilters(callback: () => void) {
 
               <button
                 type="button"
-                class="btn-ghost rounded-lg border px-3 py-2 font-medium transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45"
+                class="btn-ghost rounded-lg border px-2.5 py-1.5 text-xs font-medium transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45 sm:px-3 sm:py-2 sm:text-sm"
                 :disabled="currentCompanyPage === companyPageCount"
                 @click="setCompanyPage(currentCompanyPage + 1)"
               >

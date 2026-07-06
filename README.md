@@ -37,6 +37,16 @@ npm run qa -- --verbose-routes
 npm run qa:routes
 ```
 
+改前端体验、搜索、筛选、详情页切换或按钮链路后，建议跑：
+
+```bash
+npm run build
+npm run qa:interactions
+npm run qa:routes
+```
+
+`npm run qa:interactions` 会用本地预览和无头浏览器检查移动端溢出、筛选 URL、详情页相邻切换返回、复制链接反馈、全站搜索跳转和外链基本属性。
+
 如果只想跑最基础的构建：
 
 ```bash

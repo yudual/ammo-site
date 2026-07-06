@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "qa": "node scripts/qa-check.mjs",
     "qa:routes": "node scripts/qa-check.mjs --skip-build --skip-audit",
+    "qa:interactions": "node scripts/interaction-check.mjs",
     "check:data-quality": "node scripts/check-data-quality.mjs",
     "score:drafts": "node scripts/score-drafts.mjs",
     "score:markdown": "node scripts/score-markdown-drafts.mjs",

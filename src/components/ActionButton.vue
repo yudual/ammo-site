@@ -26,18 +26,6 @@ const props = withDefaults(
   },
 )
 
-const componentTag = computed(() => {
-  if (props.to) {
-    return RouterLink
-  }
-
-  if (props.href) {
-    return 'a'
-  }
-
-  return 'button'
-})
-
 const buttonClass = computed(() =>
   [
     'inline-flex items-center justify-center rounded-lg border font-medium transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45',
@@ -71,20 +59,56 @@ const buttonStyle = computed(() => {
     color: 'var(--text-secondary)',
   }
 })
+
+function onRouterLinkClick(event: MouseEvent, navigate: (event?: MouseEvent) => void) {
+  if (props.disabled) {
+    event.preventDefault()
+    return
+  }
+
+  navigate(event)
+}
 </script>
 
 <template>
-  <component
-    :is="componentTag"
+  <RouterLink
+    v-if="to"
     :to="to"
+    custom
+    v-slot="{ href: resolvedHref, navigate }"
+  >
+    <a
+      :href="resolvedHref"
+      :target="newTab ? '_blank' : undefined"
+      :rel="newTab ? 'noopener noreferrer' : undefined"
+      :aria-disabled="disabled ? 'true' : undefined"
+      :tabindex="disabled ? -1 : undefined"
+      :class="buttonClass"
+      :style="buttonStyle"
+      @click="onRouterLinkClick($event, navigate)"
+    >
+      <slot />
+    </a>
+  </RouterLink>
+
+  <a
+    v-else-if="href"
     :href="href"
-    :target="href && newTab ? '_blank' : undefined"
-    :rel="href && newTab ? 'noopener noreferrer' : undefined"
-    :type="!to && !href ? type : undefined"
-    :disabled="!to && !href ? disabled : undefined"
+    :target="newTab ? '_blank' : undefined"
+    :rel="newTab ? 'noopener noreferrer' : undefined"
     :class="buttonClass"
     :style="buttonStyle"
   >
     <slot />
-  </component>
+  </a>
+
+  <button
+    v-else
+    :type="type"
+    :disabled="disabled"
+    :class="buttonClass"
+    :style="buttonStyle"
+  >
+    <slot />
+  </button>
 </template>

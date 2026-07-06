@@ -42,9 +42,22 @@ const relevanceRank: Record<RelevanceLevel, number> = {
 }
 
 const isInitializing = ref(true)
+const isSyncingFromUrl = ref(false)
+
+function resetFilterState() {
+  keyword.value = ''
+  selectedTier.value = '全部'
+  selectedProvince.value = '全部'
+  selectedRelevance.value = '全部'
+  selectedStatus.value = '全部'
+  onlyWithResearch.value = false
+  currentUniversityPage.value = 1
+  listPageSize.value = 10
+}
 
 // 从 URL 初始化筛选状态
 const initFromQuery = () => {
+  resetFilterState()
   const query = route.query
   if (query.keyword) keyword.value = String(query.keyword)
   if (query.tier && tierOptions.includes(String(query.tier) as UniversityTier)) {
@@ -73,7 +86,9 @@ const initFromQuery = () => {
 initFromQuery()
 
 nextTick(() => {
+  clampUniversityPage()
   isInitializing.value = false
+  updateUrlQuery()
 })
 
 const updateUrlQuery = () => {
@@ -88,9 +103,24 @@ const updateUrlQuery = () => {
   if (currentUniversityPage.value > 1) query.page = String(currentUniversityPage.value)
   if (listPageSize.value !== 10) query.size = String(listPageSize.value)
   
+  const nextQuery = query
+  const currentQuery = route.query
+  const currentEntries = Object.entries(currentQuery).filter(([, value]) => value !== undefined && value !== null && value !== '')
+  const nextEntries = Object.entries(nextQuery)
+  const sameKeys =
+    nextEntries.length === currentEntries.length &&
+    nextEntries.every(([key, value]) => String(currentQuery[key] ?? '') === value)
+
+  if (sameKeys) {
+    return
+  }
+
+  isSyncingFromUrl.value = true
   router.replace({
     path: route.path,
-    query
+    query: nextQuery,
+  }).finally(() => {
+    isSyncingFromUrl.value = false
   })
 }
 
@@ -106,14 +136,14 @@ watch(
     listPageSize,
   ],
   () => {
-    if (isInitializing.value) return
+    if (isInitializing.value || isSyncingFromUrl.value) return
     currentUniversityPage.value = 1
     updateUrlQuery()
   }
 )
 
 watch(currentUniversityPage, () => {
-  if (isInitializing.value) return
+  if (isInitializing.value || isSyncingFromUrl.value) return
   updateUrlQuery()
 })
 
@@ -259,6 +289,15 @@ const filteredUniversities = computed(() => {
 const universityPageCount = computed(() =>
   Math.max(Math.ceil(filteredUniversities.value.length / listPageSize.value), 1),
 )
+
+function clampUniversityPage() {
+  const nextPage = Math.min(Math.max(currentUniversityPage.value, 1), universityPageCount.value)
+
+  if (nextPage !== currentUniversityPage.value) {
+    currentUniversityPage.value = nextPage
+  }
+}
+
 const universityPageStart = computed(() => (currentUniversityPage.value - 1) * listPageSize.value)
 const visibleUniversities = computed(() =>
   filteredUniversities.value.slice(
@@ -273,11 +312,7 @@ const universityPageNumbers = computed(() =>
 
 watch(filteredUniversities, () => {
   if (isInitializing.value) return
-
-  const maxPage = universityPageCount.value
-  if (currentUniversityPage.value > maxPage) {
-    currentUniversityPage.value = maxPage
-  }
+  clampUniversityPage()
 })
 
 const tierCounts = computed(() => countBy(universities, (university) => university.tier))
@@ -323,6 +358,24 @@ function updateFilters(callback: () => void) {
     currentUniversityPage.value = 1
   }
 }
+
+watch(
+  () => route.query,
+  () => {
+    if (isInitializing.value || isSyncingFromUrl.value) return
+    isSyncingFromUrl.value = true
+    try {
+      initFromQuery()
+      clampUniversityPage()
+    } finally {
+      nextTick(() => {
+        isSyncingFromUrl.value = false
+        updateUrlQuery()
+      })
+    }
+  },
+  { deep: true },
+)
 </script>
 
 <template>
@@ -718,14 +771,14 @@ function updateFilters(callback: () => void) {
           >
             <div class="flex items-center gap-2 text-[var(--text-secondary)]">
               <span class="text-sm">每页</span>
-              <button v-for="opt in PAGE_SIZE_OPTIONS" :key="opt" type="button" class="min-h-9 min-w-9 rounded-lg border px-2.5 py-1 text-sm font-medium font-numeric transition hover:-translate-y-0.5" :aria-pressed="opt === listPageSize ? 'true' : 'false'" :style="{ backgroundColor: opt === listPageSize ? 'var(--accent)' : 'var(--surface-strong)', borderColor: opt === listPageSize ? 'var(--accent)' : 'var(--border)', color: opt === listPageSize ? '#ffffff' : 'var(--text-secondary)' }" @click="listPageSize = opt">{{ opt }}</button>
+              <button v-for="opt in PAGE_SIZE_OPTIONS" :key="opt" type="button" class="min-h-8 min-w-8 rounded-lg border px-2 py-1 text-xs font-medium font-numeric transition hover:-translate-y-0.5 sm:min-h-9 sm:min-w-9 sm:px-2.5 sm:text-sm" :aria-pressed="opt === listPageSize ? 'true' : 'false'" :style="{ backgroundColor: opt === listPageSize ? 'var(--accent)' : 'var(--surface-strong)', borderColor: opt === listPageSize ? 'var(--accent)' : 'var(--border)', color: opt === listPageSize ? '#ffffff' : 'var(--text-secondary)' }" @click="listPageSize = opt">{{ opt }}</button>
               <span class="text-sm">所</span>
             </div>
 
             <div class="flex flex-wrap items-center justify-center gap-2">
               <button
                 type="button"
-                class="btn-ghost rounded-lg border px-3 py-2 font-medium transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45"
+                class="btn-ghost rounded-lg border px-2.5 py-1.5 text-xs font-medium transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45 sm:px-3 sm:py-2 sm:text-sm"
                 :disabled="currentUniversityPage === 1"
                 @click="setUniversityPage(currentUniversityPage - 1)"
               >
@@ -735,7 +788,7 @@ function updateFilters(callback: () => void) {
               <template v-for="(page, index) in universityPageNumbers" :key="`${page}-${index}`">
                 <span
                   v-if="page === 'ellipsis'"
-                  class="flex min-h-10 min-w-10 items-center justify-center px-2 font-medium text-[var(--text-tertiary)]"
+                  class="flex min-h-8 min-w-8 items-center justify-center px-1.5 font-medium text-[var(--text-tertiary)] sm:min-h-10 sm:min-w-10 sm:px-2"
                   aria-hidden="true"
                 >
                   ...
@@ -743,7 +796,7 @@ function updateFilters(callback: () => void) {
                 <button
                   v-else
                   type="button"
-                  class="btn-ghost min-h-10 min-w-10 rounded-lg border px-3 py-2 font-medium font-numeric transition hover:-translate-y-0.5"
+                  class="btn-ghost min-h-8 min-w-8 rounded-lg border px-2 py-1.5 text-xs font-medium font-numeric transition hover:-translate-y-0.5 sm:min-h-10 sm:min-w-10 sm:px-3 sm:py-2 sm:text-sm"
                   :aria-current="page === currentUniversityPage ? 'page' : undefined"
                   @click="setUniversityPage(page)"
                 >
@@ -753,7 +806,7 @@ function updateFilters(callback: () => void) {
 
               <button
                 type="button"
-                class="btn-ghost rounded-lg border px-3 py-2 font-medium transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45"
+                class="btn-ghost rounded-lg border px-2.5 py-1.5 text-xs font-medium transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45 sm:px-3 sm:py-2 sm:text-sm"
                 :disabled="currentUniversityPage === universityPageCount"
                 @click="setUniversityPage(currentUniversityPage + 1)"
               >

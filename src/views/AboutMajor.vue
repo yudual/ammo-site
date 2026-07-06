@@ -22,7 +22,7 @@ import { majorFirstInsights, majorNavItems, majorQuickFacts, majorSourceLinks } 
             弹药工程与爆炸技术专业介绍
           </h1>
           <p class="mt-5 max-w-3xl text-base leading-8 text-[var(--text-secondary)] md:text-lg">
-            别只看专业名字，真正会碰到的内容还包括力学、机械、测试、安全，以及军工、民爆和工程现场规则。
+            先看课程、学校方向、常见去向，再判断适不适合。
           </p>
         </div>
 
@@ -39,7 +39,7 @@ import { majorFirstInsights, majorNavItems, majorQuickFacts, majorSourceLinks } 
             <span class="hidden md:block">这不是只背概念的专业，很多内容最后都会落到工程场景里。</span>
           </p>
           <p class="mt-3 text-sm leading-7 text-[var(--text-secondary)]">
-            先把课程结构、四年节奏和常见去向看明白，再判断自己适不适合。
+            重点看培养方案、实验条件和近年去向。
           </p>
         </div>
       </header>

@@ -109,8 +109,9 @@ const sourceTypes = computed(() =>
 </script>
 
 <template>
-  <ReadingProgress />
-  <section class="company-detail-page min-h-screen overflow-x-clip bg-[var(--page-bg)] px-4 pb-8 pt-6 text-[var(--text-primary)] md:px-6 md:pb-12 md:pt-8">
+  <div class="company-detail-page-wrap">
+    <ReadingProgress />
+    <section class="company-detail-page min-h-screen overflow-x-clip bg-[var(--page-bg)] px-4 pb-8 pt-6 text-[var(--text-primary)] md:px-6 md:pb-12 md:pt-8">
     <div class="company-detail-shell mx-auto flex w-full min-w-0 max-w-6xl flex-col gap-6">
       <template v-if="company">
         <header
@@ -550,7 +551,8 @@ const sourceTypes = computed(() =>
         description="可能是链接有误，或者该公司尚未收录。"
       />
     </div>
-  </section>
+    </section>
+  </div>
 </template>
 
 <style scoped>

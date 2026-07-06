@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import ThemeToggle from './ThemeToggle.vue'
 import { useSearchDialog } from '../composables/useSearchDialog'
 
 const route = useRoute()
 const { toggle: toggleSearch } = useSearchDialog()
+const lastCompanyList = ref('/companies')
+const lastUniversityList = ref('/universities')
 
 const mainNavItems = [
   { label: '专业介绍', to: '/about-major' },
@@ -17,11 +19,11 @@ const mainNavItems = [
 
 const contextLink = computed(() => {
   if (/^\/companies\/\d+/.test(route.path)) {
-    return { label: '返回企业列表', to: '/companies' }
+    return { label: '返回企业列表', to: lastCompanyList.value }
   }
 
   if (route.path.startsWith('/universities/') && route.path !== '/universities') {
-    return { label: '返回院校列表', to: '/universities' }
+    return { label: '返回院校列表', to: lastUniversityList.value }
   }
 
   if (route.name === 'not-found') {
@@ -30,6 +32,18 @@ const contextLink = computed(() => {
 
   return null
 })
+
+watch(
+  () => route.fullPath,
+  (fullPath) => {
+    if (route.path === '/companies') {
+      lastCompanyList.value = fullPath
+    } else if (route.path === '/universities') {
+      lastUniversityList.value = fullPath
+    }
+  },
+  { immediate: true },
+)
 
 function isActive(path: string) {
   return route.path === path || route.path.startsWith(`${path}/`)
@@ -44,6 +58,8 @@ function onKeyDown(e: KeyboardEvent) {
 
 onMounted(() => {
   if (typeof window !== 'undefined') {
+    lastCompanyList.value = sessionStorage.getItem('ammo:last-list:companies') || '/companies'
+    lastUniversityList.value = sessionStorage.getItem('ammo:last-list:universities') || '/universities'
     window.addEventListener('keydown', onKeyDown)
   }
 })
@@ -65,12 +81,12 @@ onUnmounted(() => {
     }"
   >
     <div
-      class="mx-auto max-w-6xl px-4 py-2.5 flex min-w-0 flex-wrap items-center gap-2 md:grid md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-3"
+      class="mx-auto max-w-6xl px-3 py-2.5 flex min-w-0 flex-wrap items-center gap-2 sm:px-4 md:grid md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-3"
     >
       <div class="flex min-w-0 flex-wrap items-center gap-2 md:justify-self-start lg:flex-nowrap">
         <RouterLink
           to="/"
-          class="inline-flex shrink-0 items-center rounded-lg px-3 py-1.5 text-sm font-semibold transition hover:text-[var(--accent)]"
+          class="inline-flex shrink-0 items-center rounded-lg px-2.5 py-1.5 text-sm font-semibold transition hover:text-[var(--accent)] sm:px-3"
           :style="{
             color: route.path === '/' ? 'var(--accent)' : 'var(--text-primary)',
           }"
@@ -81,7 +97,7 @@ onUnmounted(() => {
         <RouterLink
           v-if="contextLink"
           :to="contextLink.to"
-          class="inline-flex shrink-0 items-center gap-1 rounded-lg border px-3 py-1.5 text-sm font-medium transition hover:-translate-y-0.5 hover:text-[var(--accent)]"
+          class="inline-flex shrink-0 items-center gap-1 rounded-lg border px-2.5 py-1.5 text-xs font-medium transition hover:-translate-y-0.5 hover:text-[var(--accent)] sm:px-3 sm:text-sm"
           :style="{
             backgroundColor: 'var(--surface-strong)',
             borderColor: 'var(--border)',
@@ -113,7 +129,7 @@ onUnmounted(() => {
       <div class="ml-auto flex shrink-0 items-center gap-2 md:ml-0 md:justify-self-end">
         <button
           type="button"
-          class="flex h-10 shrink-0 items-center gap-1.5 rounded-full border px-3 text-sm font-medium transition hover:scale-[1.03]"
+          class="flex h-9 shrink-0 items-center gap-1.5 rounded-full border px-2.5 text-sm font-medium transition hover:scale-[1.03] sm:h-10 sm:px-3"
           :style="{
             backgroundColor: 'var(--surface-strong)',
             borderColor: 'var(--border)',

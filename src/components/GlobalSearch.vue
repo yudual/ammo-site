@@ -42,6 +42,17 @@ function go(hit: SearchHit) {
   closeDialog()
 }
 
+function hitKindLabel(kind: SearchHit['kind']) {
+  const labels: Record<SearchHit['kind'], string> = {
+    company: '企业',
+    university: '院校',
+    page: '页面',
+    graduate: '考研',
+  }
+
+  return labels[kind]
+}
+
 function onInputKeydown(e: KeyboardEvent) {
   if (e.key === 'ArrowDown') {
     e.preventDefault()
@@ -112,7 +123,7 @@ onUnmounted(() => {
               v-model="query"
               type="text"
               class="gs-input"
-              placeholder="搜企业、城市、院校、省份…… 跨表即时搜索"
+              placeholder="搜企业、院校、考研方向"
               aria-label="搜索关键词"
               autocomplete="off"
               spellcheck="false"
@@ -140,10 +151,10 @@ onUnmounted(() => {
                   class="gs-tag shrink-0"
                   :style="{ backgroundColor: 'var(--surface-muted)', color: 'var(--text-secondary)' }"
                 >
-                  {{ hit.kind === 'company' ? '企业' : '院校' }}
+                  {{ hitKindLabel(hit.kind) }}
                 </span>
                 <span class="gs-name min-w-0 flex-1 truncate">{{ hit.name }}</span>
-                <span class="gs-sub shrink-0 hidden sm:inline">{{ hit.sub }}</span>
+                <span class="gs-sub shrink-0">{{ hit.sub }}</span>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="gs-arrow h-3.5 w-3.5 shrink-0">
                   <path d="m9 6 6 6-6 6" />
                 </svg>
@@ -155,7 +166,7 @@ onUnmounted(() => {
             </li>
 
             <li v-if="!query.trim()" class="gs-hint">
-              输入关键词，全站跨企业 · 院校搜索。
+              输入关键词，搜企业、院校、专业页和考研方向。
             </li>
           </ul>
         </div>
@@ -180,9 +191,12 @@ onUnmounted(() => {
 .gs-panel {
   width: 100%;
   max-width: 36rem;
+  max-height: min(78vh, 38rem);
   border: 1px solid;
   border-radius: 1rem;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .gs-input-row {
@@ -219,6 +233,7 @@ onUnmounted(() => {
   list-style: none;
   margin: 0;
   padding: 0.4rem;
+  overflow-y: auto;
 }
 
 .gs-item {
@@ -259,6 +274,10 @@ onUnmounted(() => {
 .gs-sub {
   color: var(--text-tertiary);
   font-size: 0.78rem;
+  max-width: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .gs-arrow {
@@ -307,6 +326,48 @@ onUnmounted(() => {
   .gs-enter-from .gs-panel,
   .gs-leave-to .gs-panel {
     transform: none;
+  }
+}
+
+@media (max-width: 639px) {
+  .gs-overlay {
+    align-items: flex-start;
+    padding: 4.5rem 0.75rem 0.75rem;
+  }
+
+  .gs-panel {
+    max-height: calc(100vh - 5.25rem);
+    border-radius: 0.85rem;
+  }
+
+  .gs-input-row {
+    gap: 0.45rem;
+    padding: 0.75rem;
+  }
+
+  .gs-input {
+    font-size: 0.95rem;
+  }
+
+  .gs-kbd {
+    display: none;
+  }
+
+  .gs-item {
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.65rem;
+  }
+
+  .gs-name {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .gs-sub {
+    max-width: 5.5rem;
+    white-space: normal;
+    line-height: 1.35;
   }
 }
 </style>

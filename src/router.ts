@@ -25,13 +25,26 @@ const router = createRouter({
     { path: '/about', name: 'about', component: () => import('./views/About.vue'), meta: { title: '关于 - 弹药导航' } },
     { path: '/:pathMatch(.*)*', name: 'not-found', component: () => import('./views/NotFound.vue'), meta: { title: '页面不存在 - 弹药导航' } },
   ],
-  scrollBehavior() {
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    }
+
+    // 仅 query 变化时，保持当前滚动位置，避免筛选/分享链接导致整页“刷新感”
+    if (to.path === from.path && to.hash === from.hash) {
+      return false
+    }
+
     return { top: 0 }
   },
 })
 
 router.afterEach((to) => {
   document.title = typeof to.meta.title === 'string' ? to.meta.title : siteTitle
+
+  if (to.path === '/companies' || to.path === '/universities') {
+    sessionStorage.setItem(`ammo:last-list:${to.path.slice(1)}`, to.fullPath)
+  }
 })
 
 export default router

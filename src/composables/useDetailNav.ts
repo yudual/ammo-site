@@ -48,7 +48,7 @@ export function useDetailNav<T extends DetailNavItem>(options: UseDetailNavOptio
     if (back === listPath || back.startsWith(listPath + '?') || back.startsWith(listPath + '#')) {
       router.back()
     } else {
-      router.push(listPath)
+      router.push(sessionStorage.getItem(`ammo:last-list:${options.primaryKey}`) || listPath)
     }
   }
 

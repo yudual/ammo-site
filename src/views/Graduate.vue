@@ -30,7 +30,7 @@ const featuredGraduateSources = graduateSourceLinks.slice(0, 3)
             弹药专业本科生，考研往哪走？
           </h1>
           <p class="mt-5 max-w-4xl text-base leading-8 text-[var(--text-secondary)] md:text-lg">
-            先分清顺接、半跨和主动转向，再看院校入口和四年准备安排。
+            先分清顺接、半跨和主动转向，再查院校入口。
           </p>
 
           <div class="mt-7 flex flex-wrap gap-2">
@@ -112,11 +112,11 @@ const featuredGraduateSources = graduateSourceLinks.slice(0, 3)
           <p class="mt-3 text-sm leading-7 text-[var(--text-secondary)]">
             {{
               item.to.endsWith('directions')
-                ? '顺接、半跨、跨考方向。'
+                ? '顺接、半跨、跨考。'
                 : item.to.endsWith('compare')
                   ? '匹配度、难点、科目和去向。'
                   : item.to.endsWith('schools')
-                    ? '院校与研招信息。'
+                    ? '院校与研招入口。'
                     : '四年准备安排。'
             }}
           </p>
@@ -137,7 +137,7 @@ const featuredGraduateSources = graduateSourceLinks.slice(0, 3)
             <p class="text-sm tracking-[0.14em] text-[var(--text-tertiary)]">方向</p>
             <h2 class="mt-3 text-xl font-semibold text-[var(--text-primary)]">先看方向差别</h2>
             <p class="mt-3 max-w-2xl text-sm leading-7 text-[var(--text-secondary)]">
-              还没决定读哪一类，就先从方向差别看起，比直接盯学校更省时间。
+              还没决定读哪一类，先看方向差别。
             </p>
           </div>
 

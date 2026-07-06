@@ -133,8 +133,9 @@ function linkPurpose(type: UniversityLink['type']) {
 </script>
 
 <template>
-  <ReadingProgress />
-  <section class="university-detail-page min-h-screen overflow-x-clip bg-[var(--page-bg)] px-4 pb-8 pt-6 text-[var(--text-primary)] md:px-6 md:pb-12 md:pt-8">
+  <div class="university-detail-page-wrap">
+    <ReadingProgress />
+    <section class="university-detail-page min-h-screen overflow-x-clip bg-[var(--page-bg)] px-4 pb-8 pt-6 text-[var(--text-primary)] md:px-6 md:pb-12 md:pt-8">
     <div class="university-detail-shell mx-auto flex w-full min-w-0 max-w-6xl flex-col gap-6">
       <template v-if="university">
         <header
@@ -596,7 +597,8 @@ function linkPurpose(type: UniversityLink['type']) {
         description="可能是链接有误，或者该院校尚未收录。"
       />
     </div>
-  </section>
+    </section>
+  </div>
 </template>
 
 <style scoped>
