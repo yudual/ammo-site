@@ -48,9 +48,12 @@ const route = useRoute()
 }
 
 /* 全局路由过渡：轻量淡入位移，避免整页硬切 */
-.page-enter-active,
+.page-enter-active {
+  transition: opacity 0.16s ease, transform 0.16s ease;
+}
+
 .page-leave-active {
-  transition: opacity 0.18s ease, transform 0.18s ease;
+  transition: none;
 }
 
 .page-enter-from {
@@ -60,13 +63,15 @@ const route = useRoute()
 
 .page-leave-to {
   opacity: 0;
-  transform: translateY(-6px);
+  transform: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .page-enter-active,
-  .page-leave-active {
+  .page-enter-active {
     transition: opacity 0.12s ease;
+  }
+  .page-leave-active {
+    transition: none;
   }
   .page-enter-from,
   .page-leave-to {

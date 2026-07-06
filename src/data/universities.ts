@@ -4824,6 +4824,18 @@ export const universities: University[] = [
           "type": "其他",
           "date": "2026-06-10访问",
           "url": "https://faculty.ustc.edu.cn/xiaohuahua/zh_CN/index.htm"
+        },
+        {
+          "title": "中国科学技术大学本科招生网",
+          "type": "招生网",
+          "date": "2026-07-06访问",
+          "url": "https://zsb.ustc.edu.cn/"
+        },
+        {
+          "title": "中国科学技术大学本科教学质量报告·2023-2024学年",
+          "type": "教学质量报告",
+          "date": "2023-2024学年",
+          "url": "https://www.teach.ustc.edu.cn/wp-content/uploads/2024/12/%E4%B8%AD%E5%9B%BD%E7%A7%91%E5%AD%A6%E6%8A%80%E6%9C%AF%E5%A4%A7%E5%AD%A62023-2024%E5%AD%A6%E5%B9%B4%E6%9C%AC%E7%A7%91%E6%95%99%E5%AD%A6%E8%B4%A8%E9%87%8F%E6%8A%A5%E5%91%8A.pdf"
         }
       ]
     }
@@ -4904,7 +4916,7 @@ export const universities: University[] = [
       "updatedAt": "2026-06-10",
       "status": "已整理官方学术及培养入口，适合作为爆炸力学或工业防爆近相关/跨考参考。",
       "relevanceLevel": "中",
-      "conclusion": "北京科技大学在矿山安全与undefined研究及安全工程培养方向上具备深厚底蕴。不属于直接开设弹药工程本科的学校，但其研究生方向、国家重点平台等在爆炸、冲击、工业防爆领域高相关，适合作为优质考研与跨考参考。",
+      "conclusion": "北京科技大学在矿山安全、工业防爆及安全工程培养方向上具备深厚底蕴。不属于直接开设弹药工程本科的学校，但其研究生方向、国家重点平台等在爆炸、冲击、工业防爆领域高相关，适合作为优质考研与跨考参考。",
       "keySignals": [
         "拥有高水平的安全科学与工程或力学学科背景。",
         "拥有官方研招大纲或学院系部介绍佐证。",
@@ -4943,6 +4955,24 @@ export const universities: University[] = [
           "type": "研究生招生",
           "date": "2025",
           "url": "https://srse.ustb.edu.cn/info/1099/8916.htm"
+        },
+        {
+          "title": "北京科技大学本科招生网",
+          "type": "招生网",
+          "date": "2026-07-06访问",
+          "url": "https://zhaosheng.ustb.edu.cn/"
+        },
+        {
+          "title": "北京科技大学2026年本科招生章程",
+          "type": "招生目录",
+          "date": "2026-06-17",
+          "url": "https://zhaosheng.ustb.edu.cn/zkxx/zszc/7e8f87879a044647ad42440cf9d10f0b.htm"
+        },
+        {
+          "title": "北京科技大学2023-2024学年本科教学质量报告",
+          "type": "教学质量报告",
+          "date": "2023-2024学年",
+          "url": "https://xxgk.ustb.edu.cn/xinxigongkaimulu/jiaoxuezhiliang/benkejiaoxue/2024-12-05/5282.html"
         }
       ]
     }

@@ -6532,7 +6532,7 @@ export const companies: Company[] = [
     "verification": {
       "status": "部分核验",
       "relevanceLevel": "高",
-      "updatedAt": "2026-06-10",
+      "updatedAt": "2026-07-06",
       "summary": "已核对独立官网与公开业务方向；招聘平台及招聘公告入口待进一步验证。",
       "verifiedFields": [
         "企业全称",
@@ -6548,7 +6548,7 @@ export const companies: Company[] = [
       ]
     },
     "research": {
-      "updatedAt": "2026-06-10",
+      "updatedAt": "2026-07-06",
       "status": "适合作为防爆与爆炸防护配套链企业候选。",
       "relevanceLevel": "高",
       "conclusion": "华荣科技股份有限公司是国内专业的防爆电气 / 危险场景安全领域主体，产品包括防爆电气、防爆灯具、防爆机器人等。其产品及方向适用于弹药与爆炸技术防爆管理及配套，但具体岗位及作息与待遇数据待核对，尚未被官方招聘直接佐证，需以当年最新材料核实。",
@@ -6578,6 +6578,30 @@ export const companies: Company[] = [
           "type": "学校就业网",
           "date": "待核对",
           "url": "https://career.hebut.edu.cn/company/index/id/17428.html"
+        },
+        {
+          "title": "关于华荣 - 华荣科技股份有限公司",
+          "type": "官网",
+          "date": "2026-07-06访问",
+          "url": "https://ex.warom.com/about/index.aspx"
+        },
+        {
+          "title": "华荣喜获首批防爆电气强制性产品认证证书",
+          "type": "新闻资料",
+          "date": "2019-10-22",
+          "url": "https://ex.warom.com/news/index-detail.aspx?Id=48b83d2d-1cd4-4698-8b04-45f78a404adf"
+        },
+        {
+          "title": "电气工程师 - 华荣科技股份有限公司",
+          "type": "学校就业网",
+          "date": "2024-11-14",
+          "url": "https://career.hebut.edu.cn/home/correcruit/content/id/69072.html"
+        },
+        {
+          "title": "华荣科技股份有限公司技术服务工程师",
+          "type": "学校就业网",
+          "date": "2024",
+          "url": "https://career.hit.edu.cn/zhxy-xszyfzpt/zpxx/zpxxxq?id=YjMwZTVhOWQxOTdmNGY3OTkwZmQ0MDlkMDA2MzU5Yjg%3D"
         }
       ]
     }
@@ -6611,7 +6635,7 @@ export const companies: Company[] = [
     "verification": {
       "status": "部分核验",
       "relevanceLevel": "高",
-      "updatedAt": "2026-06-10",
+      "updatedAt": "2026-07-06",
       "summary": "已核对独立官网与公开业务方向；招聘平台及招聘公告入口待进一步验证。",
       "verifiedFields": [
         "企业全称",
@@ -6627,7 +6651,7 @@ export const companies: Company[] = [
       ]
     },
     "research": {
-      "updatedAt": "2026-06-10",
+      "updatedAt": "2026-07-06",
       "status": "适合作为防爆与爆炸防护配套链企业候选。",
       "relevanceLevel": "高",
       "conclusion": "新黎明科技股份有限公司是国内专业的防爆电器 / 智能防爆设备领域主体，产品包括防爆电器、防爆管件、智能防爆等。其产品及方向适用于弹药与爆炸技术防爆管理及配套，但具体岗位及作息与待遇数据待核对，尚未被官方招聘直接佐证，需以当年最新材料核实。",
@@ -6651,6 +6675,36 @@ export const companies: Company[] = [
           "type": "官网",
           "date": "2026-06-10访问",
           "url": "https://www.sunleem.com/"
+        },
+        {
+          "title": "公司简介 - 新黎明科技股份有限公司",
+          "type": "官网",
+          "date": "2026-07-06访问",
+          "url": "https://www.sunleem.com/gsjj"
+        },
+        {
+          "title": "产品中心 - 新黎明科技股份有限公司",
+          "type": "官网",
+          "date": "2026-07-06访问",
+          "url": "https://www.sunleem.com/cpzs"
+        },
+        {
+          "title": "防爆电器类 - 新黎明科技股份有限公司",
+          "type": "官网",
+          "date": "2026-07-06访问",
+          "url": "https://www.sunleem.com/cpzs?product_category=2"
+        },
+        {
+          "title": "招贤纳士 - 新黎明科技股份有限公司",
+          "type": "招聘入口",
+          "date": "2026-07-06访问",
+          "url": "https://www.sunleem.com/jrwm"
+        },
+        {
+          "title": "研发工程师 · 研发部",
+          "type": "招聘公告",
+          "date": "2021-05-08",
+          "url": "https://www.sunleem.com/page174?article_id=16"
         }
       ]
     }
@@ -6682,7 +6736,7 @@ export const companies: Company[] = [
       {
         "title": "官网招聘信息页",
         "type": "招聘入口",
-        "url": "https://www.feice.com/cn/recruit/recruitment-information",
+        "url": "https://www.feice.com/recruit/recruitment-information",
         "note": "企业官方招聘岗位及联系方式入口。"
       }
     ],
@@ -6690,7 +6744,7 @@ export const companies: Company[] = [
     "verification": {
       "status": "部分核验",
       "relevanceLevel": "高",
-      "updatedAt": "2026-06-10",
+      "updatedAt": "2026-07-06",
       "summary": "已核对独立官网与公开业务方向；招聘平台及招聘公告入口待进一步验证。",
       "verifiedFields": [
         "企业全称",
@@ -6706,7 +6760,7 @@ export const companies: Company[] = [
       ]
     },
     "research": {
-      "updatedAt": "2026-06-10",
+      "updatedAt": "2026-07-06",
       "status": "适合作为防爆与爆炸防护配套链企业候选。",
       "relevanceLevel": "高",
       "conclusion": "飞策防爆电器股份有限公司是国内专业的防爆灯具 / 矿用防爆电气领域主体，产品包括防爆灯具、防爆电器、矿用防爆等。其产品及方向适用于弹药与爆炸技术防爆管理及配套，但具体岗位及作息与待遇数据待核对，尚未被官方招聘直接佐证，需以当年最新材料核实。",
@@ -6735,7 +6789,31 @@ export const companies: Company[] = [
           "title": "官网招聘信息页",
           "type": "招聘入口",
           "date": "2026-06-10访问",
-          "url": "https://www.feice.com/cn/recruit/recruitment-information"
+          "url": "https://www.feice.com/recruit/recruitment-information"
+        },
+        {
+          "title": "公司介绍 - 飞策防爆电器股份有限公司",
+          "type": "官网",
+          "date": "2026-07-06访问",
+          "url": "https://www.feice.com/about/profile.html"
+        },
+        {
+          "title": "人力资源 - 飞策防爆电器股份有限公司",
+          "type": "招聘入口",
+          "date": "2026-07-06访问",
+          "url": "https://www.feice.com/recruit"
+        },
+        {
+          "title": "校园招聘 - 飞策防爆电器股份有限公司",
+          "type": "招聘入口",
+          "date": "2026-07-06访问",
+          "url": "https://www.feice.com/recruit/recruitment-information/campus-recruitment"
+        },
+        {
+          "title": "技术员/工程师 - 飞策防爆电器股份有限公司",
+          "type": "招聘公告",
+          "date": "2021-09-08",
+          "url": "https://www.feice.com/recruit/recruitment-information/social-recruitment-8.html"
         }
       ]
     }
@@ -6766,17 +6844,17 @@ export const companies: Company[] = [
         "note": "介绍爆炸防护与泄放系统研究背景。"
       },
       {
-        "title": "度川校园招聘招聘简章",
-        "type": "学校就业网",
-        "url": "https://www.duerna.com/campus/view/id/540695",
-        "note": "用于核对历史招聘简章与专业岗位要求。"
+        "title": "大连度达理工安全系统有限公司官网",
+        "type": "官网",
+        "url": "https://www.duta.com.cn/",
+        "note": "企业官方主页。"
       }
     ],
     "description": "爆炸防护和超压泄放安全系统企业。",
     "verification": {
       "status": "部分核验",
       "relevanceLevel": "高",
-      "updatedAt": "2026-06-10",
+      "updatedAt": "2026-07-06",
       "summary": "已核对独立官网与公开业务方向；招聘平台及招聘公告入口待进一步验证。",
       "verifiedFields": [
         "企业全称",
@@ -6792,7 +6870,7 @@ export const companies: Company[] = [
       ]
     },
     "research": {
-      "updatedAt": "2026-06-10",
+      "updatedAt": "2026-07-06",
       "status": "适合作为防爆与爆炸防护配套链企业候选。",
       "relevanceLevel": "高",
       "conclusion": "大连度达理工安全系统有限公司是国内专业的爆炸安全防护 / 压力泄压领域主体，产品包括爆破片、阻火器、无焰泄放、爆炸抑制等。其产品及方向适用于弹药与爆炸技术防爆管理及配套，但具体岗位及作息与待遇数据待核对，尚未被官方招聘直接佐证，需以当年最新材料核实。",
@@ -6818,10 +6896,34 @@ export const companies: Company[] = [
           "url": "https://www.duta.com.cn/about"
         },
         {
-          "title": "度川校园招聘招聘简章",
-          "type": "学校就业网",
-          "date": "待核对",
-          "url": "https://www.duerna.com/campus/view/id/540695"
+          "title": "大连度达理工安全系统有限公司官网",
+          "type": "官网",
+          "date": "2026-07-06访问",
+          "url": "https://www.duta.com.cn/"
+        },
+        {
+          "title": "新闻动态 - 大连度达理工安全系统有限公司",
+          "type": "新闻资料",
+          "date": "2026-07-06访问",
+          "url": "https://www.duta.com.cn/Content/index/catid/49.html"
+        },
+        {
+          "title": "爆破片 - 大连度达理工安全系统有限公司",
+          "type": "官网",
+          "date": "2026-07-06访问",
+          "url": "https://www.duta.com.cn/Content/index/catid/27.html"
+        },
+        {
+          "title": "安全防爆系统 - 大连度达理工安全系统有限公司",
+          "type": "官网",
+          "date": "2026-07-06访问",
+          "url": "https://www.duta.com.cn/Content/index/catid/181.html"
+        },
+        {
+          "title": "隔爆系统 - 大连度达理工安全系统有限公司",
+          "type": "官网",
+          "date": "2026-07-06访问",
+          "url": "https://www.duta.com.cn/Content/index/catid/187.html"
         }
       ]
     }
@@ -6856,7 +6958,7 @@ export const companies: Company[] = [
     "verification": {
       "status": "部分核验",
       "relevanceLevel": "高",
-      "updatedAt": "2026-06-10",
+      "updatedAt": "2026-07-06",
       "summary": "已核对独立官网与公开业务方向；招聘平台及招聘公告入口待进一步验证。",
       "verifiedFields": [
         "企业全称",
@@ -6872,7 +6974,7 @@ export const companies: Company[] = [
       ]
     },
     "research": {
-      "updatedAt": "2026-06-10",
+      "updatedAt": "2026-07-06",
       "status": "适合作为防爆与爆炸防护配套链企业候选。",
       "relevanceLevel": "高",
       "conclusion": "江苏八方安全设备有限公司是国内专业的安全泄压设备 / 阻火安全领域主体，产品包括阻火器、呼吸阀、爆破片、安全泄压等。其产品及方向适用于弹药与爆炸技术防爆管理及配套，但具体岗位及作息与待遇数据待核对，尚未被官方招聘直接佐证，需以当年最新材料核实。",
@@ -6896,6 +6998,36 @@ export const companies: Company[] = [
           "type": "官网",
           "date": "2026-06-10访问",
           "url": "https://www.basco.cc/"
+        },
+        {
+          "title": "关于八方 - 江苏八方安全设备有限公司",
+          "type": "官网",
+          "date": "2026-07-06访问",
+          "url": "https://www.basco.cc/about"
+        },
+        {
+          "title": "测试基地 - 江苏八方安全设备有限公司",
+          "type": "官网",
+          "date": "2026-07-06访问",
+          "url": "https://www.basco.cc/csjd"
+        },
+        {
+          "title": "阻火器 - 江苏八方安全设备有限公司",
+          "type": "官网",
+          "date": "2026-07-06访问",
+          "url": "https://www.basco.cc/zhq"
+        },
+        {
+          "title": "爆破片 - 江苏八方安全设备有限公司",
+          "type": "官网",
+          "date": "2026-07-06访问",
+          "url": "https://www.basco.cc/bpp"
+        },
+        {
+          "title": "市场监管总局 TSG 92-2026 新规今日正式实施，八方合规领跑，爆破片全面适配！",
+          "type": "新闻资料",
+          "date": "2026-07-01",
+          "url": "https://www.basco.cc/hydt/459"
         }
       ]
     }
@@ -6930,7 +7062,7 @@ export const companies: Company[] = [
     "verification": {
       "status": "部分核验",
       "relevanceLevel": "高",
-      "updatedAt": "2026-06-10",
+      "updatedAt": "2026-07-06",
       "summary": "已核对独立官网与公开业务方向；招聘平台及招聘公告入口待进一步验证。",
       "verifiedFields": [
         "企业全称",
@@ -6946,7 +7078,7 @@ export const companies: Company[] = [
       ]
     },
     "research": {
-      "updatedAt": "2026-06-10",
+      "updatedAt": "2026-07-06",
       "status": "适合作为防爆与爆炸防护配套链企业候选。",
       "relevanceLevel": "高",
       "conclusion": "上海华理安全装备有限公司是国内专业的防爆安全装备 / 爆破片领域主体，产品包括爆破片装置、无焰泄放、隔爆阀、管道阻火等。其产品及方向适用于弹药与爆炸技术防爆管理及配套，但具体岗位及作息与待遇数据待核对，尚未被官方招聘直接佐证，需以当年最新材料核实。",
@@ -6970,6 +7102,582 @@ export const companies: Company[] = [
           "type": "官网",
           "date": "2026-06-10访问",
           "url": "https://www.hl130.com/Home"
+        },
+        {
+          "title": "上海华理安全装备有限公司简介",
+          "type": "官网",
+          "date": "2026-07-06访问",
+          "url": "https://www.hl130.com/page94"
+        },
+        {
+          "title": "产品中心 - 上海华理安全装备有限公司",
+          "type": "官网",
+          "date": "2026-07-06访问",
+          "url": "https://www.hl130.com/page100"
+        },
+        {
+          "title": "爆破片装置产品 - 上海华理安全装备有限公司",
+          "type": "官网",
+          "date": "2026-07-06访问",
+          "url": "https://www.hl130.com/page100?product_category=5"
+        },
+        {
+          "title": "人才理念 - 上海华理安全装备有限公司",
+          "type": "招聘入口",
+          "date": "2026-07-06访问",
+          "url": "https://www.hl130.com/page111"
+        },
+        {
+          "title": "《上海科技报》守住安全生产的最后一道关 小小爆破片立下“大功劳”",
+          "type": "新闻资料",
+          "date": "2024-10-02",
+          "url": "https://news.ecust.edu.cn/2024/1002/c160a184355/pagem.htm"
+        }
+      ]
+    }
+  },
+  {
+    "id": 57,
+    "name": "中铁隧道局集团有限公司",
+    "ownership": "国企",
+    "city": "广州",
+    "region": "广东省",
+    "salaryRange": "未知",
+    "schedule": "待核对",
+    "scaleOrIndustry": "隧道及地下工程施工",
+    "highlights": [
+      "隧道施工",
+      "地下工程",
+      "中国中铁",
+      "校园招聘"
+    ],
+    "positions": "施工技术、项目管理、爆破技术、安全管理",
+    "education": "本科及以上",
+    "website": "https://www.crtg.com/",
+    "links": [
+      {
+        "title": "中铁隧道局集团官网",
+        "type": "官网",
+        "url": "https://www.crtg.com/",
+        "note": "集团主页，含人才招聘入口。"
+      },
+      {
+        "title": "中铁隧道局人才招聘",
+        "type": "招聘入口",
+        "url": "https://crtg.com/nav/rencaizhaopin.html",
+        "note": "官网人才招聘栏目。"
+      },
+      {
+        "title": "中铁隧道局集团有限公司2024届高校毕业生校园招聘简章",
+        "type": "学校就业网",
+        "url": "https://fte.kmust.edu.cn/info/1149/2198.htm",
+        "note": "昆明理工大学就业网发布。"
+      },
+      {
+        "title": "中铁隧道局集团有限公司2024届高校毕业生校园招聘简章",
+        "type": "学校就业网",
+        "url": "https://xx.djtu.edu.cn/3/564.html",
+        "note": "大连交通大学就业网发布。"
+      },
+      {
+        "title": "中铁隧道局集团有限公司",
+        "type": "新闻资料",
+        "url": "https://www.crtg.com/news/gfgsdt/607.html",
+        "note": "官网地址与企业信息页。"
+      },
+      {
+        "title": "全国唯一！中铁隧道局入选“中国建造”隧道工程品牌企业",
+        "type": "其他",
+        "url": "https://crtg.com/nav/1994243823143747595.html",
+        "note": "官网新闻 · 2022-08-26"
+      }
+    ],
+    "description": "隶属中国中铁的隧道及地下工程施工央企。",
+    "verification": {
+      "status": "已核验",
+      "relevanceLevel": "高",
+      "updatedAt": "2026-07-06",
+      "summary": "官网、人才招聘页和高校就业网简章均已对应到同一主体，主体与方向基本清晰。",
+      "verifiedFields": [
+        "name",
+        "website",
+        "city",
+        "region",
+        "ownership",
+        "scaleOrIndustry",
+        "positions",
+        "education"
+      ],
+      "pendingFields": [
+        "schedule",
+        "salaryRange",
+        "具体项目驻地",
+        "证书要求"
+      ]
+    },
+    "research": {
+      "updatedAt": "2026-07-06",
+      "status": "主体、业务方向和招聘入口已汇总，具体待遇与项目分配仍需按最新公告核对。",
+      "relevanceLevel": "高",
+      "conclusion": "中铁隧道局集团有限公司是中国中铁旗下的隧道及地下工程施工主体，官网和高校就业网招聘都能对应到施工技术、项目管理、爆破和安全相关岗位。对弹药工程与爆炸技术专业而言，它更偏工程爆破和地下工程场景，适合愿意长期跑项目、接受现场施工节奏的毕业生。",
+      "keySignals": [
+        "中国中铁旗下隧道及地下工程施工主体",
+        "官网保留人才招聘入口",
+        "高校就业网有校招简章",
+        "岗位涉及施工、项目管理和安全"
+      ],
+      "suitableFor": [
+        "工程爆破方向",
+        "地下工程与施工技术方向",
+        "愿意接受项目制工作的毕业生"
+      ],
+      "risks": [
+        "项目制驻地多，工作地点流动",
+        "爆破相关岗位通常需要证书或现场经验",
+        "具体薪资与作息需按当年公告核对"
+      ],
+      "sources": [
+        {
+          "title": "中铁隧道局集团有限公司官网",
+          "type": "官网",
+          "date": "2026-07-06",
+          "url": "https://www.crtg.com/"
+        },
+        {
+          "title": "人才招聘 - 中铁隧道局",
+          "type": "官网",
+          "date": "2026-07-06",
+          "url": "https://crtg.com/nav/rencaizhaopin.html"
+        },
+        {
+          "title": "全国唯一！中铁隧道局入选“中国建造”隧道工程品牌企业",
+          "type": "新闻资料",
+          "date": "2022-08-26",
+          "url": "https://crtg.com/nav/1994243823143747595.html"
+        },
+        {
+          "title": "中铁隧道局集团有限公司2024届高校毕业生校园招聘简章",
+          "type": "学校就业网",
+          "date": "2024-03-15",
+          "url": "https://fte.kmust.edu.cn/info/1149/2198.htm"
+        },
+        {
+          "title": "中铁隧道局集团有限公司2024届高校毕业生校园招聘简章",
+          "type": "学校就业网",
+          "date": "2023-09-15",
+          "url": "https://xx.djtu.edu.cn/3/564.html"
+        },
+        {
+          "title": "中铁隧道局集团有限公司",
+          "type": "官网",
+          "date": "2026-07-06",
+          "url": "https://www.crtg.com/news/gfgsdt/607.html"
+        }
+      ],
+      "searchTrace": [
+        {
+          "round": 1,
+          "queries": [
+            "中铁隧道局集团有限公司官网",
+            "中铁隧道局 人才招聘",
+            "中铁隧道局 高校毕业生 校园招聘"
+          ],
+          "usefulFindings": [
+            "官网保留人才招聘栏目",
+            "高校就业网有校招简章",
+            "企业主体归属中国中铁"
+          ],
+          "gaps": [
+            "最新薪资范围",
+            "具体项目驻地和作息"
+          ]
+        },
+        {
+          "round": 2,
+          "queries": [
+            "site:crtg.com 中铁隧道局 业务领域",
+            "site:edu.cn 中铁隧道局 校招 简章"
+          ],
+          "usefulFindings": [
+            "业务聚焦隧道及地下工程",
+            "多所高校就业网转发招聘简章"
+          ],
+          "gaps": [
+            "当年岗位人数",
+            "证书要求的最新口径"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": 58,
+    "name": "上海化工研究院有限公司",
+    "ownership": "国企",
+    "city": "上海",
+    "region": "上海市",
+    "salaryRange": "未知",
+    "schedule": "待核对",
+    "scaleOrIndustry": "化工安全 / 检测评价",
+    "highlights": [
+      "化学品危险性鉴定",
+      "检测评价",
+      "华谊集团",
+      "研究院"
+    ],
+    "positions": "检测、研发、环境咨询、评价服务",
+    "education": "本科及以上",
+    "website": "https://www.srici.com/",
+    "links": [
+      {
+        "title": "上海化工研究院有限公司官网",
+        "type": "官网",
+        "url": "https://www.srici.com/",
+        "note": "集团官网首页。"
+      },
+      {
+        "title": "公司简介 - 上海化工研究院有限公司",
+        "type": "官网",
+        "url": "https://www.srici.com/info/gsjj",
+        "note": "公司沿革与主营方向。"
+      },
+      {
+        "title": "招聘信息 - 上海化工研究院有限公司",
+        "type": "招聘入口",
+        "url": "https://www.srici.com/list/zpxx",
+        "note": "官网招聘信息页。"
+      },
+      {
+        "title": "上海化工院招聘公告",
+        "type": "学校就业网",
+        "url": "https://hg.zzuli.edu.cn/2024/1102/c4433a322366/page.htm",
+        "note": "郑州轻工业大学就业网。"
+      },
+      {
+        "title": "【本、研，招聘信息】上海化工研究院有限公司",
+        "type": "学校就业网",
+        "url": "https://hgxy.ecust.edu.cn/2017/0323/c1231a61872/page.htm",
+        "note": "华东理工大学相关就业信息。"
+      },
+      {
+        "title": "关于上海华谊（集团）公司与上海化工研究院有限公司实施联合重组的公告",
+        "type": "政府资料",
+        "url": "https://www.gzw.sh.gov.cn/shgzw_sjb_xxgk_ggcz/20200224/0054-94229.html",
+        "note": "政府资料 · 2020-02-24"
+      },
+      {
+        "title": "上海化工研究院2019-2020 年度教育质量报告",
+        "type": "其他",
+        "url": "https://www.srici.com/upload/attach/202011/12/092544733.pdf",
+        "note": "官方PDF · 2020"
+      }
+    ],
+    "description": "华谊体系下的化工研究和检测评价机构。",
+    "verification": {
+      "status": "已核验",
+      "relevanceLevel": "高",
+      "updatedAt": "2026-07-06",
+      "summary": "官网、集团重组公告和高校就业网招聘页能够互相印证，主体与化工安全方向清晰。",
+      "verifiedFields": [
+        "name",
+        "website",
+        "city",
+        "region",
+        "ownership",
+        "scaleOrIndustry",
+        "positions",
+        "education"
+      ],
+      "pendingFields": [
+        "schedule",
+        "salaryRange",
+        "具体岗位比例",
+        "最新招聘人数"
+      ]
+    },
+    "research": {
+      "updatedAt": "2026-07-06",
+      "status": "公开资料已汇总，核心方向和招聘入口较清楚，待遇与岗位比例仍需看最新公告。",
+      "relevanceLevel": "高",
+      "conclusion": "上海化工研究院有限公司隶属华谊体系，公开资料显示其核心方向集中在化工研究、危化品检测鉴定、环境咨询和技术服务。学校就业网招聘页能对应到检测、研发和评价岗位，但薪资、编制和具体排班仍应以最新公告再核对。",
+      "keySignals": [
+        "华谊集团联合重组后的科研院所",
+        "官网有招聘信息页",
+        "公开资料强调危化品检测鉴定",
+        "招聘岗位覆盖检测、研发和环境咨询"
+      ],
+      "suitableFor": [
+        "化学、应用化学、化工安全方向",
+        "检测评价、环境咨询方向",
+        "想留在上海的理工科毕业生"
+      ],
+      "risks": [
+        "研发岗学历门槛可能更高",
+        "最新招聘人数和具体岗位需复核",
+        "作息和薪资需按当年公告核对"
+      ],
+      "sources": [
+        {
+          "title": "上海化工研究院有限公司",
+          "type": "官网",
+          "date": "2026-07-06",
+          "url": "https://www.srici.com/"
+        },
+        {
+          "title": "公司简介 - 上海化工研究院有限公司",
+          "type": "官网",
+          "date": "2025-02-25",
+          "url": "https://www.srici.com/info/gsjj"
+        },
+        {
+          "title": "招聘信息 - 上海化工研究院有限公司",
+          "type": "官网",
+          "date": "2026-07-06",
+          "url": "https://www.srici.com/list/zpxx"
+        },
+        {
+          "title": "关于上海华谊（集团）公司与上海化工研究院有限公司实施联合重组的公告",
+          "type": "政府资料",
+          "date": "2020-02-24",
+          "url": "https://www.gzw.sh.gov.cn/shgzw_sjb_xxgk_ggcz/20200224/0054-94229.html"
+        },
+        {
+          "title": "上海化工院招聘公告",
+          "type": "学校就业网",
+          "date": "2024-10-31",
+          "url": "https://hg.zzuli.edu.cn/2024/1102/c4433a322366/page.htm"
+        },
+        {
+          "title": "【本、研，招聘信息】上海化工研究院有限公司",
+          "type": "学校就业网",
+          "date": "2016-11-08",
+          "url": "https://hgxy.ecust.edu.cn/2017/0323/c1231a61872/page.htm"
+        },
+        {
+          "title": "上海化工研究院2019-2020 年度教育质量报告",
+          "type": "其他",
+          "date": "2020",
+          "url": "https://www.srici.com/upload/attach/202011/12/092544733.pdf"
+        }
+      ],
+      "searchTrace": [
+        {
+          "round": 1,
+          "queries": [
+            "上海化工研究院有限公司官网",
+            "上海化工研究院 招聘",
+            "上海化工研究院 危险性鉴定"
+          ],
+          "usefulFindings": [
+            "官网存在招聘信息页",
+            "华谊集团联合重组公告可查",
+            "公开资料提到危化品危险性鉴定"
+          ],
+          "gaps": [
+            "最新校招人数",
+            "具体作息和福利口径"
+          ]
+        },
+        {
+          "round": 2,
+          "queries": [
+            "site:srici.com 上海化工研究院 检测",
+            "site:edu.cn 上海化工研究院 招聘"
+          ],
+          "usefulFindings": [
+            "学校就业网有招聘简章",
+            "官网介绍其检测与技术服务方向"
+          ],
+          "gaps": [
+            "岗位分布比例",
+            "研究岗和检测岗占比"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": 59,
+    "name": "中国安能建设集团有限公司",
+    "ownership": "国企",
+    "city": "北京",
+    "region": "北京市",
+    "salaryRange": "未知",
+    "schedule": "待核对",
+    "scaleOrIndustry": "应急救援 / 重点工程建设",
+    "highlights": [
+      "应急救援",
+      "重点工程建设",
+      "水利水电",
+      "定向爆破"
+    ],
+    "positions": "工程技术、应急救援、爆破技术、安全管理",
+    "education": "本科及以上",
+    "website": "https://www.china-an.cn/",
+    "links": [
+      {
+        "title": "中国安能集团官网",
+        "type": "官网",
+        "url": "https://www.china-an.cn/",
+        "note": "集团主页。"
+      },
+      {
+        "title": "公司简介 - 中国安能",
+        "type": "官网",
+        "url": "https://www.china-an.cn/jtgk/index.html",
+        "note": "官网公司简介。"
+      },
+      {
+        "title": "中国安能建设集团有限公司2026年度校园招聘公告",
+        "type": "招聘公告",
+        "url": "https://www.china-an.cn/rlzy/rczp/art/2025/art_f3db16cb38eb4941aa26cc8d8c12286c.html",
+        "note": "官网校招公告。"
+      },
+      {
+        "title": "人才招聘 - 中国安能",
+        "type": "招聘入口",
+        "url": "https://www.china-an.cn/rlzy/rczp/index.html",
+        "note": "官网招聘栏目。"
+      },
+      {
+        "title": "中国安能集团第一工程局有限公司公司简介",
+        "type": "新闻资料",
+        "url": "https://eb1.china-an.cn/gsgk/index.html",
+        "note": "含营业性爆破资质信息。"
+      },
+      {
+        "title": "中国安能集团第二工程局有限公司2026年度公开招聘公告",
+        "type": "招聘公告",
+        "url": "https://www.china-an.cn/rlzy/rczp/art/2026/art_0980b4187dbd4ae6a2ff19163016627a.html",
+        "note": "招聘公告 · 2026-04-xx"
+      },
+      {
+        "title": "打造工程应急救援“野战军”、国家队-演习演练",
+        "type": "其他",
+        "url": "https://www.china-an.cn/yjjy/yxyl/art/2026/art_086c9a9f3d0dd03d9f66f84af78d73d6.html",
+        "note": "官网新闻 · 2026-07-06"
+      }
+    ],
+    "description": "应急救援与重点工程建设央企。",
+    "verification": {
+      "status": "已核验",
+      "relevanceLevel": "高",
+      "updatedAt": "2026-07-06",
+      "summary": "官网、招聘公告和下属单位简介能够对应到同一央企主体，转隶背景和业务方向清楚。",
+      "verifiedFields": [
+        "name",
+        "website",
+        "city",
+        "region",
+        "ownership",
+        "scaleOrIndustry",
+        "positions",
+        "education"
+      ],
+      "pendingFields": [
+        "schedule",
+        "salaryRange",
+        "具体项目分配",
+        "岗位编制口径"
+      ]
+    },
+    "research": {
+      "updatedAt": "2026-07-06",
+      "status": "主体背景、招聘入口和工程救援方向已核对，具体待遇与项目派驻仍需看当年公告。",
+      "relevanceLevel": "高",
+      "conclusion": "中国安能建设集团有限公司是由武警水电部队整体转隶组建的中央企业，主责是自然灾害工程救援和重点工程建设。公开招聘与下属单位资料显示，其涉及定向爆破、水利水电工程和营业性爆破资质，适合愿意去一线项目和应急救援场景的毕业生。",
+      "keySignals": [
+        "2018年由武警水电部队转隶组建",
+        "主责是工程救援和重点工程建设",
+        "下属单位公开写有营业性爆破一级资质",
+        "公开材料出现定向爆破和水利水电工程"
+      ],
+      "suitableFor": [
+        "工程爆破方向",
+        "应急救援与抢险方向",
+        "水利水电、土木、安全工程背景"
+      ],
+      "risks": [
+        "应急救援和项目现场强度高",
+        "工作地点可能跨省流动",
+        "具体岗位、编制和薪资需看当年招聘公告"
+      ],
+      "sources": [
+        {
+          "title": "中国安能",
+          "type": "官网",
+          "date": "2026-07-06",
+          "url": "https://www.china-an.cn/"
+        },
+        {
+          "title": "公司简介 - 中国安能",
+          "type": "官网",
+          "date": "2026-07-06",
+          "url": "https://www.china-an.cn/jtgk/index.html"
+        },
+        {
+          "title": "中国安能建设集团有限公司2026年度校园招聘公告",
+          "type": "招聘公告",
+          "date": "2025-11-28",
+          "url": "https://www.china-an.cn/rlzy/rczp/art/2025/art_f3db16cb38eb4941aa26cc8d8c12286c.html"
+        },
+        {
+          "title": "人才招聘 - 中国安能",
+          "type": "招聘入口",
+          "date": "2026-07-06",
+          "url": "https://www.china-an.cn/rlzy/rczp/index.html"
+        },
+        {
+          "title": "中国安能集团第一工程局有限公司公司简介",
+          "type": "官网",
+          "date": "2026-07-06",
+          "url": "https://eb1.china-an.cn/gsgk/index.html"
+        },
+        {
+          "title": "中国安能集团第二工程局有限公司2026年度公开招聘公告",
+          "type": "招聘公告",
+          "date": "2026-04-xx",
+          "url": "https://www.china-an.cn/rlzy/rczp/art/2026/art_0980b4187dbd4ae6a2ff19163016627a.html"
+        },
+        {
+          "title": "打造工程应急救援“野战军”、国家队-演习演练",
+          "type": "新闻资料",
+          "date": "2026-07-06",
+          "url": "https://www.china-an.cn/yjjy/yxyl/art/2026/art_086c9a9f3d0dd03d9f66f84af78d73d6.html"
+        }
+      ],
+      "searchTrace": [
+        {
+          "round": 1,
+          "queries": [
+            "中国安能集团官网",
+            "中国安能 2026 校园招聘",
+            "中国安能 定向爆破"
+          ],
+          "usefulFindings": [
+            "官网可查公司简介和招聘栏目",
+            "公告明确转隶背景",
+            "公开材料出现定向爆破与工程救援"
+          ],
+          "gaps": [
+            "具体薪资范围",
+            "最新项目驻地分布"
+          ]
+        },
+        {
+          "round": 2,
+          "queries": [
+            "site:china-an.cn 中国安能 爆破 一级资质",
+            "site:china-an.cn 中国安能 工程救援"
+          ],
+          "usefulFindings": [
+            "下属单位简介提到营业性爆破一级资质",
+            "工程救援和重点工程建设方向稳定"
+          ],
+          "gaps": [
+            "当年岗位人数",
+            "不同工程局之间的分工边界"
+          ]
         }
       ]
     }
