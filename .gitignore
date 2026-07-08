@@ -10,3 +10,6 @@ dist/
 .DS_Store
 qa-screenshots/
 research-drafts/**/*.json
+.dev-server.err
+.dev-preview.err
+.dev-*.err
