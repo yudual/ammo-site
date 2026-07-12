@@ -5,6 +5,7 @@ import BackToTop from './components/BackToTop.vue'
 import GlobalSearch from './components/GlobalSearch.vue'
 
 const route = useRoute()
+const currentYear = new Date().getFullYear()
 </script>
 
 <template>
@@ -17,6 +18,26 @@ const route = useRoute()
       </Transition>
     </router-view>
   </main>
+  <footer class="site-footer border-t border-[var(--border)]">
+    <div class="mx-auto flex w-full max-w-6xl flex-col gap-3 px-4 py-4 text-xs text-[var(--text-secondary)] sm:px-6 sm:flex-row sm:items-center sm:justify-between">
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+        <RouterLink to="/about" class="transition hover:text-[var(--accent)]">关于导航站</RouterLink>
+        <a href="mailto:ty368685189@gmail.com" class="transition hover:text-[var(--accent)]">提供线索 / 联系作者</a>
+      </div>
+      <div class="flex flex-wrap items-center gap-3 text-[var(--text-tertiary)]">
+        <a
+          href="https://beian.mps.gov.cn/#/query/webSearch?code=34120402001607"
+          target="_blank"
+          rel="noreferrer"
+          class="inline-flex items-center gap-2 transition hover:text-[var(--accent)]"
+        >
+          <img src="/beian-icon.png" alt="公安备案图标" class="h-4 w-4 object-contain" />
+          <span>皖公网安备34120402001607号</span>
+        </a>
+        <span>© {{ currentYear }} 弹药工程与爆炸技术导航站</span>
+      </div>
+    </div>
+  </footer>
   <BackToTop />
   <GlobalSearch />
 </template>

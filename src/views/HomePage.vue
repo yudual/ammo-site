@@ -42,7 +42,6 @@ const highRelevanceCount =
   companies.filter((company) => company.verification.relevanceLevel === '高').length +
   universities.filter((university) => university.verification.relevanceLevel === '高').length
 
-const currentYear = new Date().getFullYear()
 </script>
 
 <template>
@@ -133,18 +132,6 @@ const currentYear = new Date().getFullYear()
         </div>
       </section>
 
-      <!-- Footer -->
-      <footer class="mt-16 border-t border-[var(--border)] pt-6 w-full mx-auto">
-        <div class="flex flex-col gap-4 text-xs sm:text-sm text-[var(--text-secondary)] md:flex-row md:items-center md:justify-between">
-          <div class="flex flex-wrap items-center gap-6">
-            <RouterLink to="/about" class="transition hover:text-[var(--accent)]">关于导航站</RouterLink>
-            <a href="mailto:ty368685189@gmail.com" class="transition hover:text-[var(--accent)]">提供线索 / 联系作者</a>
-          </div>
-          <div class="text-[var(--text-tertiary)]">
-            © {{ currentYear }} 弹药工程与爆炸技术导航站. All rights reserved.
-          </div>
-        </div>
-      </footer>
     </div>
   </div>
 </template>
