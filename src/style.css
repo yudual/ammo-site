@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+html { overflow-x: hidden; }
+body { min-width: 320px; overflow-x: hidden; }
+
+@media (max-width: 639px) {
+  button, a, input, select, summary { -webkit-tap-highlight-color: transparent; }
+}
+
 :root {
   color-scheme: light;
   --page-bg: #f3f6f2;

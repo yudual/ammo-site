@@ -534,7 +534,7 @@ watch(
                 <h1 class="text-sm font-bold tracking-tight text-[var(--text-primary)]">院校一览</h1>
               </div>
 
-              <div class="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-2 text-[11px]">
+              <div class="mobile-summary-grid grid grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-2 text-[11px]">
                 <div class="border-soft flex items-center justify-between gap-2.5 px-2 py-1 rounded bg-[var(--surface-strong)] border">
                   <span class="text-[var(--text-tertiary)]">已收录</span>
                   <strong class="font-bold text-[var(--text-primary)]">{{ universities.length }}</strong>
@@ -555,7 +555,7 @@ watch(
             </div>
 
             <!-- 下层：快速筛选与分享工具条 -->
-            <div class="flex items-center justify-between gap-3 text-xs w-full">
+            <div class="mobile-control-row flex items-center justify-between gap-3 text-xs w-full">
               <!-- 左侧：筛选器胶囊群 -->
               <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar scroll-smooth flex-1 min-w-0">
                 <!-- 高级筛选唤起 (仅移动端显示，PC端侧边栏常驻) -->
@@ -907,6 +907,19 @@ watch(
   .university-summary-card {
     min-height: 0;
     padding: 0.85rem 0.85rem 0.8rem;
+  }
+
+  .mobile-summary-grid > :nth-child(n + 3) { display: none; }
+
+  .mobile-control-row {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .mobile-control-row > :last-child {
+    justify-content: space-between;
+    width: 100%;
   }
 
   .universities-shell > :where(header, section, div) {

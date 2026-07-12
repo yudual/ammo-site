@@ -50,25 +50,28 @@ const currentYear = new Date().getFullYear()
     <!-- Background overlay -->
     <div class="fixed inset-0 pointer-events-none z-0 home-bg-aurora"></div>
 
-    <div class="home-shell mx-auto flex min-h-screen w-full min-w-0 max-w-6xl flex-col px-5 pb-16 pt-6 sm:px-6 md:pt-8 relative z-10">
+    <div class="home-shell mx-auto flex min-h-screen w-full min-w-0 max-w-6xl flex-col px-4 pb-12 pt-4 sm:px-6 sm:pb-16 sm:pt-6 md:pt-8 relative z-10">
       
       <!-- 第一屏：主入口区 -->
-      <header class="flex flex-col items-center text-center py-10 md:py-16">
+      <header class="home-hero flex flex-col items-center text-center py-7 md:py-16">
         <p class="mb-3 text-xs sm:text-sm tracking-[0.18em] text-[var(--text-tertiary)] font-bold uppercase">
           弹药工程与爆炸技术专业导航站
         </p>
-        <h1 class="text-3xl sm:text-5xl font-extrabold leading-tight tracking-tight text-[var(--text-primary)]">
-          本专业去哪查院校、单位和考研线索
+        <h1 class="text-[1.75rem] sm:text-5xl font-extrabold leading-[1.22] tracking-tight text-[var(--text-primary)]">
+          给弹药孩子一个温暖的家
         </h1>
+        <p class="home-hero-note mt-3 max-w-xl text-sm leading-6 text-[var(--text-secondary)] sm:text-base">
+          院校、企业、专业和考研方向，从这里开始查。
+        </p>
       </header>
 
       <!-- 四个核心入口卡片 -->
-      <section class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mt-2">
+      <section class="home-route-grid grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4 mt-1 sm:mt-2">
         <RouterLink
           v-for="(item, index) in heroRouteItems"
           :key="item.to"
           :to="item.to"
-          class="bento-card bento-glass group flex flex-col justify-between hover-lift min-h-[160px]"
+          class="bento-card home-route-card bento-glass group flex flex-col justify-between hover-lift min-h-[132px] sm:min-h-[160px]"
         >
           <div class="flex justify-between items-start">
             <div class="p-2.5 rounded-xl bg-[var(--surface-strong)]/60 text-[var(--text-secondary)] group-hover:bg-[var(--accent)] group-hover:text-white transition-colors duration-300">
@@ -113,7 +116,7 @@ const currentYear = new Date().getFullYear()
       </section>
 
       <!-- 数据概览 -->
-      <section class="mt-16 sm:mt-24 grid gap-6 md:grid-cols-5 items-center">
+      <section class="home-overview mt-10 grid gap-6 md:mt-16 md:grid-cols-5 items-center">
         <div class="md:col-span-2 grid grid-cols-3 gap-3">
           <div class="bento-glass-inset rounded-xl p-4 flex flex-col justify-center items-center text-center">
             <span class="text-xs text-[var(--text-tertiary)] mb-1">已收录高校</span>
@@ -245,5 +248,18 @@ const currentYear = new Date().getFullYear()
   .animate-marquee-left {
     animation: none;
   }
+}
+
+@media (max-width: 639px) {
+  .home-hero p:first-child { margin-bottom: 0.6rem; letter-spacing: 0.1em; }
+  .home-hero-note { margin-top: 0.75rem; line-height: 1.6; }
+  .home-route-card { padding: 1rem; min-height: 124px; }
+  .home-route-card > div:last-child { margin-top: 1rem; }
+  .home-route-card h3 { font-size: 1rem; }
+  .home-route-card p { line-height: 1.45; }
+  .home-route-card > div:first-child > span { display: none; }
+  .home-overview { margin-top: 2.5rem; }
+  .home-overview strong { font-size: 1.25rem; }
+  .home-overview span { font-size: 0.68rem; }
 }
 </style>

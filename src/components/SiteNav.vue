@@ -81,7 +81,7 @@ onUnmounted(() => {
     }"
   >
     <div
-      class="mx-auto max-w-6xl px-3 py-2.5 flex min-w-0 flex-wrap items-center gap-2 sm:px-4 md:grid md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-3"
+      class="site-nav-shell mx-auto max-w-6xl px-3 py-2.5 flex min-w-0 flex-wrap items-center gap-2 sm:px-4 md:grid md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-3"
     >
       <div class="flex min-w-0 flex-wrap items-center gap-2 md:justify-self-start lg:flex-nowrap">
         <RouterLink
@@ -109,7 +109,7 @@ onUnmounted(() => {
         </RouterLink>
       </div>
 
-      <nav class="order-3 w-full min-w-0 overflow-x-auto md:order-none md:w-auto md:justify-self-center" aria-label="全站主导航">
+      <nav class="site-main-nav order-3 w-full min-w-0 overflow-x-auto md:order-none md:w-auto md:justify-self-center" aria-label="全站主导航">
         <div class="flex w-max min-w-full items-center gap-1 md:min-w-0 md:justify-center">
           <RouterLink
             v-for="item in mainNavItems"
@@ -165,5 +165,16 @@ onUnmounted(() => {
 
 .site-nav nav::-webkit-scrollbar {
   display: none;
+}
+
+@media (max-width: 767px) {
+  .site-nav-shell { padding-bottom: 0.35rem; }
+  .site-main-nav {
+    margin-inline: -0.75rem;
+    width: calc(100% + 1.5rem);
+    padding: 0.15rem 0.75rem 0.25rem;
+    border-top: 1px solid var(--border);
+  }
+  .site-main-nav > div { min-width: max-content; }
 }
 </style>
