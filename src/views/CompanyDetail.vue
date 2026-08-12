@@ -436,7 +436,7 @@ const sourceTypes = computed(() =>
             </div>
 
             <div class="border-soft mt-8 border-t pt-6">
-              <p class="text-sm tracking-[0.14em] text-[var(--text-tertiary)]">调研来源与信号</p>
+              <p class="text-sm tracking-[0.14em] text-[var(--text-tertiary)]">调研结论与来源</p>
               <template v-if="research">
                 <div class="mt-3 grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(18rem,0.42fr)]">
                   <div>
@@ -444,7 +444,7 @@ const sourceTypes = computed(() =>
                       <StatusPill :value="research.relevanceLevel" prefix="相关度：" />
                       <span class="text-sm text-[var(--text-tertiary)]">最后更新：{{ research.updatedAt }}</span>
                     </div>
-                    <p class="mt-4 text-sm font-medium text-[var(--text-primary)]">结论摘要</p>
+                    <p class="mt-4 text-sm font-medium text-[var(--text-primary)]">调研结论</p>
                     <p class="mt-2 text-sm leading-7 text-[var(--text-secondary)]">{{ research.conclusion }}</p>
                   </div>
 

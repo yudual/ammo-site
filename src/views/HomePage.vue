@@ -18,19 +18,19 @@ type ResourceMark = {
 }
 
 const heroRouteItems: HeroRouteItem[] = [
-  { label: '专业介绍', note: '课程与四年节奏', to: '/about-major', icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' },
-  { label: '院校一览', note: '高校层次与专业线索', to: '/universities', icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' },
-  { label: '企业名录', note: '性质分布与工作作息', to: '/companies', icon: 'M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' },
-  { label: '考研方向', note: '路线对比与四年准备', to: '/graduate', icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' },
+  { label: '专业介绍', note: '课程、四年节奏和现实约束', to: '/about-major', icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' },
+  { label: '院校一览', note: '层次、方向和招生入口', to: '/universities', icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' },
+  { label: '企业名录', note: '性质、岗位和现场条件', to: '/companies', icon: 'M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' },
+  { label: '考研方向', note: '顺接、半跨、跨考怎么选', to: '/graduate', icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' },
 ]
 
 const schoolMarks: ResourceMark[] = [
-  { name: '北京理工大学', logo: '/logos/schools/北京理工大学.png', note: '兵器相关方向', actionLabel: '查看详情', to: '/universities/bit' },
-  { name: '南京理工大学', logo: '/logos/schools/南京理工大学.png', note: '招生网有专业入口', actionLabel: '查看详情', to: '/universities/njust' },
-  { name: '中北大学', logo: '/logos/schools/中北大学.png', note: '兵器与爆炸线索', actionLabel: '查看详情', to: '/universities/nuc' },
-  { name: '沈阳理工大学', logo: '/logos/schools/沈阳理工大学.png', note: '北方院校线索', actionLabel: '查看详情', to: '/universities/syit' },
+  { name: '北京理工大学', logo: '/logos/schools/北京理工大学.png', note: '兵器与弹药方向', actionLabel: '查看详情', to: '/universities/bit' },
+  { name: '南京理工大学', logo: '/logos/schools/南京理工大学.png', note: '招生网可查专业入口', actionLabel: '查看详情', to: '/universities/njust' },
+  { name: '中北大学', logo: '/logos/schools/中北大学.png', note: '兵工特色院校', actionLabel: '查看详情', to: '/universities/nuc' },
+  { name: '沈阳理工大学', logo: '/logos/schools/沈阳理工大学.png', note: '东北装备制造', actionLabel: '查看详情', to: '/universities/syit' },
   { name: '安徽理工大学', logo: '/logos/schools/安徽理工大学.png', note: '民爆与工程应用', actionLabel: '查看详情', to: '/universities/aust' },
-  { name: '西安工业大学', logo: '/logos/schools/西安工业大学.png', note: '西北方向入口', actionLabel: '查看详情', to: '/universities/xatu' },
+  { name: '西安工业大学', logo: '/logos/schools/西安工业大学.png', note: '西北兵工资源', actionLabel: '查看详情', to: '/universities/xatu' },
 ]
 
 const schoolTickerItems = [...schoolMarks, ...schoolMarks].map((item, index) => ({
@@ -54,13 +54,13 @@ const highRelevanceCount =
       <!-- 第一屏：主入口区 -->
       <header class="home-hero flex flex-col items-center text-center py-7 md:py-16">
         <p class="mb-3 text-xs sm:text-sm tracking-[0.18em] text-[var(--text-tertiary)] font-bold uppercase">
-          弹药工程与爆炸技术专业导航站
+          院校 · 企业 · 专业 · 考研
         </p>
         <h1 class="text-[1.75rem] sm:text-5xl font-extrabold leading-[1.22] tracking-tight text-[var(--text-primary)]">
-          给弹药孩子一个温暖的家
+          弹药工程与爆炸技术导航站
         </h1>
         <p class="home-hero-note mt-3 max-w-xl text-sm leading-6 text-[var(--text-secondary)] sm:text-base">
-          院校、企业、专业和考研方向，从这里开始查。
+          按现实条件查院校、企业和方向，别只看专业名字。
         </p>
       </header>
 
@@ -126,7 +126,7 @@ const highRelevanceCount =
             <strong class="text-2xl font-black text-[var(--text-primary)]">{{ companies.length }} 家</strong>
           </div>
           <div class="bento-glass-inset rounded-xl p-4 flex flex-col justify-center items-center text-center">
-            <span class="text-xs text-[var(--text-tertiary)] mb-1">高匹配条目</span>
+            <span class="text-xs text-[var(--text-tertiary)] mb-1">对口相关条目</span>
             <strong class="text-2xl font-black text-[var(--accent)]">{{ highRelevanceCount }} 条</strong>
           </div>
         </div>

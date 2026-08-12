@@ -18,7 +18,7 @@ const allowedUniversity = {
 const allowedVerificationStatus = new Set(['已核验', '部分核验', '过期待复查'])
 const allowedVerificationRelevance = new Set(['高', '中', '低', '待核对'])
 const allowedResearchRelevance = new Set(['高', '中', '低'])
-const promoPattern = /全面|赋能|价值|体系|打造|助力|真正|显著|竞争力强|顶级|领先|一流平台|强烈推荐/g
+const promoPattern = /全面|赋能|价值|体系|打造|助力|真正|显著|竞争力强|顶级|领先|一流平台|强烈推荐|公开资料显示|相关性较明确|以最新招聘公告为准|以当年校招公告为准|具体岗位、薪资和工作地点/g
 const weakSourcePattern = /百度百科|百科|企查查|天眼查|爱企查|第三方院校库|论坛|知乎|自媒体|来源不明|镜像/i
 
 function parseArgs(argv) {
