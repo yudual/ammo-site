@@ -42,10 +42,10 @@ const quickFacts = computed(() => {
   }
 
   return [
-    { label: '性质', value: company.value.ownership },
-    { label: '地区', value: `${company.value.city} · ${company.value.region}` },
-    { label: '方向', value: company.value.scaleOrIndustry },
-    { label: '更新', value: verification.value?.updatedAt || '待补充' },
+    { label: '企业性质', value: company.value.ownership },
+    { label: '所在地区', value: `${company.value.city} · ${company.value.region}` },
+    { label: '主营方向', value: company.value.scaleOrIndustry },
+    { label: '最后核验', value: verification.value?.updatedAt || '待补充' },
   ]
 })
 
@@ -58,9 +58,9 @@ const detailRows = computed(() => {
     { label: '岗位线索', value: company.value.positions },
     { label: '学历要求', value: company.value.education },
     { label: '薪资范围', value: company.value.salaryRange },
-    { label: '作息', value: company.value.schedule },
-    { label: '行业 / 标签', value: [company.value.scaleOrIndustry, ...company.value.highlights].join(' / ') },
-    { label: '官网 / 入口', value: company.value.website || '待核对' },
+    { label: '工作作息', value: company.value.schedule },
+    { label: '行业与标签', value: [company.value.scaleOrIndustry, ...company.value.highlights].join(' / ') },
+    { label: '官方网址 / 入口', value: company.value.website || '待核对' },
   ]
 })
 
@@ -102,204 +102,134 @@ const priorityLinks = computed(() =>
 const sourceCount = computed(() => research.value?.sources.length || 0)
 const verifiedCount = computed(() => verification.value?.verifiedFields.length || 0)
 const pendingCount = computed(() => verification.value?.pendingFields.length || 0)
-const sourceTypes = computed(() =>
-  Array.from(new Set((research.value?.sources || []).map((source) => source.type))).slice(0, 4),
-)
-
 </script>
 
 <template>
   <div class="company-detail-page-wrap">
     <ReadingProgress />
-    <section class="company-detail-page min-h-screen overflow-x-clip bg-[var(--page-bg)] px-4 pb-8 pt-6 text-[var(--text-primary)] md:px-6 md:pb-12 md:pt-8">
-    <div class="company-detail-shell mx-auto flex w-full min-w-0 max-w-6xl flex-col gap-6">
-      <template v-if="company">
-        <header
-          class="company-detail-hero rounded-xl border p-5 md:p-6"
-          :style="{
-            backgroundColor: 'var(--surface)',
-            borderColor: 'var(--border)',
-            boxShadow: 'var(--glass-shadow)',
-          }"
-        >
-          <div class="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(18rem,0.45fr)] xl:items-start">
-            <div class="min-w-0">
-              <div class="mb-4 flex flex-wrap items-center gap-2 w-full">
+    <section class="company-detail-page min-h-screen overflow-x-clip bg-[var(--page-bg)] px-3.5 pb-12 pt-4 text-[var(--text-primary)] sm:px-6 sm:pb-16 sm:pt-6 md:pt-8">
+      <div class="company-detail-shell mx-auto flex w-full min-w-0 max-w-5xl flex-col gap-6">
+        <template v-if="company">
+          
+          <!-- 头部 Header 卡片 -->
+          <header
+            class="company-detail-hero rounded-2xl border p-5 sm:p-7"
+            :style="{
+              backgroundColor: 'var(--surface)',
+              borderColor: 'var(--border)',
+              boxShadow: 'var(--glass-shadow)',
+              backdropFilter: 'blur(16px)',
+            }"
+          >
+            <!-- 顶栏操作区：返回 + 快速跨页 + 分享 -->
+            <div class="flex flex-wrap items-center justify-between gap-2.5 pb-5 border-b mb-5" :style="{ borderColor: 'var(--border)' }">
+              <div class="flex flex-wrap items-center gap-2">
                 <button
                   type="button"
-                  class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition border hover:opacity-80 shrink-0"
+                  class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs sm:text-sm font-semibold transition border hover:bg-[var(--surface-muted)] cursor-pointer"
                   :style="{
                     backgroundColor: 'var(--surface-strong)',
                     borderColor: 'var(--border)',
-                    color: 'var(--text-secondary)',
+                    color: 'var(--text-primary)',
                   }"
                   @click="goBack"
                 >
-                  <AppIcon name="arrow-left" class="w-4 h-4" /> 回企业名录
+                  <AppIcon name="arrow-left" class="w-3.5 h-3.5 text-[var(--accent)]" />
+                  <span>回企业名录</span>
                 </button>
-                <ActionButton to="/universities" variant="secondary" size="sm" class="shrink-0">
+                <ActionButton to="/universities" variant="secondary" size="sm">
                   看院校一览
                 </ActionButton>
-                <ActionButton to="/about-major" variant="tonal" size="sm" class="shrink-0">
+                <ActionButton to="/about-major" variant="tonal" size="sm">
                   专业介绍
                 </ActionButton>
-
-                <button
-                  type="button"
-                  class="rounded-lg px-3 py-1.5 text-sm font-medium transition border sm:ml-auto flex items-center gap-1 hover:opacity-90 shrink-0"
-                  :style="{
-                    backgroundColor: isCopied ? 'var(--accent-soft)' : 'var(--surface-strong)',
-                    borderColor: isCopied ? 'var(--accent)' : 'var(--border)',
-                    color: isCopied ? 'var(--accent)' : 'var(--text-secondary)',
-                  }"
-                  @click="copyShareLink"
-                >
-                  <AppIcon :name="isCopied ? 'check' : 'link'" :size="16" />
-                  <span>{{ isCopied ? '链接已复制！' : '分享本页' }}</span>
-                </button>
-              </div>
-              <p class="mb-3 text-sm tracking-[0.16em] text-[var(--text-secondary)]">企业档案</p>
-              <h1 class="company-name-title max-w-full text-xl font-semibold leading-tight text-[var(--text-primary)] sm:text-2xl md:max-w-4xl md:text-3xl">
-                {{ company.name }}
-              </h1>
-              <p class="mt-3 max-w-3xl text-sm leading-7 text-[var(--text-secondary)] md:text-base">
-                {{ company.description }}
-              </p>
-
-              <div class="mt-4 flex flex-wrap gap-2">
-                <StatusPill :value="verification?.relevanceLevel" prefix="相关度" />
-                <StatusPill :value="verification?.status || '资料待核对'" />
-                <span
-                  class="rounded-lg px-3 py-1 text-sm"
-                  :style="{ backgroundColor: 'var(--surface-muted)', color: 'var(--text-secondary)' }"
-                >
-                  {{ company.city }} · {{ company.region }}
-                </span>
               </div>
 
-              <p class="mt-4 max-w-4xl text-sm font-medium leading-7 text-[var(--text-primary)]">
-                {{ company.positions !== '待核对' ? company.positions : company.scaleOrIndustry }}
-              </p>
+              <button
+                type="button"
+                class="rounded-lg px-3 py-1.5 text-xs sm:text-sm font-semibold transition border flex items-center gap-1.5 hover:scale-105 active:scale-95 cursor-pointer"
+                :style="{
+                  backgroundColor: isCopied ? 'var(--accent-soft)' : 'var(--surface-strong)',
+                  borderColor: isCopied ? 'var(--accent)' : 'var(--border)',
+                  color: isCopied ? 'var(--accent)' : 'var(--text-secondary)',
+                }"
+                @click="copyShareLink"
+              >
+                <AppIcon :name="isCopied ? 'check' : 'link'" :size="15" />
+                <span>{{ isCopied ? '链接已复制！' : '分享本页' }}</span>
+              </button>
             </div>
 
-            <aside
-              class="rounded-xl border p-4"
-              :style="{
-                backgroundColor: 'color-mix(in srgb, var(--surface) 86%, var(--status-warning-soft) 14%)',
-                borderColor: 'var(--status-warning-border)',
-              }"
-            >
-              <div class="flex items-start justify-between gap-3">
-                <div>
-                  <p class="text-sm font-medium" :style="{ color: 'var(--status-warning)' }">待核对</p>
-                </div>
-                <span
-                  class="rounded-lg px-2.5 py-1 text-xs font-medium"
-                  :style="{ backgroundColor: 'var(--surface)', color: 'var(--status-warning)' }"
-                >
-                  {{ pendingCount }} 项
-                </span>
-              </div>
-              <div v-if="frontRisks.length" class="mt-3 flex flex-wrap gap-2">
-                <span
-                  v-for="risk in frontRisks"
-                  :key="risk"
-                  class="rounded-lg border px-2.5 py-1 text-xs"
-                  :style="{
-                    backgroundColor: 'var(--surface)',
-                    borderColor: 'var(--status-warning-border)',
-                    color: 'var(--text-secondary)',
-                  }"
-                >
-                  {{ risk }}
-                </span>
-              </div>
-
-              <div v-if="priorityLinks.length" class="mt-4 flex flex-wrap gap-2">
-                <ActionButton
-                  v-for="link in priorityLinks"
-                  :key="`${link.type}-${link.url}`"
-                  :href="link.url"
-                  variant="secondary"
-                  size="sm"
-                  new-tab
-                >
-                  {{ link.type }}
-                </ActionButton>
-              </div>
-            </aside>
-          </div>
-
-          <div class="border-soft mt-5 grid gap-3 border-t pt-4 text-sm sm:grid-cols-2 xl:grid-cols-4">
-            <div v-for="fact in quickFacts" :key="fact.label">
-              <p class="text-[var(--text-tertiary)]">{{ fact.label }}</p>
-              <p class="mt-1 font-medium leading-6 text-[var(--text-primary)]">{{ fact.value }}</p>
-            </div>
-          </div>
-        </header>
-
-        <nav
-          class="company-detail-subnav sticky top-32 z-30 overflow-x-auto rounded-xl border p-2 backdrop-blur md:top-24"
-          :style="{
-            backgroundColor: 'var(--surface)',
-            borderColor: 'var(--border)',
-            boxShadow: 'var(--glass-shadow)',
-          }"
-          aria-label="企业详情小导航"
-        >
-          <div class="flex min-w-max gap-2">
-            <button
-              v-for="section in navSections"
-              :key="section.id"
-              type="button"
-              class="rounded-lg px-4 py-2 text-sm font-medium transition"
-              :aria-pressed="activeSection === section.id"
-              :style="{
-                backgroundColor: activeSection === section.id ? 'var(--accent)' : 'var(--surface-strong)',
-                color: activeSection === section.id ? '#ffffff' : 'var(--text-secondary)',
-              }"
-              @click="scrollToSection(section.id)"
-            >
-              {{ section.label }}
-            </button>
-          </div>
-        </nav>
-
-        <section
-          class="detail-content-shell rounded-xl border p-5 md:p-6"
-          :style="{
-            backgroundColor: 'var(--surface)',
-            borderColor: 'var(--border)',
-            boxShadow: 'var(--glass-shadow)',
-          }"
-        >
-          <section id="overview" class="detail-section scroll-target" aria-label="概览">
-            <div class="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
-              <div>
-                <p class="text-sm tracking-[0.14em] text-[var(--text-tertiary)]">概览</p>
-                <h2 class="mt-2 text-xl font-semibold text-[var(--text-primary)]">关键信息摘要</h2>
-              </div>
-            </div>
-
-            <div class="mt-5 grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(18rem,0.42fr)]">
-              <div class="grid gap-3 md:grid-cols-2">
-                <div class="surface-card-strong detail-panel rounded-xl border p-4">
-                  <p class="text-sm font-medium text-[var(--text-primary)]">岗位线索</p>
-                  <p class="mt-2 text-sm leading-7 text-[var(--text-secondary)]">{{ company.positions }}</p>
-                  <p class="mt-2 text-xs leading-5 text-[var(--text-tertiary)]">{{ company.education }}</p>
+            <!-- 主标题与核心状态 -->
+            <div class="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(18rem,0.8fr)] xl:items-start">
+              <div class="min-w-0">
+                <div class="mb-3 flex flex-wrap items-center gap-2">
+                  <span class="text-xs font-bold uppercase tracking-wider text-[var(--text-tertiary)]">企业档案</span>
+                  <StatusPill :value="verification?.relevanceLevel" prefix="相关度" size="xs" />
+                  <StatusPill :value="verification?.status || '资料待核对'" size="xs" />
                 </div>
 
-                <div class="surface-card-strong detail-panel rounded-xl border p-4">
-                  <p class="text-sm font-medium text-[var(--text-primary)]">待遇口径</p>
-                  <p class="mt-2 text-sm leading-7 text-[var(--text-secondary)]">薪资：{{ company.salaryRange }}</p>
-                  <p class="mt-1 text-sm leading-7 text-[var(--text-secondary)]">作息：{{ company.schedule }}</p>
-                </div>
+                <h1 class="company-name-title text-xl sm:text-2xl md:text-3xl font-black tracking-tight leading-tight text-[var(--text-primary)]">
+                  {{ company.name }}
+                </h1>
 
+                <p class="mt-3 text-xs sm:text-sm leading-relaxed text-[var(--text-secondary)]">
+                  {{ company.description }}
+                </p>
+
+                <div class="mt-4 flex flex-wrap gap-2">
+                  <span
+                    class="rounded-md px-2.5 py-1 text-xs font-semibold"
+                    :style="{ backgroundColor: 'var(--surface-muted)', color: 'var(--text-secondary)' }"
+                  >
+                    {{ company.city }} · {{ company.region }}
+                  </span>
+                  <span
+                    class="rounded-md px-2.5 py-1 text-xs font-semibold"
+                    :style="{ backgroundColor: 'var(--accent-soft)', color: 'var(--accent)' }"
+                  >
+                    {{ company.ownership }}
+                  </span>
+                </div>
               </div>
 
-              <aside class="surface-card-strong detail-panel rounded-xl border p-4">
-                <p class="text-sm font-medium text-[var(--text-primary)]">外部链接</p>
-                <div v-if="priorityLinks.length" class="mt-3 flex flex-col gap-2">
+              <!-- 待核对提示侧栏 -->
+              <aside
+                class="rounded-xl border p-4.5"
+                :style="{
+                  backgroundColor: 'var(--surface-strong)',
+                  borderColor: 'var(--status-warning-border)',
+                }"
+              >
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold text-[var(--status-warning)] flex items-center gap-1.5">
+                    <span class="h-2 w-2 rounded-full bg-[var(--status-warning)]" />
+                    <span>待核验项目</span>
+                  </span>
+                  <span
+                    class="rounded-md px-2 py-0.5 text-xs font-bold font-numeric"
+                    :style="{ backgroundColor: 'var(--status-warning-soft)', color: 'var(--status-warning)' }"
+                  >
+                    {{ pendingCount }} 项
+                  </span>
+                </div>
+
+                <div v-if="frontRisks.length" class="mt-3 flex flex-wrap gap-1.5">
+                  <span
+                    v-for="risk in frontRisks"
+                    :key="risk"
+                    class="rounded-md border px-2 py-0.5 text-xs leading-normal"
+                    :style="{
+                      backgroundColor: 'var(--surface-muted)',
+                      borderColor: 'var(--border)',
+                      color: 'var(--text-secondary)',
+                    }"
+                  >
+                    {{ risk }}
+                  </span>
+                </div>
+
+                <div v-if="priorityLinks.length" class="mt-4 flex flex-wrap gap-2 pt-3 border-t" :style="{ borderColor: 'var(--border)' }">
                   <ActionButton
                     v-for="link in priorityLinks"
                     :key="`${link.type}-${link.url}`"
@@ -313,227 +243,288 @@ const sourceTypes = computed(() =>
                 </div>
               </aside>
             </div>
-          </section>
 
-          <section v-if="verification" id="verification" class="detail-section scroll-target" aria-label="核验">
-            <div class="grid gap-5 xl:grid-cols-[minmax(0,0.75fr)_minmax(0,1fr)_minmax(0,1fr)]">
-              <div>
-                <p class="text-sm tracking-[0.14em] text-[var(--text-tertiary)]">资料核验情况</p>
-                <h2 class="mt-2 text-lg font-semibold text-[var(--text-primary)]">{{ verification.status }}</h2>
-                <p class="mt-3 text-sm leading-7 text-[var(--text-secondary)]">{{ verification.summary }}</p>
-                <div class="mt-4 grid grid-cols-3 gap-3 text-sm">
-                  <div class="surface-card detail-mini-stat rounded-lg border px-3 py-3">
-                    <p class="text-[var(--text-tertiary)]">已核验</p>
-                    <p class="mt-1 text-lg font-semibold text-[var(--text-primary)]">{{ verifiedCount }}</p>
-                  </div>
-                  <div class="surface-card detail-mini-stat rounded-lg border px-3 py-3">
-                    <p class="text-[var(--text-tertiary)]">待核对</p>
-                    <p class="mt-1 text-lg font-semibold text-[var(--text-primary)]">{{ pendingCount }}</p>
-                  </div>
-                  <div class="surface-card detail-mini-stat rounded-lg border px-3 py-3">
-                    <p class="text-[var(--text-tertiary)]">来源</p>
-                    <p class="mt-1 text-lg font-semibold text-[var(--text-primary)]">{{ sourceCount }}</p>
-                  </div>
-                </div>
-              </div>
-
+            <!-- 参数速览看板 (Quick Facts Grid) -->
+            <div class="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3 border-t pt-5" :style="{ borderColor: 'var(--border)' }">
               <div
-                class="surface-card-strong detail-panel rounded-xl border p-4"
-                :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--status-positive-border)' }"
+                v-for="fact in quickFacts"
+                :key="fact.label"
+                class="flex flex-col p-3 rounded-xl border"
+                :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--border)' }"
               >
-                <p class="text-sm font-medium" :style="{ color: 'var(--status-positive)' }">已核验信息</p>
-                <ul v-if="verification.verifiedFields.length" class="mt-3 space-y-2 text-sm leading-6 text-[var(--text-secondary)]">
-                  <li v-for="field in verification.verifiedFields" :key="field">{{ field }}</li>
-                </ul>
-                <p v-else class="mt-3 text-sm leading-6 text-[var(--text-tertiary)]">
-                  暂无已核验信息。
-                </p>
-              </div>
-
-              <div
-                class="surface-card-strong detail-panel rounded-xl border p-4"
-                :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--status-warning-border)' }"
-              >
-                <p class="text-sm font-medium" :style="{ color: 'var(--status-warning)' }">待核对信息</p>
-                <ul class="mt-3 space-y-2 text-sm leading-6 text-[var(--text-secondary)]">
-                  <li v-for="field in verification.pendingFields" :key="field">{{ field }}</li>
-                </ul>
+                <span class="text-[11px] font-medium text-[var(--text-tertiary)]">{{ fact.label }}</span>
+                <strong class="mt-1 text-xs sm:text-sm font-bold text-[var(--text-primary)] truncate">{{ fact.value }}</strong>
               </div>
             </div>
-          </section>
+          </header>
 
-          <section id="profile" class="detail-section scroll-target" aria-label="档案">
-            <p class="text-sm tracking-[0.14em] text-[var(--text-tertiary)]">信息表格</p>
-            <h2 class="mt-2 text-xl font-semibold text-[var(--text-primary)]">企业基础信息档案</h2>
-            <div class="border-soft mt-5 overflow-hidden rounded-xl border">
-              <div
-                v-for="row in detailRows"
-                :key="row.label"
-                class="grid gap-3 border-b px-4 py-4 last:border-b-0 md:grid-cols-[9rem_minmax(0,1fr)]"
-                :style="{ borderColor: 'var(--border)', backgroundColor: 'var(--surface-strong)' }"
-              >
-                <p class="text-sm text-[var(--text-tertiary)]">{{ row.label }}</p>
-                <p class="text-sm leading-7 text-[var(--text-secondary)]">{{ row.value }}</p>
-              </div>
-            </div>
-          </section>
-
-          <section id="research" class="detail-section scroll-target" aria-label="来源">
-            <div class="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
-              <div>
-                <p class="text-sm tracking-[0.14em] text-[var(--text-tertiary)]">外部链接</p>
-                <h2 class="mt-2 text-xl font-semibold text-[var(--text-primary)]">官网与招聘</h2>
-              </div>
-            </div>
-
-            <div class="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-              <template v-if="referenceLinks.length">
-                <a
-                  v-for="link in referenceLinks"
-                  :key="`${link.type}-${link.url}`"
-                  :href="link.url"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="group block rounded-lg border px-4 py-4 text-sm transition hover:-translate-y-0.5"
-                  :style="{
-                    backgroundColor: 'var(--surface-strong)',
-                    borderColor: 'var(--border)',
-                    color: 'var(--text-primary)',
-                  }"
-                >
-                  <span class="flex items-start justify-between gap-3">
-                    <span>
-                      <span class="block font-medium leading-6">{{ link.title }}</span>
-                      <span class="mt-1 block text-[var(--text-tertiary)]">{{ link.type }}</span>
-                    </span>
-                    <span
-                      class="shrink-0 rounded-lg border px-2.5 py-1 text-xs transition group-hover:-translate-y-0.5"
-                      :style="{
-                        backgroundColor: 'var(--accent-soft)',
-                        borderColor: 'var(--border)',
-                        color: 'var(--accent)',
-                      }"
-                    >
-                      打开
-                    </span>
-                  </span>
-                  <span v-if="link.note" class="mt-2 block leading-6 text-[var(--text-secondary)]">
-                    {{ link.note }}
-                  </span>
-                </a>
-              </template>
-
-              <div
-                v-else
-                class="rounded-lg border px-4 py-4"
+          <!-- 二级小导航 -->
+          <nav
+            class="company-detail-subnav overflow-x-auto rounded-xl border p-1.5 no-scrollbar"
+            :style="{
+              backgroundColor: 'var(--surface)',
+              borderColor: 'var(--border)',
+              boxShadow: 'var(--glass-shadow)',
+            }"
+            aria-label="企业详情小导航"
+          >
+            <div class="flex min-w-max gap-1">
+              <button
+                v-for="section in navSections"
+                :key="section.id"
+                type="button"
+                class="rounded-lg px-3.5 py-1.5 text-xs sm:text-sm font-semibold transition cursor-pointer"
+                :aria-pressed="activeSection === section.id"
                 :style="{
-                  backgroundColor: 'var(--surface-strong)',
-                  borderColor: 'var(--border)',
+                  backgroundColor: activeSection === section.id ? 'var(--accent)' : 'transparent',
+                  color: activeSection === section.id ? '#ffffff' : 'var(--text-secondary)',
                 }"
-                >
-                <p class="text-sm font-medium text-[var(--text-primary)]">暂无入口</p>
+                @click="scrollToSection(section.id)"
+              >
+                {{ section.label }}
+              </button>
+            </div>
+          </nav>
+
+          <!-- 详情主体内容 -->
+          <main
+            class="detail-content-shell rounded-2xl border p-5 sm:p-7 flex flex-col gap-10"
+            :style="{
+              backgroundColor: 'var(--surface)',
+              borderColor: 'var(--border)',
+              boxShadow: 'var(--glass-shadow)',
+              backdropFilter: 'blur(16px)',
+            }"
+          >
+            <!-- 1. 概览 Section -->
+            <section id="overview" class="detail-section scroll-target" aria-label="概览">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="h-4 w-1 rounded-full bg-[var(--accent)]" />
+                <h2 class="text-base sm:text-lg font-bold text-[var(--text-primary)]">关键信息摘要</h2>
               </div>
+
+              <div class="grid gap-4 md:grid-cols-2">
+                <div class="rounded-xl border p-4.5" :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--border)' }">
+                  <p class="text-xs font-bold text-[var(--text-primary)] mb-2">岗位线索与要求</p>
+                  <p class="text-xs sm:text-sm leading-relaxed text-[var(--text-secondary)]">{{ company.positions }}</p>
+                  <p class="mt-2 text-xs text-[var(--text-tertiary)] font-numeric">学历门槛：{{ company.education }}</p>
+                </div>
+
+                <div class="rounded-xl border p-4.5" :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--border)' }">
+                  <p class="text-xs font-bold text-[var(--text-primary)] mb-2">待遇与作息口径</p>
+                  <p class="text-xs sm:text-sm leading-relaxed text-[var(--text-secondary)]">薪资口径：{{ company.salaryRange }}</p>
+                  <p class="mt-1 text-xs sm:text-sm leading-relaxed text-[var(--text-secondary)]">工作作息：{{ company.schedule }}</p>
+                </div>
+              </div>
+            </section>
+
+            <!-- 2. 核验情况 Section -->
+            <section v-if="verification" id="verification" class="detail-section scroll-target" aria-label="核验">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="h-4 w-1 rounded-full bg-[var(--accent)]" />
+                <h2 class="text-base sm:text-lg font-bold text-[var(--text-primary)]">资料核验情况</h2>
+              </div>
+
+              <div class="grid gap-4 md:grid-cols-3">
+                <div class="rounded-xl border p-4 flex flex-col justify-between" :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--border)' }">
+                  <div>
+                    <span class="text-xs text-[var(--text-tertiary)]">核验结论</span>
+                    <h3 class="mt-1 text-sm font-bold text-[var(--text-primary)]">{{ verification.status }}</h3>
+                    <p class="mt-2 text-xs leading-relaxed text-[var(--text-secondary)]">{{ verification.summary }}</p>
+                  </div>
+
+                  <div class="mt-4 grid grid-cols-3 gap-2 text-center pt-3 border-t" :style="{ borderColor: 'var(--border)' }">
+                    <div>
+                      <span class="text-[10px] text-[var(--text-tertiary)]">已核验</span>
+                      <strong class="block text-sm font-bold font-numeric text-[var(--status-positive)]">{{ verifiedCount }}</strong>
+                    </div>
+                    <div>
+                      <span class="text-[10px] text-[var(--text-tertiary)]">待核对</span>
+                      <strong class="block text-sm font-bold font-numeric text-[var(--status-warning)]">{{ pendingCount }}</strong>
+                    </div>
+                    <div>
+                      <span class="text-[10px] text-[var(--text-tertiary)]">信源</span>
+                      <strong class="block text-sm font-bold font-numeric text-[var(--text-primary)]">{{ sourceCount }}</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="rounded-xl border p-4" :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--status-positive-border)' }">
+                  <p class="text-xs font-bold text-[var(--status-positive)] mb-2 flex items-center gap-1">
+                    <span class="h-1.5 w-1.5 rounded-full bg-[var(--status-positive)]" />
+                    <span>已核验信息</span>
+                  </p>
+                  <ul v-if="verification.verifiedFields.length" class="space-y-1.5 text-xs text-[var(--text-secondary)]">
+                    <li v-for="field in verification.verifiedFields" :key="field" class="flex items-start gap-1.5">
+                      <span class="text-[var(--status-positive)] font-bold">✓</span>
+                      <span>{{ field }}</span>
+                    </li>
+                  </ul>
+                  <p v-else class="text-xs text-[var(--text-tertiary)]">暂无</p>
+                </div>
+
+                <div class="rounded-xl border p-4" :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--status-warning-border)' }">
+                  <p class="text-xs font-bold text-[var(--status-warning)] mb-2 flex items-center gap-1">
+                    <span class="h-1.5 w-1.5 rounded-full bg-[var(--status-warning)]" />
+                    <span>待核对信息</span>
+                  </p>
+                  <ul class="space-y-1.5 text-xs text-[var(--text-secondary)]">
+                    <li v-for="field in verification.pendingFields" :key="field" class="flex items-start gap-1.5">
+                      <span class="text-[var(--status-warning)] font-bold">?</span>
+                      <span>{{ field }}</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </section>
+
+            <!-- 3. 信息档案 Section -->
+            <section id="profile" class="detail-section scroll-target" aria-label="档案">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="h-4 w-1 rounded-full bg-[var(--accent)]" />
+                <h2 class="text-base sm:text-lg font-bold text-[var(--text-primary)]">企业基础信息档案</h2>
+              </div>
+
+              <div class="overflow-hidden rounded-xl border divide-y" :style="{ borderColor: 'var(--border)', backgroundColor: 'var(--surface-strong)' }">
+                <div
+                  v-for="row in detailRows"
+                  :key="row.label"
+                  class="grid gap-2 px-4 py-3 text-xs sm:text-sm md:grid-cols-[10rem_minmax(0,1fr)] items-center"
+                >
+                  <span class="font-semibold text-[var(--text-tertiary)]">{{ row.label }}</span>
+                  <span class="text-[var(--text-primary)] font-medium">{{ row.value }}</span>
+                </div>
+              </div>
+            </section>
+
+            <!-- 4. 调研结论与来源 Section -->
+            <section id="research" class="detail-section scroll-target" aria-label="来源">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="h-4 w-1 rounded-full bg-[var(--accent)]" />
+                <h2 class="text-base sm:text-lg font-bold text-[var(--text-primary)]">官方入口与深度调研</h2>
+              </div>
+
+              <div class="grid gap-3 sm:grid-cols-2 md:grid-cols-3 mb-6">
+                <template v-if="referenceLinks.length">
+                  <a
+                    v-for="link in referenceLinks"
+                    :key="`${link.type}-${link.url}`"
+                    :href="link.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="group flex flex-col justify-between p-4 rounded-xl border transition hover:-translate-y-0.5 hover:border-[var(--accent-border)]"
+                    :style="{
+                      backgroundColor: 'var(--surface-strong)',
+                      borderColor: 'var(--border)',
+                    }"
+                  >
+                    <div>
+                      <span class="text-[11px] font-semibold px-2 py-0.5 rounded bg-[var(--surface-muted)] text-[var(--text-secondary)]">
+                        {{ link.type }}
+                      </span>
+                      <h3 class="mt-2 text-sm font-bold text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors truncate">
+                        {{ link.title }}
+                      </h3>
+                      <p v-if="link.note" class="mt-1 text-xs text-[var(--text-secondary)] leading-relaxed">
+                        {{ link.note }}
+                      </p>
+                    </div>
+                    <span class="mt-3 text-xs font-semibold text-[var(--accent)] flex items-center gap-1">
+                      <span>打开链接</span>
+                      <span>&rarr;</span>
+                    </span>
+                  </a>
+                </template>
+              </div>
+
+              <div v-if="research" class="rounded-xl border p-5" :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--border)' }">
+                <div class="flex items-center justify-between mb-3 pb-3 border-b" :style="{ borderColor: 'var(--border)' }">
+                  <span class="text-xs font-bold text-[var(--text-tertiary)] uppercase">深度调研评述</span>
+                  <span class="text-xs text-[var(--text-tertiary)] font-numeric">更新：{{ research.updatedAt }}</span>
+                </div>
+
+                <p class="text-xs sm:text-sm leading-relaxed text-[var(--text-primary)] font-medium">
+                  {{ research.conclusion }}
+                </p>
+
+                <div class="mt-5 grid gap-4 md:grid-cols-2">
+                  <div class="rounded-lg p-3.5 bg-[var(--surface-muted)]/50 border border-[var(--border)]">
+                    <p class="text-xs font-bold text-[var(--status-positive)] mb-2">关键信号</p>
+                    <ul class="space-y-1 text-xs text-[var(--text-secondary)]">
+                      <li v-for="signal in research.keySignals" :key="signal" class="flex items-start gap-1.5">
+                        <span class="text-[var(--status-positive)] font-bold">·</span>
+                        <span>{{ signal }}</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div class="rounded-lg p-3.5 bg-[var(--surface-muted)]/50 border border-[var(--border)]">
+                    <p class="text-xs font-bold text-[var(--status-warning)] mb-2">注意事项与风险</p>
+                    <ul class="space-y-1 text-xs text-[var(--text-secondary)]">
+                      <li v-for="risk in research.risks" :key="risk" class="flex items-start gap-1.5">
+                        <span class="text-[var(--status-warning)] font-bold">·</span>
+                        <span>{{ risk }}</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <SourceList :sources="research.sources" />
+              </div>
+            </section>
+          </main>
+
+          <!-- 底部相邻条目导航 (Prev / Next) -->
+          <nav v-if="company" class="flex flex-col gap-3 sm:flex-row sm:items-stretch sm:justify-between" aria-label="相邻条目">
+            <RouterLink
+              v-if="prevItem"
+              :to="{ name: 'company-detail', params: { id: prevItem.id } }"
+              class="group min-w-0 flex-1 rounded-2xl border p-4 transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
+              :style="{
+                backgroundColor: 'var(--surface-strong)',
+                borderColor: 'var(--border)',
+                boxShadow: 'var(--glass-shadow)',
+              }"
+            >
+              <span class="flex items-center gap-1.5 text-xs text-[var(--text-tertiary)]"><AppIcon name="arrow-left" :size="14" /> 上一家</span>
+              <span class="mt-1 block truncate text-sm font-bold text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors">{{ prevItem.name }}</span>
+            </RouterLink>
+
+            <div v-else class="min-w-0 flex-1 rounded-2xl border border-dashed p-4 opacity-50 flex flex-col justify-center" :style="{ borderColor: 'var(--border)' }">
+              <span class="flex items-center gap-1.5 text-xs text-[var(--text-tertiary)]"><AppIcon name="arrow-left" :size="14" /> 已是第一家</span>
             </div>
 
-            <div class="border-soft mt-8 border-t pt-6">
-              <p class="text-sm tracking-[0.14em] text-[var(--text-tertiary)]">调研结论与来源</p>
-              <template v-if="research">
-                <div class="mt-3 grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(18rem,0.42fr)]">
-                  <div>
-                <div class="flex flex-wrap items-center gap-2">
-                      <StatusPill :value="research.relevanceLevel" prefix="相关度：" />
-                      <span class="text-sm text-[var(--text-tertiary)]">最后更新：{{ research.updatedAt }}</span>
-                    </div>
-                    <p class="mt-4 text-sm font-medium text-[var(--text-primary)]">调研结论</p>
-                    <p class="mt-2 text-sm leading-7 text-[var(--text-secondary)]">{{ research.conclusion }}</p>
-                  </div>
+            <span class="hidden shrink-0 self-center px-3 text-xs font-numeric text-[var(--text-tertiary)] sm:block">
+              {{ currentIndex + 1 }} / {{ totalCount }}
+            </span>
 
-                  <div class="surface-card-strong rounded-lg border p-4">
-                    <p class="text-sm font-medium text-[var(--text-primary)]">来源概况</p>
-                <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
-                  <div class="surface-card detail-mini-stat rounded-lg border px-3 py-3">
-                    <p class="text-[var(--text-tertiary)]">来源数</p>
-                    <p class="mt-1 text-lg font-semibold text-[var(--text-primary)]">{{ sourceCount }}</p>
-                  </div>
-                  <div class="surface-card detail-mini-stat rounded-lg border px-3 py-3">
-                    <p class="text-[var(--text-tertiary)]">状态</p>
-                    <p class="mt-1 text-sm font-medium leading-6 text-[var(--text-primary)]">{{ research.status }}</p>
-                  </div>
-                    </div>
-                    <div v-if="sourceTypes.length" class="mt-3 flex flex-wrap gap-2">
-                      <span
-                        v-for="type in sourceTypes"
-                        :key="type"
-                        class="rounded-lg px-2.5 py-1 text-xs"
-                        :style="{ backgroundColor: 'var(--surface-muted)', color: 'var(--text-secondary)' }"
-                      >
-                        {{ type }}
-                      </span>
-                    </div>
-                  </div>
-                </div>
+            <RouterLink
+              v-if="nextItem"
+              :to="{ name: 'company-detail', params: { id: nextItem.id } }"
+              class="group min-w-0 flex-1 rounded-2xl border p-4 text-right transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
+              :style="{
+                backgroundColor: 'var(--surface-strong)',
+                borderColor: 'var(--border)',
+                boxShadow: 'var(--glass-shadow)',
+              }"
+            >
+              <span class="flex items-center justify-end gap-1.5 text-xs text-[var(--text-tertiary)]">下一家 <AppIcon name="arrow-right" :size="14" /></span>
+              <span class="mt-1 block truncate text-sm font-bold text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors">{{ nextItem.name }}</span>
+            </RouterLink>
 
-                <div class="mt-6 grid gap-4 md:grid-cols-2">
-                  <div class="surface-card-strong detail-panel rounded-xl border p-4">
-                    <p class="text-sm font-medium text-[var(--text-primary)]">关键信号</p>
-                    <ul class="mt-3 space-y-2 text-sm leading-6 text-[var(--text-secondary)]">
-                      <li v-for="signal in research.keySignals" :key="signal">{{ signal }}</li>
-                    </ul>
-                  </div>
+            <div v-else class="min-w-0 flex-1 rounded-2xl border border-dashed p-4 text-right opacity-50 flex flex-col justify-center" :style="{ borderColor: 'var(--border)' }">
+              <span class="flex items-center justify-end gap-1.5 text-xs text-[var(--text-tertiary)]">已是最后一家 <AppIcon name="arrow-right" :size="14" /></span>
+            </div>
+          </nav>
+        </template>
 
-                  <div class="surface-card-strong detail-panel rounded-xl border p-4">
-                    <p class="text-sm font-medium text-[var(--text-primary)]">注意事项</p>
-                    <ul class="mt-3 space-y-2 text-sm leading-6 text-[var(--text-secondary)]">
-                      <li v-for="risk in research.risks" :key="risk">{{ risk }}</li>
-                    </ul>
-                  </div>
-                </div>
-
-                <details class="surface-card-strong mt-6 rounded-xl border p-4">
-                  <summary class="cursor-pointer text-sm font-medium text-[var(--text-primary)]">
-                    展开来源列表
-                  </summary>
-                  <SourceList :sources="research.sources" />
-                </details>
-              </template>
-
-              <template v-else>
-              <EmptyStatePanel
-                eyebrow="调研来源"
-                title="暂无调研报告"
-                description="暂无公开调研内容。"
-              />
-            </template>
-          </div>
-          </section>
-        </section>
-
-        <nav v-if="company" class="mt-2 flex flex-col gap-3 sm:flex-row sm:items-stretch sm:justify-between" aria-label="相邻条目">
-          <RouterLink v-if="prevItem" :to="{ name: 'company-detail', params: { id: prevItem.id } }" class="surface-card-strong group min-w-0 flex-1 rounded-xl border p-4 transition hover:-translate-y-0.5">
-            <span class="flex items-center gap-1.5 text-xs text-[var(--text-tertiary)]"><AppIcon name="arrow-left" :size="14" /> 上一家</span>
-            <span class="mt-1 block truncate text-sm font-medium text-[var(--text-primary)] transition group-hover:text-[var(--accent)]">{{ prevItem.name }}</span>
-          </RouterLink>
-          <div v-else class="border-soft min-w-0 flex-1 rounded-xl border border-dashed p-4 opacity-60">
-            <span class="flex items-center gap-1.5 text-xs text-[var(--text-tertiary)]"><AppIcon name="arrow-left" :size="14" /> 已是第一家</span>
-          </div>
-          <span class="hidden shrink-0 self-center px-3 text-xs font-numeric text-[var(--text-tertiary)] sm:block">{{ currentIndex + 1 }} / {{ totalCount }}</span>
-          <RouterLink v-if="nextItem" :to="{ name: 'company-detail', params: { id: nextItem.id } }" class="surface-card-strong group min-w-0 flex-1 rounded-xl border p-4 text-right transition hover:-translate-y-0.5">
-            <span class="flex items-center justify-end gap-1.5 text-xs text-[var(--text-tertiary)]">下一家 <AppIcon name="arrow-right" :size="14" /></span>
-            <span class="mt-1 block truncate text-sm font-medium text-[var(--text-primary)] transition group-hover:text-[var(--accent)]">{{ nextItem.name }}</span>
-          </RouterLink>
-          <div v-else class="border-soft min-w-0 flex-1 rounded-xl border border-dashed p-4 text-right opacity-60">
-            <span class="flex items-center justify-end gap-1.5 text-xs text-[var(--text-tertiary)]">已是最后一家 <AppIcon name="arrow-right" :size="14" /></span>
-          </div>
-        </nav>
-      </template>
-
-      <EmptyStatePanel
-        v-else
-        eyebrow="企业档案"
-        title="没有找到这家公司"
-        description="可能是链接有误，或者该公司尚未收录。"
-      />
-    </div>
+        <EmptyStatePanel
+          v-else
+          eyebrow="企业档案"
+          title="没有找到这家公司"
+          description="可能是链接有误，或者该公司尚未收录。"
+        />
+      </div>
     </section>
   </div>
 </template>
@@ -557,8 +548,8 @@ const sourceTypes = computed(() =>
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(135deg, rgba(190, 98, 82, 0.08), transparent 34%),
-    linear-gradient(315deg, rgba(47, 125, 79, 0.06), transparent 42%);
+    linear-gradient(135deg, rgba(190, 85, 67, 0.05), transparent 34%),
+    linear-gradient(315deg, rgba(42, 122, 76, 0.04), transparent 42%);
   pointer-events: none;
 }
 
@@ -567,75 +558,13 @@ const sourceTypes = computed(() =>
   z-index: 1;
 }
 
-.company-detail-subnav {
-  scrollbar-width: none;
-}
-
-.company-detail-subnav::-webkit-scrollbar {
-  display: none;
-}
-
-.detail-content-shell {
-  position: relative;
-}
-
-.detail-panel {
-  min-height: 100%;
-}
-
-.detail-mini-stat {
-  min-width: 0;
-}
-
-.company-detail-page :where(header, section, nav, div, p, h1, h2, a, li, span, button, details, summary) {
-  min-width: 0;
-}
-
-.company-detail-page :where(p, h1, h2, a, li, span, button, summary) {
-  line-break: anywhere;
-  overflow-wrap: anywhere;
-  word-break: break-word;
-}
-
 .company-name-title {
   line-break: anywhere;
   overflow-wrap: anywhere;
   word-break: break-all;
 }
 
-@media (max-width: 639px) {
-  .company-detail-page {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-
-  .company-detail-shell {
-    inline-size: 100% !important;
-    max-inline-size: 100% !important;
-    margin-left: 0;
-    margin-right: 0;
-  }
-
-  .company-detail-shell > :where(header, section, nav, div) {
-    inline-size: 100% !important;
-    max-inline-size: 100% !important;
-  }
-
-  .company-detail-shell :where(header, section, nav, div, p, h1, h2, a, li, span, button, details, summary) {
-    max-inline-size: 100% !important;
-    box-sizing: border-box;
-  }
-}
-
-.detail-section + .detail-section {
-  margin-top: 2.5rem;
-}
 .scroll-target {
-  scroll-margin-top: 11.5rem;
-}
-@media (min-width: 768px) {
-  .scroll-target {
-    scroll-margin-top: 9.75rem;
-  }
+  scroll-margin-top: 6rem;
 }
 </style>

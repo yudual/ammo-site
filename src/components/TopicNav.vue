@@ -15,41 +15,45 @@ const route = useRoute()
 </script>
 
 <template>
-  <header
-    class="relative z-30 mx-auto mb-5 w-full max-w-6xl border-y px-0 py-2 backdrop-blur-xl md:mb-6 md:w-fit md:rounded-lg md:border md:px-3"
-    :style="{
-      backgroundColor: 'var(--surface)',
-      borderColor: 'var(--border)',
-      boxShadow: 'var(--glass-shadow)',
-    }"
-  >
-    <div class="flex min-w-0 items-center gap-2">
-      <nav class="w-full min-w-0 overflow-x-auto" :aria-label="ariaLabelText">
-        <div class="flex w-max min-w-full items-center gap-2 md:min-w-0">
-          <RouterLink
-            v-for="item in items"
-            :key="item.to"
-            :to="item.to"
-            class="shrink-0 rounded-lg px-2.5 py-1.5 text-[13px] transition hover:-translate-y-0.5 sm:text-sm md:px-3"
-            :style="{
-              backgroundColor: route.path === item.to ? 'var(--accent-soft)' : 'var(--surface-strong)',
-              color: route.path === item.to ? 'var(--accent)' : 'var(--text-secondary)',
-            }"
-          >
-            {{ item.label }}
-          </RouterLink>
-        </div>
+  <div class="topic-nav-shell mx-auto mb-6 w-full max-w-6xl">
+    <div
+      class="flex w-full min-w-0 items-center overflow-x-auto rounded-2xl border p-1.5 no-scrollbar"
+      :style="{
+        backgroundColor: 'var(--surface)',
+        borderColor: 'var(--border)',
+        boxShadow: 'var(--glass-shadow)',
+      }"
+    >
+      <nav
+        class="flex min-w-full sm:min-w-0 items-center gap-1.5 justify-start sm:justify-center px-1 py-0.5"
+        :aria-label="ariaLabelText"
+      >
+        <RouterLink
+          v-for="item in items"
+          :key="item.to"
+          :to="item.to"
+          class="shrink-0 whitespace-nowrap rounded-xl px-3.5 py-1.5 text-xs sm:text-sm font-semibold transition duration-150"
+          :style="{
+            backgroundColor: route.path === item.to ? 'var(--surface-strong)' : 'transparent',
+            color: route.path === item.to ? 'var(--accent)' : 'var(--text-secondary)',
+            boxShadow: route.path === item.to ? '0 1px 4px rgba(0,0,0,0.06)' : 'none',
+            border: route.path === item.to ? '1px solid var(--border)' : '1px solid transparent',
+          }"
+        >
+          {{ item.label }}
+        </RouterLink>
       </nav>
     </div>
-  </header>
+  </div>
 </template>
 
 <style scoped>
-nav {
+.no-scrollbar {
   scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-nav::-webkit-scrollbar {
+.no-scrollbar::-webkit-scrollbar {
   display: none;
 }
 </style>

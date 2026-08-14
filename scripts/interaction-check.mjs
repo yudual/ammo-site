@@ -86,8 +86,10 @@ function findChromeExecutable() {
 
   for (const candidate of candidates) {
     try {
-      spawnSync(candidate, ['--version'], { stdio: 'ignore' })
-      return candidate
+      const result = spawnSync(candidate, ['--version'], { stdio: 'ignore' })
+      if (!result.error && result.status === 0) {
+        return candidate
+      }
     } catch {
       // Try next candidate.
     }

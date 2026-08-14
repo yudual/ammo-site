@@ -190,9 +190,6 @@ function removeChip(key: string) {
   }
 }
 
-
-
-
 function resetFilters() {
   keyword.value = ''
   selectedTier.value = '全部'
@@ -322,7 +319,6 @@ const highRelevanceCount = computed(
 )
 const withResearchCount = computed(() => universities.filter((university) => university.research).length)
 
-
 function getPrimaryLink(university: University) {
   return (
     university.links.find((link) => link.type === '招生网' || link.type === '招生目录') ||
@@ -379,45 +375,67 @@ watch(
 </script>
 
 <template>
-  <section class="universities-page min-h-screen overflow-x-hidden bg-[var(--page-bg)] px-4 pb-8 pt-6 text-[var(--text-primary)] md:px-6 md:pb-12 md:pt-8">
-    <div class="universities-shell mx-auto flex w-full min-w-0 max-w-7xl flex-col gap-4">
+  <section class="universities-page min-h-screen bg-[var(--page-bg)] px-3.5 pb-12 pt-4 text-[var(--text-primary)] sm:px-6 sm:pb-16 sm:pt-6 md:pt-8">
+    <div class="universities-shell mx-auto flex w-full min-w-0 max-w-6xl flex-col gap-5">
 
       <!-- 双栏容器 -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-start w-full">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-5 sm:gap-6 items-start w-full">
         
         <!-- 左栏 (1/4) - 侧边筛选器 (PC) / 底部抽屉 (Mobile) -->
         <div class="col-span-1">
           <!-- 手机端遮罩层 -->
           <div
             v-if="filtersOpen"
-            class="fixed inset-0 z-40 bg-black/60 md:hidden transition-opacity duration-300"
+            class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs md:hidden transition-opacity duration-300"
             @click="filtersOpen = false"
           ></div>
 
           <!-- 筛选面板 -->
           <section
-            class="fixed bottom-0 left-0 right-0 z-50 max-h-[85vh] overflow-y-auto rounded-t-2xl border-t p-5 flex flex-col gap-4 transition-transform duration-300
-                   md:sticky md:top-20 md:z-auto md:max-h-none md:overflow-visible md:rounded-xl md:border md:p-4 md:flex md:translate-y-0"
+            class="fixed bottom-0 left-0 right-0 z-50 max-h-[85vh] overflow-y-auto rounded-t-3xl border-t p-5 flex flex-col gap-4 transition-transform duration-300
+                   md:sticky md:top-20 md:z-auto md:max-h-none md:overflow-visible md:rounded-2xl md:border md:p-5 md:flex md:translate-y-0"
             :class="filtersOpen ? 'translate-y-0' : 'translate-y-full md:translate-y-0'"
             :style="{
               backgroundColor: 'var(--surface)',
               borderColor: 'var(--border)',
               boxShadow: 'var(--glass-shadow)',
+              backdropFilter: 'blur(16px)',
             }"
           >
-            <!-- 手机端抽屉头部 -->
-            <div class="border-soft flex items-center justify-between border-b pb-3 mb-1 md:hidden">
-              <span class="font-semibold text-lg text-[var(--text-primary)]">筛选条件</span>
-              <button type="button" class="text-sm font-medium text-[var(--accent)]" @click="filtersOpen = false">确定</button>
+            <!-- 手机端抽屉拉手与头部 -->
+            <div class="flex flex-col items-center pb-2 md:hidden">
+              <div class="h-1.2 w-10 rounded-full bg-[var(--border-strong)] mb-3" />
+              <div class="flex items-center justify-between w-full border-b pb-3" :style="{ borderColor: 'var(--border)' }">
+                <span class="font-bold text-base text-[var(--text-primary)]">筛选条件</span>
+                <button
+                  type="button"
+                  class="text-xs font-bold px-3 py-1.5 rounded-lg bg-[var(--accent)] text-white"
+                  @click="filtersOpen = false"
+                >
+                  确定
+                </button>
+              </div>
             </div>
 
-            <label class="flex flex-col gap-2">
-              <span class="text-xs text-[var(--text-tertiary)]">搜索</span>
+            <div class="hidden md:flex items-center justify-between pb-1 border-b" :style="{ borderColor: 'var(--border)' }">
+              <span class="text-xs font-bold uppercase tracking-wider text-[var(--text-tertiary)]">筛选与检索</span>
+              <button
+                v-if="hasActiveFilters"
+                type="button"
+                class="text-xs font-semibold text-[var(--accent)] hover:underline cursor-pointer"
+                @click="resetFilters"
+              >
+                重置
+              </button>
+            </div>
+
+            <label class="flex flex-col gap-1.5">
+              <span class="text-xs font-semibold text-[var(--text-tertiary)]">关键词搜索</span>
               <input
                 v-model="keyword"
                 type="text"
                 placeholder="比如：北京、兵器、211"
-                class="h-10 rounded-lg border px-3 text-sm outline-none transition w-full"
+                class="h-9.5 rounded-xl border px-3 text-xs sm:text-sm outline-none transition w-full focus:border-[var(--accent)]"
                 :style="{
                   backgroundColor: 'var(--surface-strong)',
                   borderColor: 'var(--border)',
@@ -426,72 +444,72 @@ watch(
               />
             </label>
 
-            <label class="flex flex-col gap-2">
-              <span class="text-xs text-[var(--text-tertiary)]">层次</span>
+            <label class="flex flex-col gap-1.5">
+              <span class="text-xs font-semibold text-[var(--text-tertiary)]">院校层次</span>
               <select
                 v-model="selectedTier"
-                class="h-10 rounded-lg border px-3 text-sm outline-none transition w-full"
+                class="h-9.5 rounded-xl border px-3 text-xs sm:text-sm outline-none transition w-full cursor-pointer focus:border-[var(--accent)]"
                 :style="{
                   backgroundColor: 'var(--surface-strong)',
                   borderColor: 'var(--border)',
                   color: 'var(--text-primary)',
                 }"
               >
-                <option value="全部">全部</option>
+                <option value="全部">全部层次</option>
                 <option v-for="option in tierOptions" :key="option" :value="option">
                   {{ option }}（{{ tierCounts[option] || 0 }}）
                 </option>
               </select>
             </label>
 
-            <label class="flex flex-col gap-2">
-              <span class="text-xs text-[var(--text-tertiary)]">省份</span>
+            <label class="flex flex-col gap-1.5">
+              <span class="text-xs font-semibold text-[var(--text-tertiary)]">所在省份</span>
               <select
                 v-model="selectedProvince"
-                class="h-10 rounded-lg border px-3 text-sm outline-none transition w-full"
+                class="h-9.5 rounded-xl border px-3 text-xs sm:text-sm outline-none transition w-full cursor-pointer focus:border-[var(--accent)]"
                 :style="{
                   backgroundColor: 'var(--surface-strong)',
                   borderColor: 'var(--border)',
                   color: 'var(--text-primary)',
                 }"
               >
-                <option value="全部">全部</option>
+                <option value="全部">全部省份</option>
                 <option v-for="option in provinceOptions" :key="option" :value="option">
                   {{ option }}
                 </option>
               </select>
             </label>
 
-            <label class="flex flex-col gap-2">
-              <span class="text-xs text-[var(--text-tertiary)]">相关度</span>
+            <label class="flex flex-col gap-1.5">
+              <span class="text-xs font-semibold text-[var(--text-tertiary)]">专业相关度</span>
               <select
                 v-model="selectedRelevance"
-                class="h-10 rounded-lg border px-3 text-sm outline-none transition w-full"
+                class="h-9.5 rounded-xl border px-3 text-xs sm:text-sm outline-none transition w-full cursor-pointer focus:border-[var(--accent)]"
                 :style="{
                   backgroundColor: 'var(--surface-strong)',
                   borderColor: 'var(--border)',
                   color: 'var(--text-primary)',
                 }"
               >
-                <option value="全部">全部</option>
+                <option value="全部">全部相关度</option>
                 <option v-for="option in relevanceOptions" :key="option" :value="option">
                   {{ option }}
                 </option>
               </select>
             </label>
 
-            <label class="flex flex-col gap-2">
-              <span class="text-xs text-[var(--text-tertiary)]">资料</span>
+            <label class="flex flex-col gap-1.5">
+              <span class="text-xs font-semibold text-[var(--text-tertiary)]">资料核验状态</span>
               <select
                 v-model="selectedStatus"
-                class="h-10 rounded-lg border px-3 text-sm outline-none transition w-full"
+                class="h-9.5 rounded-xl border px-3 text-xs sm:text-sm outline-none transition w-full cursor-pointer focus:border-[var(--accent)]"
                 :style="{
                   backgroundColor: 'var(--surface-strong)',
                   borderColor: 'var(--border)',
                   color: 'var(--text-primary)',
                 }"
               >
-                <option value="全部">全部</option>
+                <option value="全部">全部状态</option>
                 <option v-for="option in statusOptions" :key="option" :value="option">
                   {{ option }}（{{ statusCounts[option] || 0 }}）
                 </option>
@@ -500,7 +518,7 @@ watch(
 
             <button
               type="button"
-              class="h-10 rounded-lg border px-4 text-sm font-medium transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 w-full mt-2"
+              class="h-10 rounded-xl border px-4 text-xs sm:text-sm font-medium transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-40 w-full mt-2 cursor-pointer"
               :disabled="!hasActiveFilters"
               :style="{
                 backgroundColor: 'var(--surface-strong)',
@@ -509,7 +527,7 @@ watch(
               }"
               @click="resetFilters"
             >
-              重置筛选
+              重置全部条件
             </button>
           </section>
         </div>
@@ -517,39 +535,40 @@ watch(
         <!-- 右栏 (3/4) - 列表与分页 -->
         <div class="col-span-1 md:col-span-3 flex flex-col gap-4 w-full min-w-0">
 
-          <!-- 单行极简控制条 (Micro-Toolbar) -->
           <!-- 数据检索控制台 (Control Console) -->
           <header
             ref="universityListTop"
-            class="flex flex-col gap-3 rounded-xl border p-3 w-full"
+            class="flex flex-col gap-3 rounded-2xl border p-3.5 sm:p-4 w-full"
             :style="{
               backgroundColor: 'var(--surface)',
               borderColor: 'var(--border)',
               boxShadow: 'var(--glass-shadow)',
+              backdropFilter: 'blur(16px)',
             }"
           >
             <!-- 上层：标题与 4 项大盘数据 -->
-            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pb-2 border-b" :style="{ borderColor: 'var(--border)/50' }">
+            <div class="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between pb-3 border-b" :style="{ borderColor: 'var(--border)' }">
               <div class="flex items-center gap-2">
-                <h1 class="text-sm font-bold tracking-tight text-[var(--text-primary)]">院校一览</h1>
+                <h1 class="text-base sm:text-lg font-black tracking-tight text-[var(--text-primary)]">院校一览</h1>
+                <span class="text-xs text-[var(--text-tertiary)]">（含兵工高校/民爆特色/综合大学）</span>
               </div>
 
               <div class="mobile-summary-grid grid grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-2 text-[11px]">
-                <div class="border-soft flex items-center justify-between gap-2.5 px-2 py-1 rounded bg-[var(--surface-strong)] border">
+                <div class="flex items-center justify-between gap-2 px-2.5 py-1 rounded-lg bg-[var(--surface-strong)] border border-[var(--border)]">
                   <span class="text-[var(--text-tertiary)]">已收录</span>
-                  <strong class="font-bold text-[var(--text-primary)]">{{ universities.length }}</strong>
+                  <strong class="font-bold font-numeric text-[var(--text-primary)]">{{ universities.length }}</strong>
                 </div>
-                <div class="border-soft flex items-center justify-between gap-2.5 px-2 py-1 rounded bg-[var(--surface-strong)] border">
+                <div class="flex items-center justify-between gap-2 px-2.5 py-1 rounded-lg bg-[var(--surface-strong)] border border-[var(--border)]">
                   <span class="text-[var(--text-tertiary)]">高相关</span>
-                  <strong class="font-bold text-[var(--text-primary)]">{{ highRelevanceCount }}</strong>
+                  <strong class="font-bold font-numeric text-[var(--text-primary)]">{{ highRelevanceCount }}</strong>
                 </div>
-                <div class="border-soft flex items-center justify-between gap-2.5 px-2 py-1 rounded bg-[var(--surface-strong)] border">
+                <div class="flex items-center justify-between gap-2 px-2.5 py-1 rounded-lg bg-[var(--surface-strong)] border border-[var(--border)]">
                   <span class="text-[var(--text-tertiary)]">有调研</span>
-                  <strong class="font-bold text-[var(--text-primary)]">{{ withResearchCount }}</strong>
+                  <strong class="font-bold font-numeric text-[var(--text-primary)]">{{ withResearchCount }}</strong>
                 </div>
-                <div class="border-soft flex items-center justify-between gap-2.5 px-2 py-1 rounded bg-[var(--surface-strong)] border">
+                <div class="flex items-center justify-between gap-2 px-2.5 py-1 rounded-lg bg-[var(--surface-strong)] border border-[var(--border)]">
                   <span class="text-[var(--text-tertiary)]">部分核验</span>
-                  <strong class="font-bold text-[var(--accent)]">{{ statusCounts['部分核验'] || 0 }}</strong>
+                  <strong class="font-bold font-numeric text-[var(--status-warning)]">{{ statusCounts['部分核验'] || 0 }}</strong>
                 </div>
               </div>
             </div>
@@ -561,8 +580,9 @@ watch(
                 <!-- 高级筛选唤起 (仅移动端显示，PC端侧边栏常驻) -->
                 <button
                   type="button"
-                  class="rounded-lg px-2 py-1 border font-semibold flex items-center gap-1 shrink-0 md:hidden bg-[var(--surface-strong)]"
+                  class="rounded-lg px-2.5 py-1 border font-semibold flex items-center gap-1 shrink-0 md:hidden cursor-pointer"
                   :style="{
+                    backgroundColor: activeFilterCount ? 'var(--accent-soft)' : 'var(--surface-strong)',
                     borderColor: activeFilterCount ? 'var(--accent)' : 'var(--border)',
                     color: activeFilterCount ? 'var(--accent)' : 'var(--text-secondary)',
                   }"
@@ -574,7 +594,7 @@ watch(
 
                 <button
                   type="button"
-                  class="rounded-lg px-2 py-1 border font-semibold shrink-0"
+                  class="rounded-lg px-2.5 py-1 border font-semibold shrink-0 cursor-pointer transition"
                   :style="{
                     backgroundColor: selectedRelevance === '高' ? 'var(--accent-soft)' : 'var(--surface-strong)',
                     borderColor: selectedRelevance === '高' ? 'var(--accent)' : 'var(--border)',
@@ -587,7 +607,7 @@ watch(
 
                 <button
                   type="button"
-                  class="rounded-lg px-2 py-1 border font-semibold shrink-0"
+                  class="rounded-lg px-2.5 py-1 border font-semibold shrink-0 cursor-pointer transition"
                   :style="{
                     backgroundColor: onlyWithResearch ? 'var(--accent-soft)' : 'var(--surface-strong)',
                     borderColor: onlyWithResearch ? 'var(--accent)' : 'var(--border)',
@@ -600,7 +620,7 @@ watch(
 
                 <button
                   type="button"
-                  class="rounded-lg px-2 py-1 border font-semibold shrink-0"
+                  class="rounded-lg px-2.5 py-1 border font-semibold shrink-0 cursor-pointer transition"
                   :style="{
                     backgroundColor: selectedStatus === '部分核验' ? 'var(--accent-soft)' : 'var(--surface-strong)',
                     borderColor: selectedStatus === '部分核验' ? 'var(--accent)' : 'var(--border)',
@@ -615,7 +635,7 @@ watch(
                 <button
                   v-if="hasActiveFilters"
                   type="button"
-                  class="border-soft rounded-lg px-2 py-1 border text-[var(--text-tertiary)] hover:opacity-80 shrink-0 bg-[var(--surface-strong)]"
+                  class="rounded-lg px-2.5 py-1 border text-[var(--text-tertiary)] hover:text-[var(--accent)] hover:border-[var(--accent-border)] shrink-0 bg-[var(--surface-strong)] cursor-pointer transition"
                   @click="resetFilters"
                 >
                   清空
@@ -623,13 +643,13 @@ watch(
               </div>
 
               <!-- 右侧：统计和复制链接 -->
-              <div class="flex items-center gap-3 shrink-0 text-[var(--text-secondary)]" role="status" aria-live="polite">
-                <span class="hidden sm:inline font-medium font-numeric">共 {{ filteredUniversities.length }} 所 · {{ currentUniversityPage }}/{{ universityPageCount }}页</span>
-                <span class="sm:hidden font-medium font-numeric">共 {{ filteredUniversities.length }} 所</span>
+              <div class="flex items-center gap-2.5 shrink-0 text-[var(--text-secondary)]" role="status" aria-live="polite">
+                <span class="hidden sm:inline font-medium font-numeric text-xs">共 {{ filteredUniversities.length }} 所 · {{ currentUniversityPage }}/{{ universityPageCount }}页</span>
+                <span class="sm:hidden font-medium font-numeric text-xs">共 {{ filteredUniversities.length }} 所</span>
 
                 <button
                   type="button"
-                  class="rounded-lg p-1 border flex items-center justify-center transition hover:opacity-80 shrink-0 w-6.5 h-6.5"
+                  class="rounded-lg p-1.5 border flex items-center justify-center transition hover:scale-105 active:scale-95 shrink-0 cursor-pointer"
                   :style="{
                     backgroundColor: isCopied ? 'var(--accent-soft)' : 'var(--surface-strong)',
                     borderColor: isCopied ? 'var(--accent)' : 'var(--border)',
@@ -638,122 +658,135 @@ watch(
                   title="复制筛选链接"
                   @click="copyShareLink"
                 >
-                  <AppIcon :name="isCopied ? 'check' : 'link'" :size="16" />
+                  <AppIcon :name="isCopied ? 'check' : 'link'" :size="15" />
                 </button>
               </div>
             </div>
+
+            <!-- 已选条件芯片：每条可单独点掉 -->
+            <div
+              v-if="hasActiveFilters"
+              class="flex flex-wrap items-center gap-1.5 pt-2 border-t"
+              :style="{ borderColor: 'var(--border)' }"
+            >
+              <span
+                v-for="chip in activeChips"
+                :key="chip.key"
+                class="inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[11px] font-medium transition"
+                :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--border)', color: 'var(--text-primary)' }"
+              >
+                {{ chip.label }}
+                <button
+                  type="button"
+                  class="text-[var(--text-tertiary)] transition hover:text-[var(--accent)] cursor-pointer"
+                  :aria-label="`取消筛选：${chip.label}`"
+                  @click="removeChip(chip.key)"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" class="h-3 w-3"><path d="M18 6 6 18M6 6l12 12" /></svg>
+                </button>
+              </span>
+            </div>
           </header>
 
-          <!-- 已选条件芯片：每条可单独点掉，比“清空全部”更省事 -->
-          <div
-            v-if="hasActiveFilters"
-            class="flex flex-wrap items-center gap-2 px-5 py-2"
-            :style="{ backgroundColor: 'var(--surface)', borderBottom: '1px solid var(--border)' }"
-          >
-            <span
-              v-for="chip in activeChips"
-              :key="chip.key"
-              class="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition hover:-translate-y-0.5"
-              :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--border)', color: 'var(--text-primary)' }"
-            >
-              {{ chip.label }}
-              <button
-                type="button"
-                class="text-[var(--text-tertiary)] transition hover:text-[var(--accent)]"
-                :aria-label="`取消筛选：${chip.label}`"
-                @click="removeChip(chip.key)"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" class="h-3 w-3"><path d="M18 6 6 18M6 6l12 12" /></svg>
-              </button>
-            </span>
-          </div>
-          <!-- 紧凑 Row 列表 -->
-          <section v-if="filteredUniversities.length > 0" class="overflow-hidden rounded-xl border w-full">
-            <div
-              class="surface-card hidden grid-cols-[minmax(20rem,1.35fr)_minmax(10rem,0.58fr)_minmax(17rem,0.92fr)_minmax(6rem,0.32fr)] gap-4 border-b px-5 py-3 text-xs text-[var(--text-tertiary)] xl:grid"
-            >
-              <span>院校 / 状态</span>
-              <span>地区与层次</span>
-              <span>专业线索</span>
-              <span class="text-right">操作</span>
-            </div>
-
+          <!-- 列表区 (Row-Card) -->
+          <section v-if="filteredUniversities.length > 0" class="flex flex-col gap-3 w-full">
             <article
               v-for="university in visibleUniversities"
               :key="university.id"
-              class="group grid gap-3 border-b px-4 py-3.5 transition last:border-b-0 hover:bg-[var(--surface)] xl:grid-cols-[minmax(20rem,1.35fr)_minmax(10rem,0.58fr)_minmax(17rem,0.92fr)_minmax(6rem,0.32fr)] xl:items-center xl:px-5"
+              class="group relative rounded-2xl border p-4 sm:p-5 transition duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-[var(--accent-border)]"
               :style="{
                 backgroundColor: 'var(--surface-strong)',
                 borderColor: 'var(--border)',
+                boxShadow: 'var(--glass-shadow)',
               }"
             >
-              <div class="order-1 flex min-w-0 items-start gap-3 xl:order-none">
-                <div
-                  class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border p-1.5"
-                  :style="{
-                    backgroundColor: 'var(--surface)',
-                    borderColor: 'var(--border)',
-                  }"
-                >
-                  <SchoolLogo :src="university.logo" :name="university.name" />
-                </div>
-
-                <div class="min-w-0 flex-1">
-                  <div class="mb-2 flex flex-wrap items-center gap-2">
-                    <StatusPill :value="university.verification.relevanceLevel" prefix="相关度" size="xs" />
-                    <StatusPill :value="university.verification.status" size="xs" />
+              <div class="grid gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(0,0.9fr)_auto] xl:items-start">
+                
+                <!-- 左列：高校LOGO、名称、状态、点状元数据链、概览 -->
+                <div class="flex min-w-0 items-start gap-3.5">
+                  <div
+                    class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border p-1"
+                    :style="{
+                      backgroundColor: 'var(--surface)',
+                      borderColor: 'var(--border)',
+                    }"
+                  >
+                    <SchoolLogo :src="university.logo" :name="university.name" />
                   </div>
-                  <RouterLink
-                    :to="`/universities/${university.id}`"
-                    class="block text-lg font-semibold leading-7 text-[var(--text-primary)] transition hover:text-[var(--accent)]"
-                  >
-                    {{ university.name }}
-                  </RouterLink>
-                  <p class="mt-2 line-clamp-1 text-sm leading-6 text-[var(--text-secondary)]">
-                    {{ university.overview }}
-                  </p>
+
+                  <div class="min-w-0 flex-1">
+                    <div class="mb-1.5 flex flex-wrap items-center gap-2">
+                      <StatusPill :value="university.verification.relevanceLevel" prefix="相关度" size="xs" />
+                      <StatusPill :value="university.verification.status" size="xs" />
+                      <span v-if="university.research" class="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-semibold bg-[var(--status-positive-soft)] text-[var(--status-positive)] border border-[var(--status-positive-border)]">
+                        已调研
+                      </span>
+                    </div>
+
+                    <RouterLink
+                      :to="`/universities/${university.id}`"
+                      class="block text-base sm:text-lg font-bold tracking-tight text-[var(--text-primary)] transition hover:text-[var(--accent)]"
+                    >
+                      {{ university.name }}
+                      <span v-if="university.shortName && university.shortName !== university.name" class="ml-1 text-xs text-[var(--text-tertiary)] font-normal">
+                        ({{ university.shortName }})
+                      </span>
+                    </RouterLink>
+
+                    <!-- 点状元数据链 (Meta Chain) -->
+                    <div class="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--text-secondary)] font-medium">
+                      <span class="font-semibold text-[var(--accent)]">{{ university.tier }}</span>
+                      <span class="text-[var(--text-tertiary)]">·</span>
+                      <span>{{ university.city }} · {{ university.province }}</span>
+                    </div>
+
+                    <p class="mt-2 line-clamp-2 text-xs sm:text-sm leading-relaxed text-[var(--text-secondary)]">
+                      {{ university.overview }}
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              <div class="order-3 text-sm leading-6 text-[var(--text-secondary)] xl:order-none">
-                <p class="font-medium text-[var(--text-primary)]">{{ university.city }}</p>
-                <p>{{ university.province }}</p>
-                <p class="mt-1 text-[var(--text-tertiary)]">{{ university.tier }}</p>
-              </div>
+                <!-- 中列：专业特色与标签 -->
+                <div class="rounded-xl border p-3 text-xs leading-relaxed text-[var(--text-secondary)]" :style="{ backgroundColor: 'var(--surface-muted)/40', borderColor: 'var(--border)' }">
+                  <p class="font-semibold text-[var(--text-primary)] mb-1">专业方向与特色</p>
+                  <p class="line-clamp-2">{{ university.focus }}</p>
+                  
+                  <div class="mt-2 flex flex-wrap gap-1.5">
+                    <span
+                      v-for="tag in university.tags.slice(0, 3)"
+                      :key="tag"
+                      class="rounded-md px-2 py-0.5 text-[11px] font-medium"
+                      :style="{ backgroundColor: 'var(--surface-muted)', color: 'var(--text-secondary)' }"
+                    >
+                      {{ tag }}
+                    </span>
+                  </div>
 
-              <div class="order-4 min-w-0 text-sm leading-6 text-[var(--text-secondary)] xl:order-none">
-                <p class="line-clamp-2">{{ university.focus }}</p>
-                <div class="mt-2 flex flex-wrap gap-2">
-                  <span
-                    v-for="tag in university.tags.slice(0, 2)"
-                    :key="tag"
-                    class="rounded-full px-2.5 py-1 text-xs"
-                    :style="{ backgroundColor: 'var(--surface-muted)', color: 'var(--text-secondary)' }"
-                  >
-                    {{ tag }}
-                  </span>
+                  <details v-if="getPendingCount(university) > 0" class="mt-2 text-[11px] text-[var(--text-tertiary)] border-t pt-1.5" :style="{ borderColor: 'var(--border)' }">
+                    <summary class="w-fit cursor-pointer rounded px-1.5 py-0.5 hover:text-[var(--text-secondary)]" :style="{ backgroundColor: 'var(--surface-muted)' }">
+                      待核对 {{ getPendingCount(university) }} 项
+                    </summary>
+                    <p class="mt-1 leading-normal">{{ getPendingPreview(university) }}</p>
+                  </details>
                 </div>
-                <details class="mt-1 text-xs leading-5 text-[var(--text-tertiary)]">
-                  <summary class="w-fit cursor-pointer rounded-full px-2 py-0.5" :style="{ backgroundColor: 'var(--surface-muted)' }">
-                    待核对 {{ getPendingCount(university) }} 项
-                  </summary>
-                  <p class="mt-1 leading-5">{{ getPendingPreview(university) }}</p>
-                </details>
-              </div>
 
-              <div class="order-2 grid gap-2 sm:flex sm:flex-wrap xl:order-none xl:justify-end">
-                <ActionButton :to="`/universities/${university.id}`" variant="primary" size="sm">
-                  看详情
-                </ActionButton>
-                <ActionButton
-                  v-if="getPrimaryLink(university)"
-                  :href="getPrimaryLink(university)?.url"
-                  variant="secondary"
-                  size="sm"
-                  new-tab
-                >
-                  外部入口
-                </ActionButton>
+                <!-- 右列：操作按钮组 -->
+                <div class="flex flex-row xl:flex-col items-center xl:items-end gap-2 shrink-0 pt-1">
+                  <ActionButton :to="`/universities/${university.id}`" variant="primary" size="sm" class="w-full sm:w-auto">
+                    看详情
+                  </ActionButton>
+                  <ActionButton
+                    v-if="getPrimaryLink(university)"
+                    :href="getPrimaryLink(university)?.url"
+                    variant="secondary"
+                    size="sm"
+                    new-tab
+                    class="w-full sm:w-auto"
+                  >
+                    外部入口
+                  </ActionButton>
+                </div>
+
               </div>
             </article>
           </section>
@@ -761,24 +794,39 @@ watch(
           <!-- 分页导航 -->
           <nav
             v-if="universityPageCount > 1"
-            class="flex flex-col items-center justify-between gap-3 rounded-xl border p-3 text-sm md:flex-row w-full"
+            class="flex flex-col items-center justify-between gap-3 rounded-2xl border p-3.5 text-xs sm:text-sm md:flex-row w-full mt-2"
             :style="{
               backgroundColor: 'var(--surface)',
               borderColor: 'var(--border)',
               boxShadow: 'var(--glass-shadow)',
+              backdropFilter: 'blur(16px)',
             }"
             aria-label="院校列表分页"
           >
-            <div class="flex items-center gap-2 text-[var(--text-secondary)]">
-              <span class="text-sm">每页</span>
-              <button v-for="opt in PAGE_SIZE_OPTIONS" :key="opt" type="button" class="min-h-8 min-w-8 rounded-lg border px-2 py-1 text-xs font-medium font-numeric transition hover:-translate-y-0.5 sm:min-h-9 sm:min-w-9 sm:px-2.5 sm:text-sm" :aria-pressed="opt === listPageSize ? 'true' : 'false'" :style="{ backgroundColor: opt === listPageSize ? 'var(--accent)' : 'var(--surface-strong)', borderColor: opt === listPageSize ? 'var(--accent)' : 'var(--border)', color: opt === listPageSize ? '#ffffff' : 'var(--text-secondary)' }" @click="listPageSize = opt">{{ opt }}</button>
-              <span class="text-sm">所</span>
+            <div class="flex items-center gap-1.5 text-[var(--text-secondary)]">
+              <span>每页</span>
+              <button
+                v-for="opt in PAGE_SIZE_OPTIONS"
+                :key="opt"
+                type="button"
+                class="min-h-7 min-w-7 rounded-lg border px-2 py-0.5 text-xs font-semibold font-numeric transition hover:-translate-y-0.5 cursor-pointer"
+                :aria-pressed="opt === listPageSize ? 'true' : 'false'"
+                :style="{
+                  backgroundColor: opt === listPageSize ? 'var(--accent)' : 'var(--surface-strong)',
+                  borderColor: opt === listPageSize ? 'var(--accent)' : 'var(--border)',
+                  color: opt === listPageSize ? '#ffffff' : 'var(--text-secondary)',
+                }"
+                @click="listPageSize = opt"
+              >
+                {{ opt }}
+              </button>
+              <span>所</span>
             </div>
 
-            <div class="flex flex-wrap items-center justify-center gap-2">
+            <div class="flex flex-wrap items-center justify-center gap-1.5">
               <button
                 type="button"
-                class="btn-ghost rounded-lg border px-2.5 py-1.5 text-xs font-medium transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45 sm:px-3 sm:py-2 sm:text-sm"
+                class="btn-ghost rounded-lg border px-2.5 py-1.5 text-xs font-semibold transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
                 :disabled="currentUniversityPage === 1"
                 @click="setUniversityPage(currentUniversityPage - 1)"
               >
@@ -788,7 +836,7 @@ watch(
               <template v-for="(page, index) in universityPageNumbers" :key="`${page}-${index}`">
                 <span
                   v-if="page === 'ellipsis'"
-                  class="flex min-h-8 min-w-8 items-center justify-center px-1.5 font-medium text-[var(--text-tertiary)] sm:min-h-10 sm:min-w-10 sm:px-2"
+                  class="flex min-h-7 min-w-7 items-center justify-center px-1 font-medium text-[var(--text-tertiary)]"
                   aria-hidden="true"
                 >
                   ...
@@ -796,7 +844,7 @@ watch(
                 <button
                   v-else
                   type="button"
-                  class="btn-ghost min-h-8 min-w-8 rounded-lg border px-2 py-1.5 text-xs font-medium font-numeric transition hover:-translate-y-0.5 sm:min-h-10 sm:min-w-10 sm:px-3 sm:py-2 sm:text-sm"
+                  class="btn-ghost min-h-7 min-w-7 rounded-lg border px-2.5 py-1 text-xs font-semibold font-numeric transition hover:-translate-y-0.5 cursor-pointer"
                   :aria-current="page === currentUniversityPage ? 'page' : undefined"
                   @click="setUniversityPage(page)"
                 >
@@ -806,7 +854,7 @@ watch(
 
               <button
                 type="button"
-                class="btn-ghost rounded-lg border px-2.5 py-1.5 text-xs font-medium transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45 sm:px-3 sm:py-2 sm:text-sm"
+                class="btn-ghost rounded-lg border px-2.5 py-1.5 text-xs font-semibold transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
                 :disabled="currentUniversityPage === universityPageCount"
                 @click="setUniversityPage(currentUniversityPage + 1)"
               >
@@ -815,16 +863,7 @@ watch(
             </div>
           </nav>
 
-          <!-- 提示或空面板 -->
-          <div
-            v-if="filteredUniversities.length > 0 && universityPageCount === 1"
-            class="flex justify-center text-sm text-[var(--text-tertiary)] w-full"
-          >
-            <span class="surface-card-strong rounded-lg border px-4 py-2">
-              匹配到的院校都在这里了
-            </span>
-          </div>
-
+          <!-- 空面板 -->
           <EmptyStatePanel
             v-if="filteredUniversities.length === 0"
             eyebrow="院校索引"
@@ -854,97 +893,30 @@ watch(
   max-width: min(84rem, 100%);
 }
 
-.university-list-hero {
-  position: relative;
-  overflow: hidden;
-}
-
-.university-list-hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(135deg, rgba(190, 98, 82, 0.08), transparent 36%),
-    linear-gradient(315deg, rgba(47, 125, 79, 0.06), transparent 42%);
-  pointer-events: none;
-}
-
-.university-list-hero > * {
-  position: relative;
-  z-index: 1;
-}
-
-.university-summary-card {
-  border: 1px solid;
-  border-radius: 0.95rem;
-  min-height: 6.8rem;
-  padding: 1rem 1rem 0.95rem;
-}
-
-.universities-page :where(header, section, article, div, p, h1, h2, a, span, label, input, select, button) {
+.universities-page :where(header, section, article, div, p, h1, h2, a, span, label, input, select, button, details, summary) {
   min-width: 0;
 }
 
-.universities-page :where(p, h1, h2, a, span, button) {
+.universities-page :where(p, h1, h2, a, span, button, summary) {
   line-break: anywhere;
   overflow-wrap: anywhere;
   word-break: break-word;
 }
 
 @media (max-width: 639px) {
-  .universities-page {
-    padding-left: 1rem;
-    padding-right: 1rem;
+  .mobile-summary-grid > :nth-child(n + 3) {
+    display: none;
   }
-
-  .universities-shell {
-    inline-size: 100% !important;
-    max-inline-size: 100% !important;
-    margin-left: 0;
-    margin-right: 0;
-  }
-
-  .university-summary-card {
-    min-height: 0;
-    padding: 0.85rem 0.85rem 0.8rem;
-  }
-
-  .mobile-summary-grid > :nth-child(n + 3) { display: none; }
 
   .mobile-control-row {
     align-items: stretch;
     flex-direction: column;
-    gap: 0.65rem;
+    gap: 0.5rem;
   }
 
   .mobile-control-row > :last-child {
     justify-content: space-between;
     width: 100%;
   }
-
-  .universities-shell > :where(header, section, div) {
-    inline-size: 100% !important;
-    max-inline-size: 100% !important;
-  }
-
-  .universities-shell :where(header, section, div, p, h1, h2, a, span, label, input, select, button) {
-    max-inline-size: 100% !important;
-    box-sizing: border-box;
-  }
-}
-
-@media (min-width: 900px) {
-  .university-summary-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-/* 隐藏移动端横向滚动条 */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
 }
 </style>

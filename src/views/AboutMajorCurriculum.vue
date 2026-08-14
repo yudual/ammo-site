@@ -6,69 +6,79 @@ const totalCourseKeywords = majorLearningBlocks.reduce((total, block) => total +
 </script>
 
 <template>
-  <section class="topic-page min-h-screen overflow-x-hidden bg-[var(--page-bg)] px-5 pb-12 pt-4 text-[var(--text-primary)] sm:px-6 sm:pt-6 md:pt-4">
+  <section class="topic-page min-h-screen overflow-x-hidden bg-[var(--page-bg)] px-3.5 pb-14 pt-4 text-[var(--text-primary)] sm:px-6 sm:pb-20 sm:pt-6 md:pt-8">
     <TopicNav :items="majorNavItems" ariaLabelText="专业介绍导航" />
 
-    <main class="mx-auto flex w-full max-w-6xl flex-col gap-8">
-      <header class="border-soft border-b pb-8">
-        <div class="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(18rem,0.45fr)] xl:items-end">
-          <div>
-            <p class="text-sm tracking-[0.14em] text-[var(--text-tertiary)]">学什么</p>
-            <h1 class="mt-3 text-2xl font-semibold leading-tight text-[var(--text-primary)] sm:text-3xl md:text-4xl">
-              不是单科专业，是一组工程能力
-            </h1>
-            <p class="mt-4 max-w-3xl text-sm leading-7 text-[var(--text-secondary)] md:text-base">
-              不同学校课程名会有差异，但基本都绕不开数理基础、力学机械、专业课和实践训练四层。
-            </p>
+    <main class="mx-auto flex w-full max-w-6xl flex-col gap-6 sm:gap-8">
+      <header
+        class="rounded-2xl border p-5 sm:p-7 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4"
+        :style="{
+          backgroundColor: 'var(--surface)',
+          borderColor: 'var(--border)',
+          boxShadow: 'var(--glass-shadow)',
+          backdropFilter: 'blur(16px)',
+        }"
+      >
+        <div>
+          <div class="inline-flex items-center gap-2 rounded-full border px-3 py-0.5 text-xs font-semibold w-fit mb-3" :style="{ backgroundColor: 'var(--surface-strong)', borderColor: 'var(--border)', color: 'var(--text-secondary)' }">
+            <span class="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
+            <span>核心培养方案</span>
           </div>
+          <h1 class="text-2xl sm:text-3xl font-black tracking-tight leading-tight text-[var(--text-primary)]">
+            四层课程体系：从数理基础到工程实弹
+          </h1>
+          <p class="mt-2 max-w-2xl text-xs sm:text-sm leading-relaxed text-[var(--text-secondary)]">
+            不同院校课程名称略有微调，但核心均围绕数理基础、力学机械、火炸药/终点效应与外场实验展开。
+          </p>
+        </div>
 
-          <div class="grid grid-cols-2 gap-3 text-sm">
-            <div class="border-soft border-l pl-4">
-              <p class="text-[var(--text-tertiary)]">课程层级</p>
-              <p class="mt-1 text-2xl font-semibold text-[var(--text-primary)]">{{ majorLearningBlocks.length }}</p>
-            </div>
-            <div class="border-soft border-l pl-4">
-              <p class="text-[var(--text-tertiary)]">关键词</p>
-              <p class="mt-1 text-2xl font-semibold text-[var(--text-primary)]">{{ totalCourseKeywords }}</p>
-            </div>
+        <div class="flex items-center gap-2 text-xs">
+          <div class="px-3 py-2 rounded-xl bg-[var(--surface-strong)] border border-[var(--border)]">
+            <span class="text-[var(--text-tertiary)] block text-[11px]">课程层级</span>
+            <strong class="text-base font-bold font-numeric text-[var(--text-primary)]">{{ majorLearningBlocks.length }} 层</strong>
+          </div>
+          <div class="px-3 py-2 rounded-xl bg-[var(--surface-strong)] border border-[var(--border)]">
+            <span class="text-[var(--text-tertiary)] block text-[11px]">核心模块</span>
+            <strong class="text-base font-bold font-numeric text-[var(--text-primary)]">{{ totalCourseKeywords }} 个</strong>
           </div>
         </div>
       </header>
 
-      <section
-        class="surface-card-strong overflow-hidden rounded-lg border"
-      >
-        <div
-          class="border-soft hidden grid-cols-[3.5rem_14rem_minmax(0,1fr)] gap-4 border-b px-5 py-3 text-xs text-[var(--text-tertiary)] md:grid"
-        >
-          <span>层级</span>
-          <span>作用</span>
-          <span>课程关键词</span>
-        </div>
-
+      <!-- 课程层级 -->
+      <section class="flex flex-col gap-4">
         <article
           v-for="block in majorLearningBlocks"
           :key="block.title"
-          class="border-soft grid gap-4 border-b px-5 py-5 last:border-b-0 md:grid-cols-[3.5rem_14rem_minmax(0,1fr)]"
+          class="rounded-2xl border p-5 sm:p-6 transition hover:-translate-y-0.5"
+          :style="{
+            backgroundColor: 'var(--surface-strong)',
+            borderColor: 'var(--border)',
+            boxShadow: 'var(--glass-shadow)',
+          }"
         >
-          <p class="text-sm font-medium text-[var(--accent)]">{{ block.eyebrow }}</p>
-          <div>
-            <h2 class="text-lg font-semibold leading-7 text-[var(--text-primary)]">
-              {{ block.title }}
-            </h2>
-            <p class="mt-2 text-sm leading-7 text-[var(--text-secondary)]">
-              {{ block.description }}
-            </p>
-          </div>
-          <div class="flex flex-wrap content-start gap-2 md:pt-1">
-            <span
-              v-for="item in block.items"
-              :key="item"
-              class="rounded-md px-2.5 py-1 text-sm"
-              :style="{ backgroundColor: 'var(--surface-muted)', color: 'var(--text-secondary)' }"
-            >
-              {{ item }}
-            </span>
+          <div class="grid gap-4 md:grid-cols-[14rem_minmax(0,1fr)] md:items-start">
+            <div>
+              <span class="rounded-lg px-2.5 py-0.5 text-xs font-bold" :style="{ backgroundColor: 'var(--accent-soft)', color: 'var(--accent)' }">
+                {{ block.eyebrow }}
+              </span>
+              <h2 class="mt-2 text-base sm:text-lg font-bold text-[var(--text-primary)]">
+                {{ block.title }}
+              </h2>
+              <p class="mt-1.5 text-xs sm:text-sm leading-relaxed text-[var(--text-secondary)]">
+                {{ block.description }}
+              </p>
+            </div>
+
+            <div class="flex flex-wrap content-start gap-2 pt-1">
+              <span
+                v-for="item in block.items"
+                :key="item"
+                class="rounded-xl border px-3 py-1.5 text-xs sm:text-sm font-medium"
+                :style="{ backgroundColor: 'var(--surface-muted)/50', borderColor: 'var(--border)', color: 'var(--text-primary)' }"
+              >
+                {{ item }}
+              </span>
+            </div>
           </div>
         </article>
       </section>
