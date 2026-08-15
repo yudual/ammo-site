@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { geoMercator, geoPath } from 'd3-geo'
 import type { GeoArc, GeoItem, GeoRegionCluster } from '../../data/geoCoordinates'
+import { chinaGeoJson, getProvinceStats, type ProvinceStat } from '../../data/chinaGeoJson'
 
 const props = defineProps<{
   items: GeoItem[]
@@ -16,34 +18,50 @@ const emit = defineEmits<{
 
 const containerRef = ref<HTMLDivElement | null>(null)
 const hoveredItem = ref<GeoItem | null>(null)
+const hoveredProvince = ref<ProvinceStat | null>(null)
 const mousePos = ref({ x: 0, y: 0 })
 
-// 缩放和平移状态
+// 缩放与平移状态
 const zoom = ref(1)
 const pan = ref({ x: 0, y: 0 })
 const isDragging = ref(false)
 const dragStart = ref({ x: 0, y: 0 })
 
-// 中国大致地理经纬度范围映射边界
-const GEO_BOUNDS = {
-  minLng: 75,
-  maxLng: 135,
-  minLat: 18,
-  maxLat: 53,
-}
+const provinceStatsMap = getProvinceStats()
 
-// 投影算法：经纬度 -> [0..1000, 0..700] 笛卡尔坐标
+// D3 墨卡托高精投影器 (针对中国大陆经纬度精准校准)
+const projection = geoMercator().center([105, 36]).scale(820).translate([500, 350])
+const pathGenerator = geoPath().projection(projection)
+
+// 生成 34 个真实省份的高精矢量 Path
+const provincePaths = computed(() => {
+  if (!chinaGeoJson || !chinaGeoJson.features) return []
+  return chinaGeoJson.features.map((feature: any) => {
+    const name = feature.properties.name || ''
+    const pathData = pathGenerator(feature) || ''
+    const stats = provinceStatsMap[name] || {
+      id: name,
+      name,
+      center: feature.properties.cp || [105, 35],
+      universities: [],
+      companies: [],
+      totalCount: 0,
+    }
+    return {
+      name,
+      pathData,
+      stats,
+    }
+  })
+})
+
+// 投影算法：[lng, lat] -> [x, y]
 function project(lng: number, lat: number): { x: number; y: number } {
-  const normX = (lng - GEO_BOUNDS.minLng) / (GEO_BOUNDS.maxLng - GEO_BOUNDS.minLng)
-  // 墨卡托微调纬度投影
-  const normY = (GEO_BOUNDS.maxLat - lat) / (GEO_BOUNDS.maxLat - GEO_BOUNDS.minLat)
-  return {
-    x: normX * 1000,
-    y: normY * 700,
-  }
+  const coords = projection([lng, lat])
+  return coords ? { x: coords[0], y: coords[1] } : { x: 500, y: 350 }
 }
 
-// 监听聚集区切换并平滑居中平移
+// 监听聚集区平滑定焦
 watch(
   () => props.activeCluster,
   (cluster) => {
@@ -105,12 +123,11 @@ function zoomOut() {
   zoom.value = Math.max(0.8, zoom.value * 0.8)
 }
 
-// 生成二次贝塞尔飞线路径
 function getArcPath(from: [number, number], to: [number, number]): string {
   const p1 = project(from[0], from[1])
   const p2 = project(to[0], to[1])
   const midX = (p1.x + p2.x) / 2
-  const midY = (p1.y + p2.y) / 2 - Math.hypot(p2.x - p1.x, p2.y - p1.y) * 0.22
+  const midY = (p1.y + p2.y) / 2 - Math.hypot(p2.x - p1.x, p2.y - p1.y) * 0.2
   return `M ${p1.x} ${p1.y} Q ${midX} ${midY} ${p2.x} ${p2.y}`
 }
 
@@ -126,18 +143,18 @@ onUnmounted(() => {
 <template>
   <div
     ref="containerRef"
-    class="tactical-2d-viewport relative w-full h-full min-h-[560px] overflow-hidden select-none cursor-grab active:cursor-grabbing rounded-3xl border"
+    class="tactical-2d-viewport relative w-full h-full min-h-[580px] overflow-hidden select-none cursor-grab active:cursor-grabbing rounded-3xl border"
     :style="{
       backgroundColor: 'var(--surface-strong)',
       borderColor: 'var(--border)',
-      boxShadow: 'var(--glass-shadow)',
+      boxShadow: 'var(--glass-shadow-hover)',
     }"
     @mousedown="onMouseDown"
     @mousemove="onMouseMove"
     @wheel="onWheel"
   >
-    <!-- 背景战术网格与雷达同心环 -->
-    <div class="absolute inset-0 pointer-events-none opacity-20 bg-[radial-gradient(circle_at_50%_50%,var(--accent)_1px,transparent_1px)] bg-[size:32px_32px]" />
+    <!-- 背景战术网格与高科技雷达扫描线 -->
+    <div class="absolute inset-0 pointer-events-none opacity-20 bg-[radial-gradient(circle_at_50%_50%,var(--accent)_1px,transparent_1px)] bg-[size:36px_36px]" />
 
     <!-- 缩放控制浮动栏 -->
     <div class="absolute top-4 right-4 z-20 flex flex-col gap-1.5 p-1.5 rounded-xl border backdrop-blur-xl bg-[var(--surface)] border-[var(--border)] shadow-md">
@@ -167,14 +184,14 @@ onUnmounted(() => {
       </button>
     </div>
 
-    <!-- 战术沙盘 SVG 渲染图层 -->
+    <!-- 战术沙盘 SVG 真实矢量图层 -->
     <svg
       class="w-full h-full"
       viewBox="0 0 1000 700"
       preserveAspectRatio="xMidYMid meet"
     >
       <g :transform="`translate(${pan.x}, ${pan.y}) scale(${zoom})`" class="transition-transform duration-75">
-        <!-- 经纬度参考线 -->
+        <!-- 经纬度网格 -->
         <g class="opacity-15 stroke-[var(--text-tertiary)]" stroke-dasharray="3,3" stroke-width="0.8">
           <line x1="100" y1="0" x2="100" y2="700" />
           <line x1="300" y1="0" x2="300" y2="700" />
@@ -186,14 +203,20 @@ onUnmounted(() => {
           <line x1="0" y1="600" x2="1000" y2="600" />
         </g>
 
-        <!-- 中国主干疆界战术底图轮廓示意 (抽象高阶多边形) -->
-        <path
-          d="M 230 180 L 320 150 L 450 140 L 580 120 L 720 100 L 840 120 L 890 200 L 840 280 L 880 340 L 820 450 L 750 560 L 680 620 L 590 600 L 500 540 L 400 520 L 300 460 L 210 380 L 150 300 L 180 220 Z"
-          fill="var(--surface-muted)"
-          stroke="var(--border-strong)"
-          stroke-width="1.5"
-          class="opacity-60"
-        />
+        <!-- 中国真实 34 个省份多边形几何图层 -->
+        <g class="provinces-layer">
+          <path
+            v-for="prov in provincePaths"
+            :key="prov.name"
+            :d="prov.pathData"
+            :fill="hoveredProvince?.name === prov.name ? 'var(--accent-soft)' : 'var(--surface-muted)'"
+            :stroke="hoveredProvince?.name === prov.name ? 'var(--accent)' : 'var(--border-strong)'"
+            :stroke-width="hoveredProvince?.name === prov.name ? 1.8 : 0.8"
+            class="transition-colors duration-150 cursor-pointer"
+            @mouseenter="hoveredProvince = prov.stats"
+            @mouseleave="hoveredProvince = null"
+          />
+        </g>
 
         <!-- 产学研动态飞线 (Flight Arcs) -->
         <g v-if="showArcs">
@@ -205,21 +228,20 @@ onUnmounted(() => {
             :stroke="arc.color || 'var(--accent)'"
             stroke-width="1.8"
             stroke-linecap="round"
-            class="opacity-70 animate-pulse-dash"
+            class="opacity-75 animate-pulse-dash"
             stroke-dasharray="6,4"
           />
         </g>
 
         <!-- 所有地标 Pinpoints (高校 & 企业) -->
         <g v-for="item in items" :key="item.id" class="cursor-pointer">
-          <!-- 投影坐标位置 -->
           <g
             :transform="`translate(${project(item.lng, item.lat).x}, ${project(item.lng, item.lat).y})`"
             @click.stop="emit('select', item)"
             @mouseenter="hoveredItem = item"
             @mouseleave="hoveredItem = null"
           >
-            <!-- 脉冲光环 (选中的或 Hover 的) -->
+            <!-- 脉冲雷达波 (选中/Hover) -->
             <circle
               v-if="selectedItem?.id === item.id || hoveredItem?.id === item.id"
               r="14"
@@ -229,7 +251,7 @@ onUnmounted(() => {
               class="animate-ping opacity-60"
             />
 
-            <!-- 选中瞄准靶心 (Reticle) -->
+            <!-- 战术瞄准靶心 (Reticle) -->
             <g v-if="selectedItem?.id === item.id">
               <circle r="9" fill="none" :stroke="item.type === 'university' ? '#3b82f6' : 'var(--accent)'" stroke-width="1.5" />
               <line x1="-12" y1="0" x2="-6" y2="0" :stroke="item.type === 'university' ? '#3b82f6' : 'var(--accent)'" stroke-width="1.5" />
@@ -238,18 +260,18 @@ onUnmounted(() => {
               <line x1="0" y1="6" x2="0" y2="12" :stroke="item.type === 'university' ? '#3b82f6' : 'var(--accent)'" stroke-width="1.5" />
             </g>
 
-            <!-- 核心地标实心圆点 -->
+            <!-- 核心地标圆点 -->
             <circle
-              :r="selectedItem?.id === item.id ? 6 : (item.type === 'university' ? 5 : 4)"
+              :r="selectedItem?.id === item.id ? 6 : (item.type === 'university' ? 4.5 : 4)"
               :fill="item.type === 'university' ? '#3b82f6' : 'var(--accent)'"
               stroke="#ffffff"
               stroke-width="1.5"
               class="transition-all duration-150"
             />
 
-            <!-- 极简地名/校名微标签 (仅在适度放大或选中时呈现) -->
+            <!-- 悬浮微标签 -->
             <text
-              v-if="zoom > 1.4 || selectedItem?.id === item.id"
+              v-if="zoom > 1.3 || selectedItem?.id === item.id"
               x="8"
               y="3"
               class="text-[9px] font-bold fill-[var(--text-primary)] pointer-events-none drop-shadow-sm select-none"
@@ -261,7 +283,29 @@ onUnmounted(() => {
       </g>
     </svg>
 
-    <!-- 鼠标悬停实时微 Tooltip -->
+    <!-- 鼠标悬停省份情报 HUD -->
+    <div
+      v-if="hoveredProvince"
+      class="absolute top-4 left-4 z-20 flex flex-col gap-1 p-3 rounded-2xl border backdrop-blur-xl pointer-events-none select-none text-[11px] font-numeric"
+      :style="{
+        backgroundColor: 'var(--surface)',
+        borderColor: 'var(--border)',
+        boxShadow: 'var(--glass-shadow)',
+        color: 'var(--text-secondary)',
+      }"
+    >
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-[var(--accent)]" />
+        <strong class="font-bold text-xs text-[var(--text-primary)]">{{ hoveredProvince.name }}省 / 直辖市</strong>
+      </div>
+      <div class="flex items-center gap-3 mt-1 border-t pt-1.5 border-[var(--border)] text-xs">
+        <span>收录高校: <strong class="text-[#3b82f6] font-bold">{{ hoveredProvince.universities.length }}</strong> 所</span>
+        <span>&bull;</span>
+        <span>收录企业: <strong class="text-[var(--accent)] font-bold">{{ hoveredProvince.companies.length }}</strong> 家</span>
+      </div>
+    </div>
+
+    <!-- 鼠标悬停地标微 Tooltip -->
     <div
       v-if="hoveredItem"
       class="pointer-events-none fixed z-50 flex flex-col gap-0.5 px-3 py-2 rounded-xl border backdrop-blur-xl shadow-lg transform -translate-x-1/2 -translate-y-full -mt-3"
@@ -280,8 +324,8 @@ onUnmounted(() => {
       <span class="text-[11px] text-[var(--text-secondary)]">📍 {{ hoveredItem.province }} · {{ hoveredItem.city }}</span>
     </div>
 
-    <!-- 左下角战术沙盘图例 HUD -->
-    <div class="absolute bottom-4 left-4 z-20 flex items-center gap-3 p-2.5 rounded-xl border backdrop-blur-xl bg-[var(--surface)] border-[var(--border)] text-xs font-medium shadow-md">
+    <!-- 左下角图例 -->
+    <div class="absolute bottom-4 left-4 z-20 flex items-center gap-3 p-2.5 rounded-xl border backdrop-blur-xl bg-[var(--surface)] border-[var(--border)] text-xs font-medium shadow-md select-none">
       <div class="flex items-center gap-1.5">
         <span class="w-2.5 h-2.5 rounded-full bg-[#3b82f6] shadow-sm" />
         <span class="text-[var(--text-secondary)]">高校 (34)</span>
