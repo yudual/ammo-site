@@ -28,10 +28,10 @@ const props = withDefaults(
 
 const buttonClass = computed(() =>
   [
-    'inline-flex items-center justify-center rounded-lg border font-medium transition duration-200 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-45 select-none cursor-pointer',
+    'inline-flex items-center justify-center rounded-xl border font-semibold select-none cursor-pointer transition-all duration-200 active:scale-[0.96] disabled:cursor-not-allowed disabled:opacity-45 disabled:active:scale-100',
     props.size === 'sm' ? 'px-3 py-1.5 text-xs sm:text-sm gap-1.5' : 'px-4 py-2.5 text-sm gap-2',
     props.block ? 'w-full' : '',
-    props.variant === 'primary' ? 'shadow-sm hover:shadow-md hover:-translate-y-0.5' : 'hover:-translate-y-0.5',
+    props.variant === 'primary' ? 'shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:brightness-105' : 'hover:-translate-y-0.5 hover:bg-[var(--surface-muted)]',
   ]
     .filter(Boolean)
     .join(' '),
@@ -57,7 +57,7 @@ const buttonStyle = computed(() => {
   return {
     backgroundColor: 'var(--surface-strong)',
     borderColor: 'var(--border)',
-    color: 'var(--text-secondary)',
+    color: 'var(--text-primary)',
   }
 })
 

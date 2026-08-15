@@ -99,7 +99,7 @@ onUnmounted(() => {
       <div
         v-if="open"
         class="gs-overlay"
-        :style="{ backgroundColor: 'rgba(15, 22, 18, 0.42)' }"
+        :style="{ backgroundColor: 'rgba(10, 15, 13, 0.52)' }"
         @click.self="closeDialog"
       >
         <div
@@ -107,14 +107,15 @@ onUnmounted(() => {
           :style="{
             backgroundColor: 'var(--surface-strong)',
             borderColor: 'var(--border)',
-            boxShadow: 'var(--glass-shadow)',
+            boxShadow: 'var(--glass-shadow-hover)',
           }"
           role="dialog"
           aria-modal="true"
           aria-label="全站搜索"
         >
+          <!-- 搜索输入框 -->
           <div class="gs-input-row" :style="{ borderBottom: '1px solid var(--border)' }">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" class="gs-icon h-4.5 w-4.5 shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="gs-icon h-4.5 w-4.5 shrink-0 text-[var(--accent)]">
               <circle cx="11" cy="11" r="7" />
               <path d="m21 21-4.3-4.3" />
             </svg>
@@ -123,25 +124,35 @@ onUnmounted(() => {
               v-model="query"
               type="text"
               class="gs-input"
-              placeholder="搜企业、院校、考研方向"
+              placeholder="搜索企业、院校、考研方向、课程..."
               aria-label="搜索关键词"
               autocomplete="off"
               spellcheck="false"
               @keydown="onInputKeydown"
             />
-            <kbd
-              class="gs-kbd shrink-0"
-              :style="{ borderColor: 'var(--border)', color: 'var(--text-tertiary)', backgroundColor: 'var(--surface)' }"
+            <button
+              v-if="query"
+              type="button"
+              class="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)] px-1.5 py-0.5 rounded cursor-pointer"
+              @click="query = ''"
             >
-              Esc
+              清空
+            </button>
+            <kbd
+              class="gs-kbd shrink-0 cursor-pointer select-none"
+              :style="{ borderColor: 'var(--border)', color: 'var(--text-tertiary)', backgroundColor: 'var(--surface-muted)' }"
+              @click="closeDialog"
+            >
+              ESC
             </kbd>
           </div>
 
-          <ul class="gs-list">
+          <!-- 搜索结果列表 -->
+          <ul class="gs-list no-scrollbar">
             <li v-for="(hit, i) in results" :key="hit.kind + '-' + hit.id">
               <RouterLink
                 :to="hit.to"
-                class="gs-item"
+                class="gs-item group"
                 :class="{ 'is-active': i === highlight }"
                 :style="i === highlight ? { backgroundColor: 'var(--accent-soft)', color: 'var(--text-primary)' } : {}"
                 @click="closeDialog"
@@ -153,22 +164,32 @@ onUnmounted(() => {
                 >
                   {{ hitKindLabel(hit.kind) }}
                 </span>
-                <span class="gs-name min-w-0 flex-1 truncate">{{ hit.name }}</span>
-                <span class="gs-sub shrink-0">{{ hit.sub }}</span>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="gs-arrow h-3.5 w-3.5 shrink-0">
+                <span class="gs-name min-w-0 flex-1 truncate group-hover:text-[var(--accent)] transition-colors">{{ hit.name }}</span>
+                <span class="gs-sub shrink-0 text-xs">{{ hit.sub }}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="gs-arrow h-3.5 w-3.5 shrink-0 opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 transition">
                   <path d="m9 6 6 6-6 6" />
                 </svg>
               </RouterLink>
             </li>
 
-            <li v-if="query.trim() && !results.length" class="gs-empty">
-              没有匹配的结果，换个关键词试试。
+            <li v-if="query.trim() && !results.length" class="gs-empty py-8 text-center text-xs text-[var(--text-tertiary)]">
+              未找到与「{{ query }}」相关的结果，换个关键词试试。
             </li>
 
-            <li v-if="!query.trim()" class="gs-hint">
-              输入关键词，搜企业、院校、专业页和考研方向。
+            <li v-if="!query.trim()" class="gs-hint py-8 text-center text-xs text-[var(--text-tertiary)]">
+              输入关键词，快速检索收录的 80 家企业、34 所院校与考研方向。
             </li>
           </ul>
+
+          <!-- 底部键盘快捷提示栏 -->
+          <div class="hidden sm:flex items-center justify-between px-3.5 py-2 border-t text-[11px] text-[var(--text-tertiary)] select-none" :style="{ borderColor: 'var(--border)', backgroundColor: 'var(--surface)' }">
+            <div class="flex items-center gap-3">
+              <span><kbd class="font-mono bg-[var(--surface-muted)] px-1 py-0.5 rounded border border-[var(--border)]">↑</kbd> <kbd class="font-mono bg-[var(--surface-muted)] px-1 py-0.5 rounded border border-[var(--border)]">↓</kbd> 切换</span>
+              <span><kbd class="font-mono bg-[var(--surface-muted)] px-1 py-0.5 rounded border border-[var(--border)]">↵</kbd> 打开</span>
+              <span><kbd class="font-mono bg-[var(--surface-muted)] px-1 py-0.5 rounded border border-[var(--border)]">ESC</kbd> 退出</span>
+            </div>
+            <span class="font-numeric">弹药工程导航全站检索</span>
+          </div>
         </div>
       </div>
     </Transition>
@@ -183,17 +204,17 @@ onUnmounted(() => {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 6vh 1rem 1rem;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  padding: 8vh 1rem 1rem;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .gs-panel {
   width: 100%;
-  max-width: 36rem;
+  max-width: 38rem;
   max-height: min(78vh, 38rem);
   border: 1px solid;
-  border-radius: 1rem;
+  border-radius: 1.25rem;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -202,8 +223,8 @@ onUnmounted(() => {
 .gs-input-row {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.85rem 1rem;
+  gap: 0.75rem;
+  padding: 0.9rem 1.15rem;
   color: var(--text-secondary);
 }
 
@@ -213,20 +234,23 @@ onUnmounted(() => {
   background: transparent;
   border: none;
   outline: none;
-  font-size: 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
   color: var(--text-primary);
 }
 
 .gs-input::placeholder {
   color: var(--text-tertiary);
+  font-weight: 400;
 }
 
 .gs-kbd {
   font-family: ui-monospace, 'SF Mono', Consolas, monospace;
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   border: 1px solid;
-  border-radius: 0.35rem;
-  padding: 0.1rem 0.35rem;
+  border-radius: 0.4rem;
+  padding: 0.15rem 0.45rem;
+  font-weight: 600;
 }
 
 .gs-list {
@@ -239,16 +263,16 @@ onUnmounted(() => {
 .gs-item {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.65rem;
   width: 100%;
   border: none;
   background: transparent;
-  border-radius: 0.6rem;
-  padding: 0.6rem 0.7rem;
+  border-radius: 0.75rem;
+  padding: 0.65rem 0.85rem;
   cursor: pointer;
   text-align: left;
-  transition: background-color 0.15s ease;
-  font-size: 0.92rem;
+  transition: all 0.15s ease;
+  font-size: 0.9rem;
   text-decoration: none;
   color: inherit;
 }
@@ -260,7 +284,7 @@ onUnmounted(() => {
 .gs-tag {
   display: inline-flex;
   align-items: center;
-  border-radius: 0.45rem;
+  border-radius: 0.4rem;
   padding: 0.1rem 0.45rem;
   font-size: 0.7rem;
   font-weight: 600;
@@ -284,18 +308,10 @@ onUnmounted(() => {
   color: var(--text-tertiary);
 }
 
-.gs-empty,
-.gs-hint {
-  padding: 0.9rem 0.7rem;
-  font-size: 0.85rem;
-  color: var(--text-tertiary);
-  text-align: center;
-}
-
 /* 过渡 */
 .gs-enter-active,
 .gs-leave-active {
-  transition: opacity 0.18s ease;
+  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .gs-enter-from,
@@ -305,69 +321,23 @@ onUnmounted(() => {
 
 .gs-enter-active .gs-panel,
 .gs-leave-active .gs-panel {
-  transition: transform 0.2s ease;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.22s ease;
 }
 
 .gs-enter-from .gs-panel,
 .gs-leave-to .gs-panel {
-  transform: translateY(-12px) scale(0.98);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .gs-enter-active,
-  .gs-leave-active {
-    transition: opacity 0.12s ease;
-  }
-  .gs-enter-active .gs-panel,
-  .gs-leave-active .gs-panel {
-    transition: opacity 0.12s ease;
-    transform: none;
-  }
-  .gs-enter-from .gs-panel,
-  .gs-leave-to .gs-panel {
-    transform: none;
-  }
+  transform: translateY(-10px) scale(0.97);
+  opacity: 0;
 }
 
 @media (max-width: 639px) {
   .gs-overlay {
-    align-items: flex-start;
-    padding: 4.5rem 0.75rem 0.75rem;
+    padding: 3rem 0.75rem 0.75rem;
   }
 
   .gs-panel {
-    max-height: calc(100vh - 5.25rem);
-    border-radius: 0.85rem;
-  }
-
-  .gs-input-row {
-    gap: 0.45rem;
-    padding: 0.75rem;
-  }
-
-  .gs-input {
-    font-size: 0.95rem;
-  }
-
-  .gs-kbd {
-    display: none;
-  }
-
-  .gs-item {
-    align-items: flex-start;
-    gap: 0.5rem;
-    padding: 0.65rem;
-  }
-
-  .gs-name {
-    white-space: normal;
-    overflow-wrap: anywhere;
-  }
-
-  .gs-sub {
-    max-width: 5.5rem;
-    white-space: normal;
-    line-height: 1.35;
+    max-height: calc(100vh - 4.5rem);
+    border-radius: 1rem;
   }
 }
 </style>

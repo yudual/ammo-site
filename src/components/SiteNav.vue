@@ -143,7 +143,7 @@ onUnmounted(() => {
       <div class="ml-auto flex shrink-0 items-center gap-2 md:ml-0 md:justify-self-end">
         <button
           type="button"
-          class="flex h-9 shrink-0 items-center gap-2 rounded-full border px-3 text-xs sm:text-sm font-medium transition duration-200 hover:border-[var(--accent-border)] hover:scale-105 active:scale-95 cursor-pointer"
+          class="group flex h-9 sm:h-10 shrink-0 items-center gap-2 rounded-full border px-3 sm:px-3.5 text-xs sm:text-sm font-semibold transition-all duration-200 hover:border-[var(--accent-border)] hover:scale-105 active:scale-95 cursor-pointer select-none"
           :style="{
             backgroundColor: 'var(--surface-strong)',
             borderColor: 'var(--border)',
@@ -154,13 +154,13 @@ onUnmounted(() => {
           title="全站搜索 (Ctrl/⌘ + K)"
           @click="toggleSearch"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="h-3.5 w-3.5 sm:h-4 sm:w-4">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-transform duration-300 group-hover:rotate-12 text-[var(--accent)]">
             <circle cx="11" cy="11" r="7" />
             <path d="m21 21-4.3-4.3" />
           </svg>
-          <span class="text-xs font-semibold">搜索</span>
+          <span class="text-xs font-semibold group-hover:text-[var(--text-primary)] transition-colors">搜索</span>
           <kbd
-            class="ml-0.5 hidden rounded border px-1.5 py-0.5 text-[10px] font-mono leading-none md:inline"
+            class="ml-0.5 hidden rounded-md border px-1.5 py-0.5 text-[10px] font-mono leading-none md:inline group-hover:border-[var(--accent-border)] transition-colors"
             :style="{ borderColor: 'var(--border)', color: 'var(--text-tertiary)', backgroundColor: 'var(--surface-muted)' }"
           >
             ⌘K

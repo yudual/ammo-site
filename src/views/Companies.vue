@@ -3,7 +3,7 @@ import ActionButton from '../components/ActionButton.vue'
 import AppIcon from '../components/AppIcon.vue'
 import EmptyStatePanel from '../components/EmptyStatePanel.vue'
 import StatusPill from '../components/StatusPill.vue'
-import { computed, nextTick, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   companies,
@@ -166,6 +166,18 @@ watch(
 watch(currentCompanyPage, () => {
   if (isInitializing.value || isSyncingFromUrl.value) return
   updateUrlQuery()
+})
+
+watch(filtersOpen, (isOpen) => {
+  if (typeof document !== 'undefined') {
+    document.body.style.overflow = isOpen ? 'hidden' : ''
+  }
+})
+
+onUnmounted(() => {
+  if (typeof document !== 'undefined') {
+    document.body.style.overflow = ''
+  }
 })
 
 const { isCopied, copyShareLink } = useShareLink()
@@ -639,7 +651,7 @@ watch(
                 <!-- 高级筛选唤起 (仅移动端显示，PC端侧边栏常驻) -->
                 <button
                   type="button"
-                  class="rounded-lg px-2.5 py-1 border font-semibold flex items-center gap-1 shrink-0 md:hidden cursor-pointer"
+                  class="rounded-lg px-2.5 py-1 border font-semibold flex items-center gap-1 shrink-0 md:hidden cursor-pointer transition active:scale-95 duration-150"
                   :style="{
                     backgroundColor: activeFilterCount ? 'var(--accent-soft)' : 'var(--surface-strong)',
                     borderColor: activeFilterCount ? 'var(--accent)' : 'var(--border)',
@@ -653,7 +665,7 @@ watch(
 
                 <button
                   type="button"
-                  class="rounded-lg px-2.5 py-1 border font-semibold shrink-0 cursor-pointer transition"
+                  class="rounded-lg px-2.5 py-1 border font-semibold shrink-0 cursor-pointer transition active:scale-95 duration-150"
                   :style="{
                     backgroundColor: selectedRelevance === '高' ? 'var(--accent-soft)' : 'var(--surface-strong)',
                     borderColor: selectedRelevance === '高' ? 'var(--accent)' : 'var(--border)',
@@ -666,7 +678,7 @@ watch(
 
                 <button
                   type="button"
-                  class="rounded-lg px-2.5 py-1 border font-semibold shrink-0 cursor-pointer transition"
+                  class="rounded-lg px-2.5 py-1 border font-semibold shrink-0 cursor-pointer transition active:scale-95 duration-150"
                   :style="{
                     backgroundColor: onlyWithResearch ? 'var(--accent-soft)' : 'var(--surface-strong)',
                     borderColor: onlyWithResearch ? 'var(--accent)' : 'var(--border)',
@@ -679,7 +691,7 @@ watch(
 
                 <button
                   type="button"
-                  class="rounded-lg px-2.5 py-1 border font-semibold shrink-0 cursor-pointer transition"
+                  class="rounded-lg px-2.5 py-1 border font-semibold shrink-0 cursor-pointer transition active:scale-95 duration-150"
                   :style="{
                     backgroundColor: selectedStatus === '部分核验' ? 'var(--accent-soft)' : 'var(--surface-strong)',
                     borderColor: selectedStatus === '部分核验' ? 'var(--accent)' : 'var(--border)',
@@ -694,7 +706,7 @@ watch(
                 <button
                   v-if="hasActiveFilters"
                   type="button"
-                  class="rounded-lg px-2.5 py-1 border text-[var(--text-tertiary)] hover:text-[var(--accent)] hover:border-[var(--accent-border)] shrink-0 bg-[var(--surface-strong)] cursor-pointer transition"
+                  class="rounded-lg px-2.5 py-1 border text-[var(--text-tertiary)] hover:text-[var(--accent)] hover:border-[var(--accent-border)] shrink-0 bg-[var(--surface-strong)] cursor-pointer transition active:scale-95 duration-150"
                   @click="resetFilters"
                 >
                   清空
@@ -708,7 +720,7 @@ watch(
 
                 <button
                   type="button"
-                  class="rounded-lg p-1.5 border flex items-center justify-center transition hover:scale-105 active:scale-95 shrink-0 cursor-pointer"
+                  class="relative rounded-lg p-1.5 border flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shrink-0 cursor-pointer"
                   :style="{
                     backgroundColor: isCopied ? 'var(--accent-soft)' : 'var(--surface-strong)',
                     borderColor: isCopied ? 'var(--accent)' : 'var(--border)',
@@ -717,7 +729,14 @@ watch(
                   title="复制筛选链接"
                   @click="copyShareLink"
                 >
-                  <AppIcon :name="isCopied ? 'check' : 'link'" :size="15" />
+                  <AppIcon :name="isCopied ? 'check' : 'link'" :size="15" class="transition-transform duration-200" :class="{ 'scale-110': isCopied }" />
+                  <span
+                    v-if="isCopied"
+                    class="absolute -top-7 right-0 whitespace-nowrap rounded-md px-1.5 py-0.5 text-[10px] font-bold text-white shadow-sm pointer-events-none"
+                    :style="{ backgroundColor: 'var(--accent)' }"
+                  >
+                    已复制链接
+                  </span>
                 </button>
               </div>
             </div>

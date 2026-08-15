@@ -11,7 +11,7 @@ function handleScroll() {
   ticking = true
   window.requestAnimationFrame(() => {
     const y = window.scrollY || document.documentElement.scrollTop || 0
-    visible.value = y > 600
+    visible.value = y > 500
     ticking = false
   })
 }
@@ -49,7 +49,6 @@ onMounted(() => {
 
 onUnmounted(unbind)
 
-// 路由切换后先隐藏，待滚动判定再决定是否出现
 watch(
   () => route.fullPath,
   () => {
@@ -63,7 +62,7 @@ watch(
     <button
       v-if="visible"
       type="button"
-      class="back-to-top"
+      class="back-to-top group"
       :style="{
         backgroundColor: 'var(--surface-strong)',
         borderColor: 'var(--border)',
@@ -81,8 +80,8 @@ watch(
         stroke="currentColor"
         stroke-linecap="round"
         stroke-linejoin="round"
-        stroke-width="2"
-        class="h-5 w-5"
+        stroke-width="2.2"
+        class="h-4.5 w-4.5 transition-transform duration-200 group-hover:-translate-y-0.5 text-[var(--accent)]"
       >
         <path d="M12 19V5" />
         <path d="M5 12l7-7 7 7" />
@@ -94,8 +93,8 @@ watch(
 <style scoped>
 .back-to-top {
   position: fixed;
-  right: 1rem;
-  bottom: 1.25rem;
+  right: 1.25rem;
+  bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
   z-index: 50;
   display: inline-flex;
   align-items: center;
@@ -105,38 +104,35 @@ watch(
   border-radius: 9999px;
   border: 1px solid;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 @media (min-width: 768px) {
   .back-to-top {
-    right: 1.5rem;
-    bottom: 1.75rem;
+    right: 2rem;
+    bottom: 2rem;
   }
 }
 
 .back-to-top:hover {
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: var(--glass-shadow-hover);
+  border-color: var(--accent-border);
 }
 
 .back-to-top:active {
-  transform: translateY(0);
-}
-
-.back-to-top:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  transform: scale(0.92);
 }
 
 .backtotop-enter-active,
 .backtotop-leave-active {
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .backtotop-enter-from,
 .backtotop-leave-to {
   opacity: 0;
-  transform: translateY(8px) scale(0.9);
+  transform: translateY(12px) scale(0.85);
 }
 
 @media (prefers-reduced-motion: reduce) {

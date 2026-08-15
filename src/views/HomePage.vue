@@ -147,9 +147,9 @@ const withResearchCount =
             </p>
           </div>
 
-          <div class="mt-4 flex items-center gap-1 text-xs font-semibold text-[var(--accent)] opacity-0 group-hover:opacity-100 transition-opacity">
+          <div class="mt-4 flex items-center gap-1 text-xs font-semibold text-[var(--accent)] transition-transform duration-200 group-hover:translate-x-1">
             <span>进入查看</span>
-            <span aria-hidden="true">&rarr;</span>
+            <span aria-hidden="true" class="transition-transform duration-200 group-hover:translate-x-0.5">&rarr;</span>
           </div>
         </RouterLink>
       </section>
