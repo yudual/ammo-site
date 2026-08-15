@@ -22,6 +22,8 @@ const router = createRouter({
     { path: '/graduate/compare', name: 'graduate-compare', component: () => import('./views/GraduateCompare.vue'), meta: { title: '方向对比 - 考研方向 - 弹药导航' } },
     { path: '/graduate/schools', name: 'graduate-schools', component: () => import('./views/GraduateSchools.vue'), meta: { title: '院校入口 - 考研方向 - 弹药导航' } },
     { path: '/graduate/timeline', name: 'graduate-timeline', component: () => import('./views/GraduateTimeline.vue'), meta: { title: '四年准备 - 考研方向 - 弹药导航' } },
+    { path: '/atlas', name: 'atlas', component: () => import('./views/AtlasView.vue'), meta: { title: '空间沙盘 - 弹药导航' } },
+    { path: '/map', redirect: '/atlas' },
     { path: '/about', name: 'about', component: () => import('./views/About.vue'), meta: { title: '关于 - 弹药导航' } },
     { path: '/:pathMatch(.*)*', name: 'not-found', component: () => import('./views/NotFound.vue'), meta: { title: '页面不存在 - 弹药导航' } },
   ],

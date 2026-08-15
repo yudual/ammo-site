@@ -14,6 +14,7 @@ const mainNavItems = [
   { label: '企业名录', to: '/companies' },
   { label: '院校一览', to: '/universities' },
   { label: '考研方向', to: '/graduate' },
+  { label: '空间沙盘', to: '/atlas' },
   { label: '关于', to: '/about' },
 ]
 

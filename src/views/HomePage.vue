@@ -262,6 +262,48 @@ const withResearchCount =
         </div>
       </section>
 
+      <!-- 全新特色功能：空间沙盘引流卡片 (GeoAtlas Banner) -->
+      <section class="home-atlas-banner mt-8 sm:mt-12">
+        <RouterLink
+          to="/atlas"
+          class="group relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-6 p-6 sm:p-8 rounded-3xl border transition-all duration-300 hover:shadow-xl hover:border-[var(--accent-border)] cursor-pointer select-none"
+          :style="{
+            backgroundColor: 'var(--surface)',
+            borderColor: 'var(--border)',
+            boxShadow: 'var(--glass-shadow)',
+          }"
+        >
+          <div class="relative z-10 flex flex-col gap-2 max-w-xl">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[var(--accent)] text-white shadow-xs">
+                全新功能
+              </span>
+              <span class="text-xs font-semibold text-[var(--accent)]">
+                3D 地球 &bull; 2D 平面沙盘双模
+              </span>
+            </div>
+
+            <h3 class="text-xl sm:text-2xl font-black tracking-tight text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors">
+              弹药工程与爆炸技术「全国产业与高校空间沙盘」
+            </h3>
+
+            <p class="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
+              将全国 34 所高校、80 家企业院所置于数字空间沙盘。支持 3D 旋转探索、四大军工聚集区定焦与产学研关联飞线！
+            </p>
+          </div>
+
+          <div class="relative z-10 shrink-0">
+            <span class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm bg-[var(--accent)] text-white shadow-md transition group-hover:scale-105 group-hover:shadow-lg">
+              <span>立即进入沙盘探索</span>
+              <span class="transition-transform duration-200 group-hover:translate-x-1">&rarr;</span>
+            </span>
+          </div>
+
+          <!-- 背景拟态微光晕 -->
+          <div class="absolute -right-16 -bottom-16 w-64 h-64 rounded-full bg-[var(--accent)] opacity-10 blur-3xl pointer-events-none group-hover:opacity-20 transition-opacity" />
+        </RouterLink>
+      </section>
+
     </div>
   </div>
 </template>
