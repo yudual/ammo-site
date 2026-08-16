@@ -14,6 +14,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'select', item: GeoItem): void
+  (e: 'selectProvince', provinceName: string): void
 }>()
 
 const containerRef = ref<HTMLDivElement | null>(null)
@@ -21,7 +22,7 @@ const hoveredItem = ref<GeoItem | null>(null)
 const hoveredProvince = ref<ProvinceStat | null>(null)
 const mousePos = ref({ x: 0, y: 0 })
 
-// 缩放与平移状态
+// 缩放与平移状态 (SVG 1000x700 坐标系)
 const zoom = ref(1)
 const pan = ref({ x: 0, y: 0 })
 const isDragging = ref(false)
@@ -33,7 +34,7 @@ const provinceStatsMap = getProvinceStats()
 const projection = geoMercator().center([105, 36]).scale(840).translate([500, 350])
 const pathGenerator = geoPath().projection(projection)
 
-// 生成 34 个真实省份的高精矢量 Path
+// 生成 34 个真实省份的高精矢量 Path 与中心坐标
 const provincePaths = computed(() => {
   if (!chinaGeoJson || !chinaGeoJson.features) return []
   return chinaGeoJson.features.map((feature: any) => {
@@ -47,10 +48,12 @@ const provincePaths = computed(() => {
       companies: [],
       totalCount: 0,
     }
+    const centerPoint = projection(stats.center) || [500, 350]
     return {
       name,
       pathData,
       stats,
+      centerPoint,
     }
   })
 })
@@ -82,6 +85,21 @@ watch(
   { immediate: true },
 )
 
+// 监听地标选中，平滑居中聚焦到该地标
+watch(
+  () => props.selectedItem,
+  (item) => {
+    if (!item) return
+    const target = project(item.lng, item.lat)
+    const newZoom = Math.max(zoom.value, 2.2)
+    zoom.value = newZoom
+    pan.value = {
+      x: 500 - target.x * newZoom,
+      y: 350 - target.y * newZoom,
+    }
+  },
+)
+
 function onMouseDown(e: MouseEvent) {
   isDragging.value = true
   dragStart.value = { x: e.clientX - pan.value.x, y: e.clientY - pan.value.y }
@@ -104,7 +122,7 @@ function onMouseUp() {
   isDragging.value = false
 }
 
-// 彻底修复中心缩放算法：以鼠标光标所在点为中心进行缩放，不偏离目标
+// 光标锚点精准中心缩放算法 (鼠标指向哪里就放大哪里)
 function onWheel(e: WheelEvent) {
   e.preventDefault()
   if (!containerRef.value) return
@@ -112,15 +130,13 @@ function onWheel(e: WheelEvent) {
   const mouseX = e.clientX - rect.left
   const mouseY = e.clientY - rect.top
 
-  // 映射到 SVG 坐标空间
   const svgX = (mouseX / rect.width) * 1000
   const svgY = (mouseY / rect.height) * 700
 
   const factor = e.deltaY < 0 ? 1.15 : 0.85
   const oldZoom = zoom.value
-  const newZoom = Math.max(0.8, Math.min(5, oldZoom * factor))
+  const newZoom = Math.max(0.85, Math.min(5.5, oldZoom * factor))
 
-  // 保持鼠标下的地图点位坐标绝对不变
   pan.value.x = svgX - (svgX - pan.value.x) * (newZoom / oldZoom)
   pan.value.y = svgY - (svgY - pan.value.y) * (newZoom / oldZoom)
   zoom.value = newZoom
@@ -133,8 +149,7 @@ function resetView() {
 
 function zoomIn() {
   const oldZoom = zoom.value
-  const newZoom = Math.min(5, oldZoom * 1.25)
-  // 以画布中心 (500, 350) 为锚点放大
+  const newZoom = Math.min(5.5, oldZoom * 1.25)
   pan.value.x = 500 - (500 - pan.value.x) * (newZoom / oldZoom)
   pan.value.y = 350 - (350 - pan.value.y) * (newZoom / oldZoom)
   zoom.value = newZoom
@@ -142,11 +157,21 @@ function zoomIn() {
 
 function zoomOut() {
   const oldZoom = zoom.value
-  const newZoom = Math.max(0.8, oldZoom * 0.8)
-  // 以画布中心 (500, 350) 为锚点缩小
+  const newZoom = Math.max(0.85, oldZoom * 0.8)
   pan.value.x = 500 - (500 - pan.value.x) * (newZoom / oldZoom)
   pan.value.y = 350 - (350 - pan.value.y) * (newZoom / oldZoom)
   zoom.value = newZoom
+}
+
+function onProvinceClick(prov: any) {
+  emit('selectProvince', prov.name)
+  const target = project(prov.stats.center[0], prov.stats.center[1])
+  const newZoom = 2.4
+  zoom.value = newZoom
+  pan.value = {
+    x: 500 - target.x * newZoom,
+    y: 350 - target.y * newZoom,
+  }
 }
 
 function getArcPath(from: [number, number], to: [number, number]): string {
@@ -169,7 +194,7 @@ onUnmounted(() => {
 <template>
   <div
     ref="containerRef"
-    class="tactical-2d-viewport relative w-full h-full min-h-[580px] overflow-hidden select-none cursor-grab active:cursor-grabbing rounded-3xl border"
+    class="tactical-2d-viewport relative w-full h-full min-h-[600px] overflow-hidden select-none cursor-grab active:cursor-grabbing rounded-3xl border transition-colors duration-200"
     :style="{
       backgroundColor: 'var(--surface-strong)',
       borderColor: 'var(--border)',
@@ -179,15 +204,38 @@ onUnmounted(() => {
     @mousemove="onMouseMove"
     @wheel="onWheel"
   >
-    <!-- 背景战术网格 -->
+    <!-- 背景战术网格与高精十字坐标线 -->
     <div class="absolute inset-0 pointer-events-none opacity-20 bg-[radial-gradient(circle_at_50%_50%,var(--accent)_1px,transparent_1px)] bg-[size:36px_36px]" />
+
+    <!-- 顶部左侧：战术状态 HUD -->
+    <div
+      class="absolute top-4 left-4 z-20 flex flex-col gap-1 p-3 rounded-2xl border backdrop-blur-xl pointer-events-none select-none text-[11px] font-numeric"
+      :style="{
+        backgroundColor: 'var(--surface)',
+        borderColor: 'var(--border)',
+        boxShadow: 'var(--glass-shadow)',
+        color: 'var(--text-secondary)',
+      }"
+    >
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" />
+        <strong class="font-bold text-xs text-[var(--text-primary)] tracking-wide uppercase">
+          全国兵工与高校数字沙盘
+        </strong>
+      </div>
+      <div class="flex items-center gap-3 mt-1 border-t pt-1.5 border-[var(--border)] text-xs">
+        <span>当前视效: <strong class="text-[var(--text-primary)] font-bold">{{ (zoom * 100).toFixed(0) }}%</strong></span>
+        <span>&bull;</span>
+        <span>已收录实体: <strong class="text-[var(--accent)] font-bold">{{ items.length }}</strong> 处</span>
+      </div>
+    </div>
 
     <!-- 缩放控制浮动栏 -->
     <div class="absolute top-4 right-4 z-20 flex flex-col gap-1.5 p-1.5 rounded-xl border backdrop-blur-xl bg-[var(--surface)] border-[var(--border)] shadow-md">
       <button
         type="button"
         class="h-8 w-8 rounded-lg flex items-center justify-center font-bold text-sm text-[var(--text-primary)] hover:bg-[var(--surface-strong)] transition cursor-pointer active:scale-90"
-        title="中心放大"
+        title="放大地图"
         @click="zoomIn"
       >
         +
@@ -195,7 +243,7 @@ onUnmounted(() => {
       <button
         type="button"
         class="h-8 w-8 rounded-lg flex items-center justify-center font-bold text-sm text-[var(--text-primary)] hover:bg-[var(--surface-strong)] transition cursor-pointer active:scale-90"
-        title="中心缩小"
+        title="缩小地图"
         @click="zoomOut"
       >
         &minus;
@@ -203,7 +251,7 @@ onUnmounted(() => {
       <button
         type="button"
         class="h-8 w-8 rounded-lg flex items-center justify-center text-xs font-semibold text-[var(--text-secondary)] hover:bg-[var(--surface-strong)] transition cursor-pointer active:scale-90"
-        title="重置居中"
+        title="重置全览"
         @click="resetView"
       >
         ⌖
@@ -217,7 +265,7 @@ onUnmounted(() => {
       preserveAspectRatio="xMidYMid meet"
     >
       <g :transform="`translate(${pan.x}, ${pan.y}) scale(${zoom})`" class="transition-transform duration-75">
-        <!-- 经纬度网格 -->
+        <!-- 经纬度参考网格 -->
         <g class="opacity-15 stroke-[var(--text-tertiary)]" stroke-dasharray="3,3" stroke-width="0.8">
           <line x1="100" y1="0" x2="100" y2="700" />
           <line x1="300" y1="0" x2="300" y2="700" />
@@ -241,7 +289,24 @@ onUnmounted(() => {
             class="transition-colors duration-150 cursor-pointer"
             @mouseenter="hoveredProvince = prov.stats"
             @mouseleave="hoveredProvince = null"
+            @click="onProvinceClick(prov)"
           />
+        </g>
+
+        <!-- 省份简名微标注 (当适度放大时优雅呈现) -->
+        <g v-if="zoom > 1.4" class="province-labels pointer-events-none select-none">
+          <text
+            v-for="prov in provincePaths"
+            :key="`lbl-${prov.name}`"
+            :x="prov.centerPoint[0]"
+            :y="prov.centerPoint[1]"
+            fill="var(--text-tertiary)"
+            class="text-[10px] font-bold opacity-75"
+            text-anchor="middle"
+            dominant-baseline="central"
+          >
+            {{ prov.name }}
+          </text>
         </g>
 
         <!-- 产学研动态飞线 (Flight Arcs) -->
@@ -286,7 +351,7 @@ onUnmounted(() => {
               <line x1="0" y1="6" x2="0" y2="12" :stroke="item.type === 'university' ? '#3b82f6' : 'var(--accent)'" stroke-width="1.5" />
             </g>
 
-            <!-- 核心地标圆点 -->
+            <!-- 核心地标实心圆点 -->
             <circle
               :r="selectedItem?.id === item.id ? 6 : (item.type === 'university' ? 4 : 3.5)"
               :fill="item.type === 'university' ? '#3b82f6' : 'var(--accent)'"
@@ -295,22 +360,22 @@ onUnmounted(() => {
               class="transition-all duration-150"
             />
 
-            <!-- 仅在极深度放大或选中时呈现精致半透明白色微文字徽章（杜绝黑乎乎杂乱） -->
-            <g v-if="selectedItem?.id === item.id || (zoom > 2.8 && hoveredItem?.id === item.id)">
+            <!-- 仅在选中时才显示精致的浮空白色文字徽章 -->
+            <g v-if="selectedItem?.id === item.id">
               <rect
                 x="8"
                 y="-12"
-                :width="item.name.length * 11 + 16"
-                height="20"
+                :width="item.name.length * 11 + 20"
+                height="22"
                 rx="6"
-                :fill="item.type === 'university' ? 'rgba(37, 99, 235, 0.92)' : 'rgba(190, 85, 67, 0.92)'"
+                :fill="item.type === 'university' ? 'rgba(37, 99, 235, 0.94)' : 'rgba(190, 85, 67, 0.94)'"
                 stroke="#ffffff"
                 stroke-width="1"
-                class="shadow-sm"
+                class="shadow-md"
               />
               <text
                 x="14"
-                y="2"
+                y="3"
                 fill="#ffffff"
                 class="text-[10px] font-bold select-none pointer-events-none"
               >
@@ -322,10 +387,10 @@ onUnmounted(() => {
       </g>
     </svg>
 
-    <!-- 鼠标悬停省份情报 HUD -->
+    <!-- 鼠标悬停省份情报 HUD (右上角) -->
     <div
       v-if="hoveredProvince"
-      class="absolute top-4 left-4 z-20 flex flex-col gap-1 p-3 rounded-2xl border backdrop-blur-xl pointer-events-none select-none text-[11px] font-numeric"
+      class="absolute top-16 right-4 z-20 flex flex-col gap-1 p-3 rounded-2xl border backdrop-blur-xl pointer-events-none select-none text-[11px] font-numeric"
       :style="{
         backgroundColor: 'var(--surface)',
         borderColor: 'var(--border)',
@@ -344,7 +409,7 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <!-- 鼠标悬停地标微 Tooltip (高对比度毛玻璃卡片，告别黑乎乎文本) -->
+    <!-- 鼠标悬停地标微 Tooltip (高清晰毛玻璃卡片，跟随鼠标) -->
     <div
       v-if="hoveredItem"
       class="pointer-events-none fixed z-50 flex flex-col gap-0.5 px-3.5 py-2.5 rounded-xl border backdrop-blur-2xl shadow-xl transform -translate-x-1/2 -translate-y-full -mt-3"

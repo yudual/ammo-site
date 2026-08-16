@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, ref } from 'vue'
+import { computed, ref } from 'vue'
 import AtlasConsole from '../components/atlas/AtlasConsole.vue'
 import AtlasDetailSheet from '../components/atlas/AtlasDetailSheet.vue'
 import Tactical2DView from '../components/atlas/Tactical2DView.vue'
@@ -11,15 +11,9 @@ import {
   type GeoRegionCluster,
 } from '../data/geoCoordinates'
 
-const Globe3DView = defineAsyncComponent(
-  () => import('../components/atlas/Globe3DView.vue'),
-)
-
 const allGeoItems = getGeoItems()
-const mode = ref<'3d' | '2d'>('3d')
 const filterType = ref<'all' | 'university' | 'company'>('all')
 const showArcs = ref(true)
-const autoRotate = ref(false)
 const searchKeyword = ref('')
 const selectedItem = ref<GeoItem | null>(null)
 const activeClusterId = ref('all')
@@ -31,7 +25,7 @@ const activeCluster = computed(() => {
   )
 })
 
-// 根据分类与搜索词筛选地标实体
+// 根据分类、搜索词与省份筛选地标实体
 const filteredItems = computed(() => {
   let list = allGeoItems
 
@@ -68,6 +62,10 @@ function onSelectCluster(cluster: GeoRegionCluster) {
 function onSelectItem(item: GeoItem) {
   selectedItem.value = item
 }
+
+function onSelectProvince(provinceName: string) {
+  searchKeyword.value = provinceName
+}
 </script>
 
 <template>
@@ -75,10 +73,8 @@ function onSelectItem(item: GeoItem) {
     <main class="mx-auto flex w-full max-w-7xl flex-col gap-3">
       <!-- 顶部控制中枢 -->
       <AtlasConsole
-        v-model:mode="mode"
         v-model:filter-type="filterType"
         v-model:show-arcs="showArcs"
-        v-model:auto-rotate="autoRotate"
         v-model:search-keyword="searchKeyword"
         :active-cluster-id="activeClusterId"
         :total-count="totalCount"
@@ -87,11 +83,11 @@ function onSelectItem(item: GeoItem) {
         @select-cluster="onSelectCluster"
       />
 
-      <!-- 核心沙盘工作台 (左侧情报目录 + 右侧 3D/2D 画布) -->
-      <div class="relative w-full h-[72vh] min-h-[580px] max-h-[820px] flex gap-3">
-        <!-- 左侧：可折叠全景战术情报名录 (桌面端常驻/收起，移动端底部弹出) -->
+      <!-- 核心沙盘工作台 (左侧情报目录 + 2D 高精度战术沙盘) -->
+      <div class="relative w-full h-[74vh] min-h-[600px] max-h-[860px] flex gap-3">
+        <!-- 左侧：战术情报名录速查栏 (桌面端常驻，可滚动) -->
         <aside
-          class="hidden lg:flex flex-col w-72 shrink-0 rounded-3xl border p-3 backdrop-blur-xl transition-all duration-300 z-30"
+          class="hidden lg:flex flex-col w-72 shrink-0 rounded-3xl border p-3.5 backdrop-blur-xl transition-all duration-300 z-30"
           :style="{
             backgroundColor: 'var(--surface)',
             borderColor: 'var(--border)',
@@ -102,13 +98,21 @@ function onSelectItem(item: GeoItem) {
             <div class="flex items-center gap-2">
               <span class="w-2.5 h-2.5 rounded-full bg-[var(--accent)] animate-pulse" />
               <strong class="text-xs font-bold tracking-wide uppercase text-[var(--text-primary)]">
-                战术情报名录 ({{ filteredItems.length }})
+                情报名录 ({{ filteredItems.length }})
               </strong>
             </div>
+
+            <span v-if="searchKeyword" class="text-[11px] text-[var(--accent)] font-semibold cursor-pointer" @click="searchKeyword = ''">
+              清除筛选
+            </span>
           </div>
 
           <!-- 列表可滚动区域 -->
           <div class="flex-1 overflow-y-auto no-scrollbar flex flex-col gap-1.5 mt-2.5 pr-0.5">
+            <div v-if="filteredItems.length === 0" class="py-8 text-center text-xs text-[var(--text-tertiary)]">
+              未找到匹配的单位或院校
+            </div>
+
             <button
               v-for="item in filteredItems"
               :key="item.id"
@@ -143,29 +147,16 @@ function onSelectItem(item: GeoItem) {
           </div>
         </aside>
 
-        <!-- 主视窗渲染区 (3D/2D 沙盘) -->
+        <!-- 主视窗渲染区 (2D 战术沙盘) -->
         <div class="relative flex-1 h-full min-w-0">
-          <!-- 3D 拟态数字地球 -->
-          <Globe3DView
-            v-if="mode === '3d'"
-            :items="filteredItems"
-            :selected-item="selectedItem"
-            :arcs="ordnanceFlightArcs"
-            :show-arcs="showArcs"
-            :auto-rotate="autoRotate"
-            :active-cluster="activeCluster"
-            @select="onSelectItem"
-          />
-
-          <!-- 2D 战术平面沙盘 -->
           <Tactical2DView
-            v-else
             :items="filteredItems"
             :selected-item="selectedItem"
             :arcs="ordnanceFlightArcs"
             :show-arcs="showArcs"
             :active-cluster="activeCluster"
             @select="onSelectItem"
+            @select-province="onSelectProvince"
           />
 
           <!-- 浮动地标微档案卡片 -->

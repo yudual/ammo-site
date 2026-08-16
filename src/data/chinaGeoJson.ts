@@ -1,6 +1,4 @@
 import chinaMapData from 'china-map-geojson'
-import * as topojson from 'topojson-client'
-import worldData from 'world-atlas/countries-110m.json'
 import { getGeoItems, type GeoItem } from './geoCoordinates'
 
 export interface ProvinceStat {
@@ -14,10 +12,6 @@ export interface ProvinceStat {
 
 // 提取中国 34 个省份的 GeoJSON Feature 数据
 export const chinaGeoJson = (chinaMapData as any).ChinaData || (chinaMapData as any).default?.ChinaData || chinaMapData
-
-// 提取全球陆地矢量几何
-const worldTopo: any = worldData
-export const worldCountriesGeoJson = topojson.feature(worldTopo, worldTopo.objects.countries) as any
 
 // 统计各省份的军工实体数据分布
 export function getProvinceStats(): Record<string, ProvinceStat> {
