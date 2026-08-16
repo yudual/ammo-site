@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { geoRegionClusters, type GeoRegionCluster } from '../../data/geoCoordinates'
 
-const props = defineProps<{
+defineProps<{
   mode: '3d' | '2d'
   filterType: 'all' | 'university' | 'company'
   showArcs: boolean
+  autoRotate: boolean
   activeClusterId: string
   searchKeyword: string
   totalCount: number
@@ -17,15 +17,13 @@ const emit = defineEmits<{
   (e: 'update:mode', value: '3d' | '2d'): void
   (e: 'update:filterType', value: 'all' | 'university' | 'company'): void
   (e: 'update:showArcs', value: boolean): void
+  (e: 'update:autoRotate', value: boolean): void
   (e: 'update:searchKeyword', value: string): void
   (e: 'selectCluster', cluster: GeoRegionCluster): void
 }>()
 
-const isClusterDrawerOpen = ref(false)
-
 function onClusterClick(cluster: GeoRegionCluster) {
   emit('selectCluster', cluster)
-  isClusterDrawerOpen.value = false
 }
 </script>
 
@@ -40,37 +38,56 @@ function onClusterClick(cluster: GeoRegionCluster) {
         boxShadow: 'var(--glass-shadow)',
       }"
     >
-      <!-- 左侧：3D/2D 模式切换胶囊滑块 -->
-      <div
-        class="flex items-center p-1 rounded-xl border bg-[var(--surface-muted)]"
-        :style="{ borderColor: 'var(--border)' }"
-      >
-        <button
-          type="button"
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all duration-200 cursor-pointer active:scale-95 select-none"
-          :style="{
-            backgroundColor: mode === '3d' ? 'var(--surface-strong)' : 'transparent',
-            color: mode === '3d' ? 'var(--accent)' : 'var(--text-secondary)',
-            boxShadow: mode === '3d' ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
-          }"
-          @click="emit('update:mode', '3d')"
+      <!-- 左侧：3D/2D 模式切换胶囊滑块 + 自转控制 -->
+      <div class="flex items-center gap-2 flex-wrap">
+        <div
+          class="flex items-center p-1 rounded-xl border bg-[var(--surface-muted)]"
+          :style="{ borderColor: 'var(--border)' }"
         >
-          <span>🌐</span>
-          <span>3D 地球</span>
-        </button>
+          <button
+            type="button"
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all duration-200 cursor-pointer active:scale-95 select-none"
+            :style="{
+              backgroundColor: mode === '3d' ? 'var(--surface-strong)' : 'transparent',
+              color: mode === '3d' ? 'var(--accent)' : 'var(--text-secondary)',
+              boxShadow: mode === '3d' ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+            }"
+            @click="emit('update:mode', '3d')"
+          >
+            <span>🌐</span>
+            <span>3D 地球</span>
+          </button>
 
+          <button
+            type="button"
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all duration-200 cursor-pointer active:scale-95 select-none"
+            :style="{
+              backgroundColor: mode === '2d' ? 'var(--surface-strong)' : 'transparent',
+              color: mode === '2d' ? 'var(--accent)' : 'var(--text-secondary)',
+              boxShadow: mode === '2d' ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+            }"
+            @click="emit('update:mode', '2d')"
+          >
+            <span>🗺️</span>
+            <span>2D 沙盘</span>
+          </button>
+        </div>
+
+        <!-- 3D 模式下的自转开关 (用户可自由开启/关闭) -->
         <button
+          v-if="mode === '3d'"
           type="button"
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all duration-200 cursor-pointer active:scale-95 select-none"
+          class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs sm:text-sm font-semibold transition active:scale-95 cursor-pointer select-none"
           :style="{
-            backgroundColor: mode === '2d' ? 'var(--surface-strong)' : 'transparent',
-            color: mode === '2d' ? 'var(--accent)' : 'var(--text-secondary)',
-            boxShadow: mode === '2d' ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+            backgroundColor: autoRotate ? 'var(--accent-soft)' : 'var(--surface-strong)',
+            borderColor: autoRotate ? 'var(--accent)' : 'var(--border)',
+            color: autoRotate ? 'var(--accent)' : 'var(--text-secondary)',
           }"
-          @click="emit('update:mode', '2d')"
+          title="点击切换地球是否持续自动旋转"
+          @click="emit('update:autoRotate', !autoRotate)"
         >
-          <span>🗺️</span>
-          <span>2D 沙盘</span>
+          <span class="inline-block transition-transform duration-500" :class="{ 'rotate-180': autoRotate }">🔄</span>
+          <span>自转: {{ autoRotate ? '开' : '静止' }}</span>
         </button>
       </div>
 
@@ -120,7 +137,7 @@ function onClusterClick(cluster: GeoRegionCluster) {
           <span class="text-[11px] font-numeric opacity-80">({{ compCount }})</span>
         </button>
 
-        <!-- 产学研飞线开关 (3D模式下特别亮眼) -->
+        <!-- 产学研飞线开关 -->
         <button
           type="button"
           class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs sm:text-sm font-semibold transition active:scale-95 cursor-pointer select-none whitespace-nowrap"
@@ -129,7 +146,7 @@ function onClusterClick(cluster: GeoRegionCluster) {
             borderColor: showArcs ? 'var(--accent)' : 'var(--border)',
             color: showArcs ? 'var(--accent)' : 'var(--text-tertiary)',
           }"
-          title="点击开启/关闭重点高校产学研合作与人才流动飞线"
+          title="开启/关闭重点高校产学研合作与人才流动飞线"
           @click="emit('update:showArcs', !showArcs)"
         >
           <span>✨ 产学研飞线</span>
@@ -140,11 +157,11 @@ function onClusterClick(cluster: GeoRegionCluster) {
       </div>
 
       <!-- 右侧：快速搜索输入框 -->
-      <div class="relative flex-1 sm:flex-none sm:w-52">
+      <div class="relative flex-1 sm:flex-none sm:w-48">
         <input
           :value="searchKeyword"
           type="text"
-          placeholder="查找大学或军工企业..."
+          placeholder="搜索大学/院所/城市..."
           class="w-full rounded-xl border px-3 py-1.5 pl-8 text-xs sm:text-sm font-medium outline-none transition focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
           :style="{
             backgroundColor: 'var(--surface-strong)',

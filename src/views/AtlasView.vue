@@ -19,6 +19,7 @@ const allGeoItems = getGeoItems()
 const mode = ref<'3d' | '2d'>('3d')
 const filterType = ref<'all' | 'university' | 'company'>('all')
 const showArcs = ref(true)
+const autoRotate = ref(false)
 const searchKeyword = ref('')
 const selectedItem = ref<GeoItem | null>(null)
 const activeClusterId = ref('all')
@@ -77,6 +78,7 @@ function onSelectItem(item: GeoItem) {
         v-model:mode="mode"
         v-model:filter-type="filterType"
         v-model:show-arcs="showArcs"
+        v-model:auto-rotate="autoRotate"
         v-model:search-keyword="searchKeyword"
         :active-cluster-id="activeClusterId"
         :total-count="totalCount"
@@ -150,6 +152,7 @@ function onSelectItem(item: GeoItem) {
             :selected-item="selectedItem"
             :arcs="ordnanceFlightArcs"
             :show-arcs="showArcs"
+            :auto-rotate="autoRotate"
             :active-cluster="activeCluster"
             @select="onSelectItem"
           />

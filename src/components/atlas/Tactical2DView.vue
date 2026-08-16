@@ -30,7 +30,7 @@ const dragStart = ref({ x: 0, y: 0 })
 const provinceStatsMap = getProvinceStats()
 
 // D3 墨卡托高精投影器 (针对中国大陆经纬度精准校准)
-const projection = geoMercator().center([105, 36]).scale(820).translate([500, 350])
+const projection = geoMercator().center([105, 36]).scale(840).translate([500, 350])
 const pathGenerator = geoPath().projection(projection)
 
 // 生成 34 个真实省份的高精矢量 Path
@@ -61,7 +61,7 @@ function project(lng: number, lat: number): { x: number; y: number } {
   return coords ? { x: coords[0], y: coords[1] } : { x: 500, y: 350 }
 }
 
-// 监听聚集区平滑定焦
+// 监听聚集区平滑定焦 (以聚集区中心为锚点平移缩放)
 watch(
   () => props.activeCluster,
   (cluster) => {
@@ -71,10 +71,11 @@ watch(
       pan.value = { x: 0, y: 0 }
     } else {
       const target = project(cluster.center[0], cluster.center[1])
-      zoom.value = cluster.zoom2D
+      const newZoom = cluster.zoom2D
+      zoom.value = newZoom
       pan.value = {
-        x: 500 - target.x * cluster.zoom2D,
-        y: 350 - target.y * cluster.zoom2D,
+        x: 500 - target.x * newZoom,
+        y: 350 - target.y * newZoom,
       }
     }
   },
@@ -103,10 +104,25 @@ function onMouseUp() {
   isDragging.value = false
 }
 
+// 彻底修复中心缩放算法：以鼠标光标所在点为中心进行缩放，不偏离目标
 function onWheel(e: WheelEvent) {
   e.preventDefault()
+  if (!containerRef.value) return
+  const rect = containerRef.value.getBoundingClientRect()
+  const mouseX = e.clientX - rect.left
+  const mouseY = e.clientY - rect.top
+
+  // 映射到 SVG 坐标空间
+  const svgX = (mouseX / rect.width) * 1000
+  const svgY = (mouseY / rect.height) * 700
+
   const factor = e.deltaY < 0 ? 1.15 : 0.85
-  const newZoom = Math.max(0.8, Math.min(5, zoom.value * factor))
+  const oldZoom = zoom.value
+  const newZoom = Math.max(0.8, Math.min(5, oldZoom * factor))
+
+  // 保持鼠标下的地图点位坐标绝对不变
+  pan.value.x = svgX - (svgX - pan.value.x) * (newZoom / oldZoom)
+  pan.value.y = svgY - (svgY - pan.value.y) * (newZoom / oldZoom)
   zoom.value = newZoom
 }
 
@@ -116,11 +132,21 @@ function resetView() {
 }
 
 function zoomIn() {
-  zoom.value = Math.min(5, zoom.value * 1.25)
+  const oldZoom = zoom.value
+  const newZoom = Math.min(5, oldZoom * 1.25)
+  // 以画布中心 (500, 350) 为锚点放大
+  pan.value.x = 500 - (500 - pan.value.x) * (newZoom / oldZoom)
+  pan.value.y = 350 - (350 - pan.value.y) * (newZoom / oldZoom)
+  zoom.value = newZoom
 }
 
 function zoomOut() {
-  zoom.value = Math.max(0.8, zoom.value * 0.8)
+  const oldZoom = zoom.value
+  const newZoom = Math.max(0.8, oldZoom * 0.8)
+  // 以画布中心 (500, 350) 为锚点缩小
+  pan.value.x = 500 - (500 - pan.value.x) * (newZoom / oldZoom)
+  pan.value.y = 350 - (350 - pan.value.y) * (newZoom / oldZoom)
+  zoom.value = newZoom
 }
 
 function getArcPath(from: [number, number], to: [number, number]): string {
@@ -153,7 +179,7 @@ onUnmounted(() => {
     @mousemove="onMouseMove"
     @wheel="onWheel"
   >
-    <!-- 背景战术网格与高科技雷达扫描线 -->
+    <!-- 背景战术网格 -->
     <div class="absolute inset-0 pointer-events-none opacity-20 bg-[radial-gradient(circle_at_50%_50%,var(--accent)_1px,transparent_1px)] bg-[size:36px_36px]" />
 
     <!-- 缩放控制浮动栏 -->
@@ -161,7 +187,7 @@ onUnmounted(() => {
       <button
         type="button"
         class="h-8 w-8 rounded-lg flex items-center justify-center font-bold text-sm text-[var(--text-primary)] hover:bg-[var(--surface-strong)] transition cursor-pointer active:scale-90"
-        title="放大"
+        title="中心放大"
         @click="zoomIn"
       >
         +
@@ -169,7 +195,7 @@ onUnmounted(() => {
       <button
         type="button"
         class="h-8 w-8 rounded-lg flex items-center justify-center font-bold text-sm text-[var(--text-primary)] hover:bg-[var(--surface-strong)] transition cursor-pointer active:scale-90"
-        title="缩小"
+        title="中心缩小"
         @click="zoomOut"
       >
         &minus;
@@ -233,7 +259,7 @@ onUnmounted(() => {
           />
         </g>
 
-        <!-- 所有地标 Pinpoints (高校 & 企业) -->
+        <!-- 所有地标 Pinpoints (高校 & 企业：使用精致微光点，彻底移除黑乎乎的重叠文字标签) -->
         <g v-for="item in items" :key="item.id" class="cursor-pointer">
           <g
             :transform="`translate(${project(item.lng, item.lat).x}, ${project(item.lng, item.lat).y})`"
@@ -262,22 +288,35 @@ onUnmounted(() => {
 
             <!-- 核心地标圆点 -->
             <circle
-              :r="selectedItem?.id === item.id ? 6 : (item.type === 'university' ? 4.5 : 4)"
+              :r="selectedItem?.id === item.id ? 6 : (item.type === 'university' ? 4 : 3.5)"
               :fill="item.type === 'university' ? '#3b82f6' : 'var(--accent)'"
               stroke="#ffffff"
-              stroke-width="1.5"
+              stroke-width="1.2"
               class="transition-all duration-150"
             />
 
-            <!-- 悬浮微标签 -->
-            <text
-              v-if="zoom > 1.3 || selectedItem?.id === item.id"
-              x="8"
-              y="3"
-              class="text-[9px] font-bold fill-[var(--text-primary)] pointer-events-none drop-shadow-sm select-none"
-            >
-              {{ item.name.length > 8 ? item.name.slice(0, 7) + '..' : item.name }}
-            </text>
+            <!-- 仅在极深度放大或选中时呈现精致半透明白色微文字徽章（杜绝黑乎乎杂乱） -->
+            <g v-if="selectedItem?.id === item.id || (zoom > 2.8 && hoveredItem?.id === item.id)">
+              <rect
+                x="8"
+                y="-12"
+                :width="item.name.length * 11 + 16"
+                height="20"
+                rx="6"
+                :fill="item.type === 'university' ? 'rgba(37, 99, 235, 0.92)' : 'rgba(190, 85, 67, 0.92)'"
+                stroke="#ffffff"
+                stroke-width="1"
+                class="shadow-sm"
+              />
+              <text
+                x="14"
+                y="2"
+                fill="#ffffff"
+                class="text-[10px] font-bold select-none pointer-events-none"
+              >
+                {{ item.type === 'university' ? '🏛️ ' : '🏭 ' }}{{ item.name }}
+              </text>
+            </g>
           </g>
         </g>
       </g>
@@ -305,38 +344,45 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <!-- 鼠标悬停地标微 Tooltip -->
+    <!-- 鼠标悬停地标微 Tooltip (高对比度毛玻璃卡片，告别黑乎乎文本) -->
     <div
       v-if="hoveredItem"
-      class="pointer-events-none fixed z-50 flex flex-col gap-0.5 px-3 py-2 rounded-xl border backdrop-blur-xl shadow-lg transform -translate-x-1/2 -translate-y-full -mt-3"
+      class="pointer-events-none fixed z-50 flex flex-col gap-0.5 px-3.5 py-2.5 rounded-xl border backdrop-blur-2xl shadow-xl transform -translate-x-1/2 -translate-y-full -mt-3"
       :style="{
         left: `${mousePos.x}px`,
         top: `${mousePos.y}px`,
         backgroundColor: 'var(--surface-strong)',
-        borderColor: 'var(--border)',
+        borderColor: 'var(--border-strong)',
         color: 'var(--text-primary)',
       }"
     >
-      <div class="flex items-center gap-1.5">
-        <span class="w-2 h-2 rounded-full" :class="hoveredItem.type === 'university' ? 'bg-[#3b82f6]' : 'bg-[var(--accent)]'" />
+      <div class="flex items-center gap-2">
+        <span
+          class="px-1.5 py-0.2 rounded text-[10px] font-bold text-white shadow-xs"
+          :style="{ backgroundColor: hoveredItem.type === 'university' ? '#2563eb' : 'var(--accent)' }"
+        >
+          {{ hoveredItem.type === 'university' ? '高校' : '企业' }}
+        </span>
         <strong class="text-xs font-bold">{{ hoveredItem.name }}</strong>
       </div>
-      <span class="text-[11px] text-[var(--text-secondary)]">📍 {{ hoveredItem.province }} · {{ hoveredItem.city }}</span>
+      <span class="text-[11px] text-[var(--text-secondary)] mt-0.5">
+        📍 {{ hoveredItem.province }} · {{ hoveredItem.city }} &bull; {{ hoveredItem.relevanceLevel }}相关
+      </span>
     </div>
 
     <!-- 左下角图例 -->
     <div class="absolute bottom-4 left-4 z-20 flex items-center gap-3 p-2.5 rounded-xl border backdrop-blur-xl bg-[var(--surface)] border-[var(--border)] text-xs font-medium shadow-md select-none">
       <div class="flex items-center gap-1.5">
         <span class="w-2.5 h-2.5 rounded-full bg-[#3b82f6] shadow-sm" />
-        <span class="text-[var(--text-secondary)]">高校 (34)</span>
+        <span class="text-[var(--text-secondary)] font-semibold">高校 (34)</span>
       </div>
       <div class="flex items-center gap-1.5">
         <span class="w-2.5 h-2.5 rounded-full bg-[var(--accent)] shadow-sm" />
-        <span class="text-[var(--text-secondary)]">企业院所 (80)</span>
+        <span class="text-[var(--text-secondary)] font-semibold">企业院所 (80)</span>
       </div>
       <div v-if="showArcs" class="hidden sm:flex items-center gap-1.5 border-l pl-2.5 border-[var(--border)]">
         <span class="w-3 h-0.5 bg-[var(--accent)]" />
-        <span class="text-[var(--text-secondary)]">产学研飞线</span>
+        <span class="text-[var(--text-secondary)] font-semibold">产学研飞线</span>
       </div>
     </div>
   </div>
